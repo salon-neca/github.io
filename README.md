@@ -1,3 +1,3 @@
-Poker Home Game Manager
+Salon Neca
 
-https://pokerica.github.io
+https://salon-neca.github.io

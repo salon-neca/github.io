@@ -89,7 +89,8 @@ select {
 
 .ord {
   border:1px solid black;
-  width:99px; height:40px;
+  padding:5px 20px;
+  width:auto; height:40px;
   color:black; background:#eeeeee;
   margin-bottom:9px; font-size:17px;
 }
@@ -154,19 +155,22 @@ table {
   position:relative;
   table-layout:fixed;
   
-  line-height:15px;
-  
   user-select:none;
   border-collapse:collapse;
 }
 
 th {
   padding:9px 5px;
-  text-align:center; font-size:15px; font-weight:bold;
+  text-align:center;
+  font-size:15px; font-weight:bold;
 }
 
 td {
-  padding:5px; white-space:pre;
+  font-size:17px; padding:5px;
+}
+
+#htb td {
+  font-size:15px;
 }
 
 #htb tr.selected,

@@ -1,10 +1,9 @@
-
-// *** r23 ab
+// *** r03 abc
 self.addEventListener('install', e => {
-  caches.delete('pmpAppCache').then(cache => {
-      caches.open('pmpAppCache').then(cache => {
-        return cache.addAll([ '/', '/index.html', '/client.js', '/aux/aux.js',
-          '/style.css', '/manifest.json', '/aux/ibm.ttf', '/aux/quack.wav' ])
+  caches.delete('saloncch').then(cache => {
+      caches.open('saloncch').then(cache => {
+        return cache.addAll([ '/', '/index.html', '/client.js', '/style.css',
+                 '/manifest.json', '/aux/aux.js', '/aux/ibm.ttf', '/aux/quack.wav' ])
           .then(() => self.skipWaiting());
       }); });
 });
