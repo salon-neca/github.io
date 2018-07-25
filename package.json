@@ -1,8 +1,7 @@
 {
   "//2": "https://docs.npmjs.com/files/package.json",
   "//3": "updating this file will download and update your packages",
-
-  "name": "Pokerica",
+  "name": "Salon Neca",
   "version": "2.0.4",
   "description": "What am I about?",
   "main": "server.js",
@@ -10,18 +9,18 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.2"
   },
   "engines": {
     "node": "8.x"
   },
   "repository": {
-    "url": "https://pokerica.github.io"
+    "url": "https://salon-neca.github.io/"
   },
   "license": "MIT",
   "keywords": [
     "node",
     "glitch",
-    "poker"
+    "salon"
   ]
 }
