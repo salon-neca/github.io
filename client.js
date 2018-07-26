@@ -1,10 +1,9 @@
 $(document).ready(function()
 {
-  var versionCode= 'v1.0r03c \n';
+  var versionCode= 'v1.0r05a \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999,
                dataType:'text', contentType:'text/plain', processData:false});
-
   
   var nBar= document.getElementById('notif');
   var adminInfo= document.getElementById('dbFrame');
@@ -23,11 +22,16 @@ $(document).ready(function()
   var tbSpc= [0, '40px','40px','300px'];
   var tbLst= [0, 1,1];
   var tbSrt= [0, 2,-1];
-  var tbFcol= [0, '~fCol1','~fCol2'];
-  var tbFmod= [0, '~fMod1','~fMod2'];
+  var tbFcol= [0, 0,0];
+  var tbFmod= [0, 0,0];
   var tblInf= [0, '~tblInf1','~tblInf2'];
   var fltInf= [0, '~fltInf1','~fltInf2'];
-  var fltNum= [0, 0,0];
+  
+  var recNum= [0, 0,0];
+  var fltNum= [0, 1,1];
+  var fltMax= [0, 0,0];
+  var fltInp= [0, '',''];
+  var fltStr= [0, '~fltStr','~fltStr'];
 
 // *** PLAYER TAB
   var plTab= [0, 'first', 'last', 'tel', 'mob'];
@@ -137,9 +141,9 @@ $(document).ready(function()
       
       $('#t1in1').val('');
       if(col < 3) {
-        $('#t1in1').attr({placeholder:'NAME'}); tbFcol[1]= 'NAME'; }
+        $('#t1in1').attr({placeholder:'NAME'}); tbFcol[1]= 1; }
       else {
-        $('#t1in1').attr({placeholder:'PHONE'}); tbFcol[1]= 'PHONE'; }
+        $('#t1in1').attr({placeholder:'PHONE'}); tbFcol[1]= 2; }
     }
     else
     if(tab === 2)
@@ -149,19 +153,28 @@ $(document).ready(function()
     }
   }
 
-  function tiFresh(t)
-  {
-    var cl= false, jqt= $('#t2inf');
-    if(t < 0) { t= -t; cl= true; }
-    if(t === 1) jqt= $('#t1inf');
-
-    if(cl || tbFmod[t] === '') fltInf[t]= 'none';
-    else fltInf[t]= tbFcol[t] + tbFmod[t];
-    
-    jqt.text('FILTER: '+ fltInf[t]);
-  }
 
   // *** tabs# redraw... ************************************************
+  function tiFresh(t)
+  {
+    var cln= false, jq= $('#t2inf');
+    if(t < 0) { t*= -1; cln= true; }
+    if(!t || t === 1) { t= 1; jq= $('#t1inf'); }
+
+    if(cln)
+    {
+      if(fltNum[t] === 1) fltStr[t]= 'Filters..';
+//      $('#t1in1').value= '';
+      jq.text(fltStr[t]);
+    }
+    else
+    { 
+      var fc= (tbFcol[t] === 1)? 'NAME' : 'PHONE';
+      var fm= (tbFmod[t] === 1)? '<begins:"' : '<contains:"';
+      fltInf[t]= fc + fm; jq.text(fltStr[t] + fltInf[t]);
+    }
+  }
+
   function freshTab1()
   {
     nextID= 0;
@@ -179,7 +192,7 @@ $(document).ready(function()
                         +'</td><td>'+ col[4]
                         +'</td></tr>' );
     }
-    fltNum[1]= i;
+    recNum[1]= i;
   }
 
   var msa= ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
@@ -198,7 +211,7 @@ $(document).ready(function()
                        +'</td><td style="text-align:right">'+ col[3]
                        +'</td></tr>');
     }
-    fltNum[2]= i;
+    recNum[2]= i;
   }
 
   function reFresh()
@@ -208,13 +221,52 @@ $(document).ready(function()
     switch(curTab)
     {
       case 1: freshTab1();
-        a= fltNum[1]; b= plShw.length; c= plTab.length; break;
+        a= recNum[1]; b= plShw.length; c= plTab.length;
+        if(fltNum[1] === 1)
+        {
+          fltMax[1]= c;
+//          $('#t1in1, #t1fil')[0].disabled= false;
+        }
+
+        if(b < fltMax[1])
+        {
+          if(fltNum[1] < 3)
+          {
+            fltNum[1]++; fltMax[1]= b;
+            fltStr[1]+= fltInf[1] +'"'+ fltInp[1]+'"   ...';
+          }
+          else {
+            nBar.innerText= ' [!]Two filters maximum.'; }
+
+          tiFresh(1);
+        }
+        else
+          tiFresh(-1);
+      break;
+      
       case 2: freshTab2();
-        a= fltNum[2]; b= hiShw.length; c= hiTab.length; break;
+        a= recNum[2]; b= hiShw.length; c= hiTab.length;
+        if(fltNum[2] === 1) fltMax[2]= c;
+        if(b < fltMax[2])
+        {
+          if(fltNum[2] < 3)
+          {
+            fltNum[2]++; fltMax[2]= b;
+            if(fltNum[2] > 2) fltNum[2]= 2;
+            fltStr[2]+= fltInf[2] +'"'+ fltInp[2] +'"   ...';
+          }
+          else
+            nBar.innerText= ' [!]Two filters maximum.';
+            
+          tiFresh(1);
+        }
+        else
+          tiFresh(-1);    
+      break;
     }
+    
     setRowSpc(); setRowCol();
-    nBar.innerText= tblInf[1]= '#'+ a +'/'+ b +'('+ c +')';
-    if(c <= b) tiFresh(-curTab); else tiFresh(curTab);
+    nBar.innerText= tblInf[1]= ' [#]'+ a +'/'+ b +'('+ c +')';
 
     lastTab= curTab;
 
@@ -441,7 +493,7 @@ $(document).ready(function()
     rawdb+= '@'+ hiSave.substr(1);
     localStorage.setItem('dataBase', rawdb);
 
-    nBar.innerText+= ' #cache save OK';
+    nBar.innerText+= ' [!]Cache save OK.';
     adminInfo.innerText+= 'PASS:cache save '+ (rawdb.length/1024).toFixed(2) +'KB \n';
 
     if(cchOnly) return;
@@ -454,7 +506,7 @@ $(document).ready(function()
     else
     if(!isLogged) {
       adminInfo.innerText+= 'FAIL:no password\n';
-      nBar.innerText= ' #must be logged to update server database'; return; }
+      nBar.innerText= ' [!]Must be logged to update server database.'; return; }
 
     $.ajax(
     {
@@ -468,7 +520,7 @@ $(document).ready(function()
         if(r.substring(0,4) !== 'size') {
           adminInfo.innerText+= 'FAIL@server:'+ r +'\n'; return; }
 
-        nBar.innerText+= ' #server save '+ r.substring(5);
+        nBar.innerText+= ' [!]Server save '+ r.substring(5);
         adminInfo.innerText+= x.getAllResponseHeaders() +'\n'
           + 'PASS:server save '+ (rawdb.length/1024).toFixed(2) +'KB \n';
       }
@@ -515,7 +567,7 @@ $(document).ready(function()
     {
       case '#tab1': curTab= 1; nBar.innerText= tblInf[1]; break;
       case '#tab2': curTab= 2; nBar.innerText= tblInf[2]; break;
-      case '#tab3': curTab= 3; nBar.innerText='~system'; break;
+      case '#tab3': curTab= 3; nBar.innerText=' [~]System'; break;
     }
 
 //    reFresh();
@@ -557,35 +609,34 @@ $(document).ready(function()
     if(++tbLst[curTab] > 3) tbLst[curTab]= 1;
     setRowCol();
   });
-  
+
+  // *** FILTERING ************************************
   $('#t1fil').click(function()
   {
-    var bg= true,
-        i1= $('#t1in1').val(),
+    var i1= $('#t1in1').val(),
         os= Math.abs(tbSrt[1])-1;
 
-    if(tbFmod[1] !== '<begins>') { bg= false; tbFmod[1]= '<contains>'; }
-    else tbFmod[1]= '<begins>';
-
+    fltInp[1]= ''+ i1;
+    var tps= plShw.splice(0);
     plShw.length= 0;
-    for(var i= 0; i < plTab.length; i++)
+    for(var i= 0; i < tps.length; i++)
     {
-      var x= plTab[i];
+      var x= tps[i];
       var c1, t1= x[1], c2, t2= x[2];
       if(os > 2) { t1= x[3]; t2= x[4]; }
 
       c1= t1.indexOf(i1); c2= t2.indexOf(i1);
-      if(bg) { if(c1 === 0 || c2 === 0) plShw.push( x ); }
+      if(tbFmod[1] === 1) { if(c1 === 0 || c2 === 0) plShw.push( x ); }
       else if(c1 >= 0 || c2 >= 0) plShw.push( x );
     }
-
-    sortem(curTab= 1, tbSrt[1]);
-    reFresh();
+    
+    sortem(curTab= 1, tbSrt[1]); reFresh();
+//    if($('#t1in1').is(':focus')) $('#t1in1')[0].blur();
   });
 
   $('#t1clr').click(function()
   {
-    plShw.length= 0;
+    plShw.length= 0; fltNum[1]= 1; fltStr[1]= 'Filters..';
     plTab.forEach(function(x) { plShw.push( x ); });
 
     sortem(curTab= 1, tbSrt[1]);
@@ -594,63 +645,55 @@ $(document).ready(function()
 
 
   // *** INPUT TEXT FIELD ...............................
+  function hntShow() {
+    nBar.innerText= tblInf[1] +' [?]Press <SPACE> to toggle filter mode.'; }
+    
   $('#t1in1').on('keyup', function(e)
-  { // e.preventDefault(); e.stopPropagation();
+  {
     var t= ''+this.value;
-//    tbFmod[1]= '<begins>';
-
     if(t === ' ')
     {
-      if(tbFmod[1] === '<begins>')
-      {
-        tbFmod[1]= '<contains>'; tiFresh(1);
-        nBar.innerText= tblInf[1] +' ?HINT: Press [SPACE] to toggle <begind> filter mode.';
-      }
-      else
-      {
-        tbFmod[1]= '<begins>'; tiFresh(1);
-        nBar.innerText= tblInf[1] +' ?HINT: Press [SPACE] to toggle <contains> filter mode.';
-      }
+      if(tbFmod[1] !== 1) {
+        tbFmod[1]= 1; tiFresh(1); hntShow(); }
+      else {
+        tbFmod[1]= 2; tiFresh(1); hntShow(); }
     
       this.value= '';
       return;
     }
     else
-    if(t === '')
-    {
-      tbFmod[1]= '<begins>'; tiFresh(1);
-      nBar.innerText= tblInf[1] +' ?HINT: Press [SPACE] to toggle <contains> filter mode.';
-    }
+    if(t === '') {
+      tbFmod[1]= 1; tiFresh(1); hntShow(); }
     else
-    if(t.length === 1) nBar.innerText= tblInf[1];
+    if(t.length === 1)
+      nBar.innerText= tblInf[1];
 
-    t= t.toUpperCase().replace(/[^A-Z 0-9]/, '');
-    this.value= t;
+    this.value= t.toUpperCase().replace(/[^A-Z 0-9]/, '');
   });
 
   $('#t1in1').on('focus', function(e)
   {
     this.select();
-    tbFmod[1]= '<begins>'; tiFresh(1);
-    nBar.innerText= tblInf[1] +' ?HINT: Press [SPACE] to toggle <contains> filter mode.';
+    tbFmod[1]= 1; tiFresh(1); hntShow();
   });
-
 
   $('#t1in1').on('blur', function(e)
   {
-    tiFresh(-1);
+//    fltInp[1]= ''+ this.value;
     nBar.innerText= tblInf[1];
+    tiFresh(-1); //this.value= '';
   });
   
   $('.finf').on('keydown', function(e)
   { // if(e.which === 8) this.value= '';
+//    e.preventDefault();
     if(e.which !== 9 && e.which !== 13) return;
-    $(this).blur();;
     $(this).next().click();
+    this.blur();
+//    if($(this).is(':focus')) this.blur();
   });
 
 
-  
   // *** TAB 1 : ADMIN BUTTONS ***************************************
   $('#raz1But').click(function()
   { //>Reset All to Zero<
