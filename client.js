@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v1.0r05a \n';
+  var versionCode= 'v1.0r05b \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999,
                dataType:'text', contentType:'text/plain', processData:false});
@@ -155,26 +155,6 @@ $(document).ready(function()
 
 
   // *** tabs# redraw... ************************************************
-  function tiFresh(t)
-  {
-    var cln= false, jq= $('#t2inf');
-    if(t < 0) { t*= -1; cln= true; }
-    if(!t || t === 1) { t= 1; jq= $('#t1inf'); }
-
-    if(cln)
-    {
-      if(fltNum[t] === 1) fltStr[t]= 'Filters..';
-//      $('#t1in1').value= '';
-      jq.text(fltStr[t]);
-    }
-    else
-    { 
-      var fc= (tbFcol[t] === 1)? 'NAME' : 'PHONE';
-      var fm= (tbFmod[t] === 1)? '<begins:"' : '<contains:"';
-      fltInf[t]= fc + fm; jq.text(fltStr[t] + fltInf[t]);
-    }
-  }
-
   function freshTab1()
   {
     nextID= 0;
@@ -214,6 +194,28 @@ $(document).ready(function()
     recNum[2]= i;
   }
 
+  function tiFresh(t)
+  {
+    var cln= false, jq= $('#t2inf');
+    if(t < 0) { t*= -1; cln= true; }
+    if(!t || t === 1) { t= 1; jq= $('#t1inf'); }
+
+    if(fltNum[t] === 1) fltStr[t]= '';
+
+    if(cln)
+    {
+      if(fltNum[t] === 1) fltStr[t]= 'Filters..';
+//      $('#t1in1').value= '';
+      jq.text(fltStr[t]);
+    }
+    else
+    { 
+      var fc= (tbFcol[t] === 1)? 'NAME' : 'PHONE';
+      var fm= (tbFmod[t] === 1)? '<begins with>' : '<contains>';
+      fltInf[t]= fc + fm +'"..'; jq.text(fltStr[t] + fltInf[t]);
+    }
+  }
+
   function reFresh()
   {
     var a, b, c;
@@ -225,22 +227,31 @@ $(document).ready(function()
         if(fltNum[1] === 1)
         {
           fltMax[1]= c;
-//          $('#t1in1, #t1fil')[0].disabled= false;
+          $('#t1in1')[0].display= 'initial';
+          $('#t1fil')[0].disabled= false;
         }
 
         if(b < fltMax[1])
         {
           if(fltNum[1] < 3)
           {
-            fltNum[1]++; fltMax[1]= b;
-            fltStr[1]+= fltInf[1] +'"'+ fltInp[1]+'"   ...';
+            if(++fltNum[1] > 2)
+            {
+              $('#t1fil')[0].disabled= true;
+              $('#t1in1')[0].display= 'none';
+            }
+            else
+            {
+              fltMax[1]= b;
+            }
           }
-          else {
-            nBar.innerText= ' [!]Two filters maximum.'; }
+          else
+            nBar.innerText= ' [!]Two filters maximum.';
 
-          tiFresh(1);
+          fltStr[1]+= fltInf[1].slice(0,-2) + fltInp[1] +'"   ';
+//          tiFresh(-1);
         }
-        else
+//        else
           tiFresh(-1);
       break;
       
@@ -631,7 +642,7 @@ $(document).ready(function()
     }
     
     sortem(curTab= 1, tbSrt[1]); reFresh();
-//    if($('#t1in1').is(':focus')) $('#t1in1')[0].blur();
+    if($('#t1in1').is(':focus')) $('#t1in1')[0].blur();
   });
 
   $('#t1clr').click(function()
@@ -688,8 +699,9 @@ $(document).ready(function()
   { // if(e.which === 8) this.value= '';
 //    e.preventDefault();
     if(e.which !== 9 && e.which !== 13) return;
+    tiFresh(-1);
     $(this).next().click();
-    this.blur();
+//    this.blur();
 //    if($(this).is(':focus')) this.blur();
   });
 
