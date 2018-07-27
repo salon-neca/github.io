@@ -1,3 +1,3 @@
 Salon Neca
 
-https://salon-neca.github.io
+https://salonN.github.io
