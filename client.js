@@ -1,9 +1,8 @@
 $(document).ready(function()
 {
-  var versionCode= 'v1.0r05c \n';
+  var versionCode= 'v1.0r05e \n';
   var appPath= 'https://sns.glitch.me';
-  $.ajaxSetup({async:true, cache:false, timeout:9999,
-               dataType:'text', contentType:'text/plain', processData:false});
+  $.ajaxSetup({async:true, cache:false, timeout:9999});
   
   var nBar= document.getElementById('notif');
   var adminInfo= document.getElementById('dbFrame');
@@ -40,6 +39,13 @@ $(document).ready(function()
   var hiTab= ['2001-11-27', 0, 'info'];
   var hiShw= ['2001-11-27', 0, 'name','info'];
 
+  var lastNotif= '';
+  function clrAdmin(a)
+  {
+    if(!a) adminInfo.innerText= versionCode;
+    if(nBar.innerText !== '...') {
+      lastNotif= nBar.innerText; nBar.innerText= '...'; }
+  }
 
   function setRowCol(ct)
   {
@@ -205,85 +211,62 @@ $(document).ready(function()
     if(cln)
     {
       if(fltNum[t] === 1) fltStr[t]= 'Filters..';
-//      $('#t1in1').value= '';
       jq.text(fltStr[t]);
     }
     else
     { 
       var fc= (tbFcol[t] === 1)? 'NAME' : 'PHONE';
       var fm= (tbFmod[t] === 1)? '<begins with>' : '<contains>';
-      fltInf[t]= fc + fm +'"..'; jq.text(fltStr[t] + fltInf[t]);
+      fltInf[t]= ''+fltNum[t]+'.'+ fc + fm +'"..'; jq.text(fltStr[t] + fltInf[t]);
     }
   }
 
   function reFresh()
   {
-    var a, b, c;
+    var i= curTab, j1, j2, a, b, c;
     $('#mtb1').val(ttxt);
     switch(curTab)
     {
       case 1: freshTab1();
-        a= recNum[1]; b= plShw.length; c= plTab.length;
-        if(fltNum[1] === 1)
-        {
-          fltMax[1]= c;
-          $('#t1in1')[0].display= 'initial';
-          $('#t1fil')[0].disabled= false;
-        }
-
-        if(b < fltMax[1])
-        {
-          if(fltNum[1] < 3)
-          {
-            if(++fltNum[1] > 2)
-            {
-              $('#t1fil')[0].disabled= true;
-              $('#t1in1')[0].display= 'none';
-            }
-            else
-            {
-              fltMax[1]= b;
-            }
-          }
-          else
-            nBar.innerText= ' [!]Two filters maximum.';
-
-          fltStr[1]+= fltInf[1].slice(0,-2) + fltInp[1] +'"   ';
-//          tiFresh(-1);
-        }
-//        else
-          tiFresh(-1);
+        j1= $('#t1fil'), j2= $('#t1in1');
+        a= recNum[i]; b= plShw.length; c= plTab.length;
       break;
-      
       case 2: freshTab2();
-        a= recNum[2]; b= hiShw.length; c= hiTab.length;
-        if(fltNum[2] === 1) fltMax[2]= c;
-        if(b < fltMax[2])
-        {
-          if(fltNum[2] < 3)
-          {
-            fltNum[2]++; fltMax[2]= b;
-            if(fltNum[2] > 2) fltNum[2]= 2;
-            fltStr[2]+= fltInf[2] +'"'+ fltInp[2] +'"   ...';
-          }
-          else
-            nBar.innerText= ' [!]Two filters maximum.';
-            
-          tiFresh(1);
-        }
-        else
-          tiFresh(-1);    
+        j1= $('#t2fil'), j2= $('#t2in1');
+        a= recNum[i]; b= hiShw.length; c= hiTab.length;
       break;
     }
     
     setRowSpc(); setRowCol();
-    nBar.innerText= tblInf[1]= ' [#]'+ a +'/'+ b +'('+ c +')';
+    nBar.innerText= tblInf[i]= ' [#]'+ a +'/'+ b +'('+ c +')';
+    
+        if(fltNum[i] === 1)
+        {
+          j1[0].disabled= false;
+          j2[0].disabled= false;
+          fltMax[i]= c;
+        }
 
-    lastTab= curTab;
+        if(b < fltMax[i] && fltNum[i] < 3)
+        {
+          fltMax[i]= b;
+          if(fltNum[i]++ === 2)
+          {
+            j1[0].disabled= true;
+            j2[0].disabled= true;
+          }
+          fltStr[i]+= fltInf[i].slice(0,-2) + fltInp[i] +'"  ';
+        }
+
+        j2.val('');
+        tiFresh(-i);
+
 
 // whats this for?
     if(editMode) $(".admin").css("display", "table-cell");
     else $(".admin").css("display", "none");
+
+    lastTab= curTab;
   }
   // *** END REFRESH *****************************************
 
@@ -382,6 +365,8 @@ $(document).ready(function()
 
     sortem(curTab= 1, 2); reFresh();
     $('#mtb1').click();
+    
+    loadServer2();
   }
 
 
@@ -405,12 +390,33 @@ $(document).ready(function()
     });
 
     sortem(curTab= 2, -1); reFresh();
-    $('#mtb2').click();
+    $('#mtb1').click();
   }
 
+  function loadServer2()
+  {
+    adminInfo.innerText+= '\nSERVER:load & import 2\n';
+    $.ajax(
+    {
+      url:appPath +'/ld2', type:'GET',
+      error:function(e, f)
+      {
+        adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
+        $("#mtb3").click();
+      },
+      success:function(d, s, x)
+      {
+        adminInfo.innerText+= x.getAllResponseHeaders()
+          + 'PASS:server load 2 '+ (d.length/1024).toFixed(2) +'KB \n';
+
+        importDB2(d);
+      }
+    });
+  }
+  
   function loadServer()
   {
-    adminInfo.innerText+= 'SERVER:load & import \n';
+    adminInfo.innerText+= '\nSERVER:load & import \n';
     $.ajax(
     {
       url:appPath +'/ld1', type:'GET',
@@ -423,28 +429,10 @@ $(document).ready(function()
       success:function(d, s, x)
       {
        // var d= r.replace(/\n|\r/g, '');
-        adminInfo.innerText+= x.getAllResponseHeaders() +'\n'
+        adminInfo.innerText+= x.getAllResponseHeaders()
           + 'PASS:server load '+ (d.length/1024).toFixed(2) +'KB \n';
         ttxt= ' Clients ';
         importDB(d);
-      }
-    });
-
-    adminInfo.innerText+= 'SERVER:load & import 2\n';
-    $.ajax(
-    {
-      url:appPath +'/ld2', type:'GET',
-      error:function(e, f)
-      {
-        adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
-        $("#mtb3").click();
-      },
-      success:function(d, s, x)
-      {
-        adminInfo.innerText+= x.getAllResponseHeaders() +'\n'
-          + 'PASS:server load '+ (d.length/1024).toFixed(2) +'KB \n';
-
-        importDB2(d);
       }
     });
   }
@@ -558,7 +546,7 @@ $(document).ready(function()
         $('#gpc4But').css({background:'none', color:'black', 'box-shadow':'none'}); }
     });
   }
-  curTab= 3; reFresh();
+  clrAdmin();
   loadDB();
 
 
@@ -657,7 +645,7 @@ $(document).ready(function()
 
   // *** INPUT TEXT FIELD ...............................
   function hntShow() {
-    nBar.innerText= tblInf[1] +' [?]Press <SPACE> to toggle filter mode.'; }
+    nBar.innerText= tblInf[1] +' [?]Press SPACE to toggle filter modes.'; }
     
   $('#t1in1').on('keyup', function(e)
   {
@@ -688,21 +676,12 @@ $(document).ready(function()
     tbFmod[1]= 1; tiFresh(1); hntShow();
   });
 
-  $('#t1in1').on('blur', function(e)
-  {
-//    fltInp[1]= ''+ this.value;
-    nBar.innerText= tblInf[1];
-    tiFresh(-1); //this.value= '';
-  });
   
   $('.finf').on('keydown', function(e)
   { // if(e.which === 8) this.value= '';
 //    e.preventDefault();
     if(e.which !== 9 && e.which !== 13) return;
-    tiFresh(-1);
     $(this).next().click();
-//    this.blur();
-//    if($(this).is(':focus')) this.blur();
   });
 
 
@@ -810,5 +789,5 @@ $(document).ready(function()
 
   $("#sld4But").click( function() { loadDB(); }); //>Server Load<
   $("#ssv4But").click( function() { saveDB(); }); //>Server Save<
-  
+
 }); // THE END
