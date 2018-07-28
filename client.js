@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v1.0r05e \n';
+  var versionCode= 'v1.0r07b \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
   
@@ -52,33 +52,33 @@ $(document).ready(function()
     if(!ct) ct= curTab;
     switch(ct)
     {
-      case 1:
-        $('#ptb>tr').css({border:'none'});
-        $('#ptb>tr').removeClass().addClass("clean");
+      case 2:
+        $('#htb>tr').css({border:'none'});
+        $('#htb>tr').removeClass().addClass("clean");
         switch(tbLst[ct])
         {
-          case 1: $('#ptb>tr').removeClass(); break; 
-          case 2: $('#ptb>tr').css('border-top', '1px solid lightgrey');
+          case 1: $('#htb>tr').removeClass(); break; 
+          case 2: $('#htb>tr').css('border-top', '1px solid lightgrey');
         }
       break;
 
-      case 2:
-        $('#htb>tr').css({border:'none'});
-        $('#htb>tr').not('.selected, .extra').removeClass().addClass("clean");
+      case 1:
+        $('#ptb>tr').css({border:'none'});
+        $('#ptb>tr').not('.selected, .extra').removeClass().addClass("clean");
         switch(tbLst[ct])
         {
           case 1:
-            $('#htb>tr').not('.selected, .extra').removeClass('clean');
-            $('#htb>tr.extra').css({color:'white', background:'black'});
+            $('#ptb>tr').not('.selected, .extra').removeClass('clean');
+            $('#ptb>tr.extra').css({color:'white', background:'black'});
           break;
 
           case 2:
-            $('#htb>tr').css({'border-top':'1px solid lightgrey'});
-            $('#htb>tr.extra').css({color:'black', background:'#f0f0f0'});
+            $('#ptb>tr').css({'border-top':'1px solid lightgrey'});
+            $('#ptb>tr.extra').css({color:'black', background:'#f0f0f0'});
           break;
 
           case 3:
-            $('#htb>tr.extra').css({color:'white', background:'#3f3f3f'});
+            $('#ptb>tr.extra').css({color:'white', background:'#3f3f3f'});
           break;
         }
         break;
@@ -192,8 +192,8 @@ $(document).ready(function()
       var col= hiShw[i];
       $('#htb').append( '<tr tabindex="1">'
                        +'<td>'+ col[0]
-                       +'</td><td class="admin" style="text-align:right">'+ col[1]
-                       +'</td><td style="font-size:12px; white-space:pre">'+ col[2]
+                       +'</td><td style="text-align:right">'+ col[1]
+                       +'</td><td class="admin" style="font-size:12px; white-space:pre">'+ col[2]
                        +'</td><td style="text-align:right">'+ col[3]
                        +'</td></tr>');
     }
@@ -281,6 +281,34 @@ $(document).ready(function()
     return '~not found';
   }
 
+  function id2trs(rx, h)
+  {
+    var cs= '';
+    for(var i= 0; i < hiTab.length; i++)
+    {
+      var x= hiTab[i];
+      if(x[1] === rx)
+      {
+        var dt= '', p= x[0] +':  '+ x[2];
+        if(p.length > 75)
+          cs+= p.substr(0,72) +'...\n';
+        else
+          cs+= p.substr(0,75) +'\n';
+
+        h++;
+      }
+    }
+    return cs;
+  }
+
+  
+  // *** subRow-content - REMOVE
+  function subrowDelete(etpn)
+  {
+    rowAnim(etpn.previousSibling.rowIndex, false);
+    $(etpn).remove();
+  }
+
   $('#playerTable').click(function(e)
   { 
     var etpn= e.target.parentNode;
@@ -297,13 +325,24 @@ $(document).ready(function()
       return;
     }
 
-    if($(etpn).hasClass('selected')) rowAnim(trx, false);
-    else 
-    {
-      $('#ptb>tr').removeClass('selected');
-      rowAnim(trx, true);
-    }
+    if($(etpn).hasClass('extra')) {
+      subrowDelete( etpn ); return; }
+    
+    if($(etpn).hasClass('selected')) {
+      subrowDelete(etpn.nextSibling); return; }
+
+    var h, q= etpn.firstChild.innerText;
+    var scs= id2trs(+q, h);
+    h+= 200;
+    $(etpn).after(
+        '<tr class="extra"><td colspan=4>'+'<pre style="height:'
+      + h +'px; '+'padding:9px 9px; margin:0; text-align:left; '
+      + 'user-select: none; pointer-events:none; font-size:14px">'
+      + scs +'</pre> <button class="ord2" id="x1ns" style="float:right" disabled>New Session</button> </td></tr>');
+    rowAnim(trx, true);
+    setRowCol();
   });
+
 
   $('#historyTable').on('click', function (e)
   { 
@@ -342,10 +381,44 @@ $(document).ready(function()
       k[1]= k[1].toUpperCase();
       k[2]= k[2].toUpperCase();
 
-      if(k[1].length < 3) k[1]= '~first';
-      if(k[2].length < 3) k[2]= '~last';
-      if(k[3].length < 3) k[3]= '~tel.';
-      if(k[4].length < 3) k[4]= '~mob.';
+
+      if(k[3][3] === '-') k[3]= k[3].replace('-', '');
+      if(k[4][3] === '-') k[4]= k[4].replace('-', '');
+        
+      k[3]= k[3].replace('ili', ';');
+      k[4]= k[4].replace('ili', ';');
+      k[3]= k[3].replace(/[^\d,:/\\.;-]/g, '');
+      k[4]= k[4].replace(/[^\d,:/\\.;-]/g, '');
+      k[3]= k[3].replace(/[,:/\\.;]/g, '#');
+      k[4]= k[4].replace(/[,:/\\.;]/g, '#');
+
+      if(k[3][3] === '#') k[3]= k[3].replace('#', '');
+      if(k[4][3] === '#') k[4]= k[4].replace('#', '');
+      
+      if((k[3].substr(0,5)).indexOf('#') >= 0) k[3]= k[3].replace('#', '');
+      if((k[4].substr(0,5)).indexOf('#') >= 0) k[4]= k[4].replace('#', '');
+
+      if((k[3].substr(0,5)).indexOf('-') >= 0) k[3]= k[3].replace('-', '');
+      if((k[4].substr(0,5)).indexOf('-') >= 0) k[4]= k[4].replace('-', '');
+
+      if((k[3].substr(0,8)).indexOf('-') >= 0) k[3]= k[3].replace('-', '');
+      if((k[4].substr(0,8)).indexOf('-') >= 0) k[4]= k[4].replace('-', '');
+
+
+      if(k[3].length > 5 && k[3].length < 8) k[3]= '011'+ k[3];
+      if(k[4].length > 5 && k[4].length < 8) k[4]= '011'+ k[4];
+
+      if(k[3].length < 10 &&  k[3][0] !== '0') k[3]= '0'+ k[3];
+      if(k[4].length < 10 &&  k[4][0] !== '0') k[4]= '0'+ k[4];
+
+      k[3]= k[3].replace(/[#]/g, ' #');
+      k[4]= k[4].replace(/[#]/g, ' #');
+// ***
+
+      if(k[1].length < 2) k[1]= '~first';
+      if(k[2].length < 2) k[2]= '~last';
+      if(k[3].length < 5) k[3]= '~tel.';
+      if(k[4].length < 5) k[4]= '~mob.';
       
 //      k[1]= k[1].substr(0,15);
   //    k[2]= k[2].substr(0,20);
@@ -359,43 +432,52 @@ $(document).ready(function()
       k[3]= k[3].toLowerCase();
       k[4]= k[4].toLowerCase();
 
-      plTab.push( k );
-      plShw.push( k );
+      var ts= id2trs(k[0]);
+      if(ts.length > 2)
+      {
+        plTab.push( k );
+        plShw.push( k );
+      }
     });
 
     sortem(curTab= 1, 2); reFresh();
     $('#mtb1').click();
     
-    loadServer2();
   }
 
 
   function importDB2(d)
   {
     var dl= d.split('\n');
-    hiTab.length= hiShw.length= 0;
-    dl.forEach(function(x)
+    hiTab.length= 0;
+    hiShw.length= 0;
+    dl.forEach(function(x, c)
     {
       var k= x.split('\t');
 
       if(k[0].length < 3) k[0]= '~date';
       k[1]= +k[1];
-      if(k[2].length < 3) k[2]= '~treatmeng description';
+      if(k[2].length < 3) k[2]= '#';
 
 //      k[0]= k[0].substr(0,10);
   //    k[2]= k[2].substr(0,200);
       k[2]= k[2].toLowerCase();
-      hiTab.push( k );
-      hiShw.push([ k[0], k[1], cid2nme(k[1],'\n'), k[2] ]);
+      
+      if(k[2] !== '#')
+      {
+        hiTab.push([ k[0], k[1], k[2] ]);
+        hiShw.push([ k[0], k[1], cid2nme(k[1],'\n'), k[2] ]);
+      }
     });
 
     sortem(curTab= 2, -1); reFresh();
-    $('#mtb1').click();
+//    $('#mtb1').click();
+    loadServer();
   }
 
   function loadServer2()
   {
-    adminInfo.innerText+= '\nSERVER:load & import 2\n';
+    adminInfo.innerText+= '\nSERVER:load & import2\n';
     $.ajax(
     {
       url:appPath +'/ld2', type:'GET',
@@ -407,7 +489,7 @@ $(document).ready(function()
       success:function(d, s, x)
       {
         adminInfo.innerText+= x.getAllResponseHeaders()
-          + 'PASS:server load 2 '+ (d.length/1024).toFixed(2) +'KB \n';
+          + 'PASS:server load2 '+ (d.length/1024).toFixed(2) +'KB \n';
 
         importDB2(d);
       }
@@ -535,7 +617,7 @@ $(document).ready(function()
       $("#mtb3").click();
       return;
     }
-    loadServer();
+    loadServer2();
   }
 
   // *** action starts here *********************************                     
