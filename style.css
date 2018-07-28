@@ -58,6 +58,20 @@
   color:#aaaaaa; background:#5f5f5f;
 }
 
+.ord3 {
+  border:1px solid lightgrey;
+  width:140px; height:35px;
+  color:white; background:#5f5f5f;
+  margin-top:9px; font-size:15px;
+}
+.ord3:hover {
+  background:#909090;
+}
+.ord3:disabled {
+  border-color:grey;
+  color:#aaaaaa; background:#2f2f2f;
+}
+
 .mnu { 
   float:right;  
   width:50px; height:40px;
