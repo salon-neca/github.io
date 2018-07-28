@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v1.0r07b \n';
+  var versionCode= 'v1.0r07d \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
   
@@ -333,9 +333,10 @@ $(document).ready(function()
 
     var h, q= etpn.firstChild.innerText;
     var scs= id2trs(+q, h);
-    h+= 200;
+//    h+= 200;
+    var cols= editMode? 5:4;
     $(etpn).after(
-        '<tr class="extra"><td colspan=4>'+'<pre style="height:'
+        '<tr class="extra"><td colspan='+cols+'>'+'<pre style="height:'
       + h +'px; '+'padding:9px 9px; margin:0; text-align:left; '
       + 'user-select: none; pointer-events:none; font-size:14px">'
       + scs +'</pre> <button class="ord2" id="x1ns" style="float:right" disabled>New Session</button> </td></tr>');
@@ -662,6 +663,8 @@ $(document).ready(function()
       adminInfo.innerText+=
         'Made by zele-chelik!, Jul 2018. \n'; return; }
 
+        $('#ptb>tr.extra').remove();
+        $('#ptb>tr.selected').removeClass('selected');
     if(editMode= !editMode)
     {
       $(".admin").css("display", "table-cell");
