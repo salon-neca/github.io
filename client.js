@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v1.0r07d \n';
+  var versionCode= 'v1.0r07e \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
   
@@ -52,16 +52,6 @@ $(document).ready(function()
     if(!ct) ct= curTab;
     switch(ct)
     {
-      case 2:
-        $('#htb>tr').css({border:'none'});
-        $('#htb>tr').removeClass().addClass("clean");
-        switch(tbLst[ct])
-        {
-          case 1: $('#htb>tr').removeClass(); break; 
-          case 2: $('#htb>tr').css('border-top', '1px solid lightgrey');
-        }
-      break;
-
       case 1:
         $('#ptb>tr').css({border:'none'});
         $('#ptb>tr').not('.selected, .extra').removeClass().addClass("clean");
@@ -81,7 +71,17 @@ $(document).ready(function()
             $('#ptb>tr.extra').css({color:'white', background:'#3f3f3f'});
           break;
         }
-        break;
+      break;
+
+      case 2:
+        $('#htb>tr').css({border:'none'});
+        $('#htb>tr').removeClass().addClass("clean");
+        switch(tbLst[ct])
+        {
+          case 1: $('#htb>tr').removeClass(); break; 
+          case 2: $('#htb>tr').css('border-top', '1px solid lightgrey');
+        }
+      break;
     }
   }
 
@@ -281,21 +281,27 @@ $(document).ready(function()
     return '~not found';
   }
 
-  function id2trs(rx, h)
+  function id2trs(rx)
   {
     var cs= '';
     for(var i= 0; i < hiTab.length; i++)
     {
-      var x= hiTab[i];
+      var q, x= hiTab[i];
       if(x[1] === rx)
       {
-        var dt= '', p= x[0] +':  '+ x[2];
-        if(p.length > 75)
-          cs+= p.substr(0,72) +'...\n';
-        else
-          cs+= p.substr(0,75) +'\n';
 
-        h++;
+        x[2]= x[2].replace(/\n|\r/g, ' ');;
+        var nc= 59, cl= x[2].length, ch= [];
+        for(var j= 0; j < cl; j+= nc)
+        {
+          q= x[2].substring(j, j+nc);
+          if(q[0] === ' ') q= q.substr(1);
+          ch.push( q );
+        }
+
+        ch= ch.join('\n             ');
+        var p= 'SESSN.DATE:  '+ x[0] +'\nTREATMENTS:  ' +ch;
+        cs+= p +'\n    CREAMS:  '+'\n\n';
       }
     }
     return cs;
@@ -310,10 +316,16 @@ $(document).ready(function()
   }
 
   $('#playerTable').click(function(e)
-  { 
+  {
     var etpn= e.target.parentNode;
     if(etpn.rowIndex === undefined) etpn= e.target;
     var trx= etpn.rowIndex;
+
+    if($(e.target).hasClass('ord3')) {
+      var cid= etpn.parentNode.parentNode
+                     .previousSibling.firstChild.innerText;
+      nBar.innerText= ' @'+cid+':'+cid2nme(+cid); return;
+    }
 
     if(trx === 0)
     {
@@ -331,17 +343,18 @@ $(document).ready(function()
     if($(etpn).hasClass('selected')) {
       subrowDelete(etpn.nextSibling); return; }
 
-    var h, q= etpn.firstChild.innerText;
-    var scs= id2trs(+q, h);
-//    h+= 200;
+    var q= etpn.firstChild.innerText;
+    var scs= 'CLIENT #ID '+ q+ ':'+ cid2nme(+q) +'\n\n'+ id2trs(+q);
     var cols= editMode? 5:4;
     $(etpn).after(
-        '<tr class="extra"><td colspan='+cols+'>'+'<pre style="height:'
-      + h +'px; '+'padding:9px 9px; margin:0; text-align:left; '
+        '<tr class="extra"><td colspan='+cols+'>'
+      + '<pre style="padding:9px 9px; margin:0; text-align:left; '
       + 'user-select: none; pointer-events:none; font-size:14px">'
-      + scs +'</pre> <button class="ord2" id="x1ns" style="float:right" disabled>New Session</button> </td></tr>');
-    rowAnim(trx, true);
+      + scs +'</pre>'
+      + '<button class="ord3" style="float:right" >New Session</button>'
+      + '</td></tr>');
     setRowCol();
+    rowAnim(trx, true);
   });
 
 
@@ -656,6 +669,10 @@ $(document).ready(function()
   });
 
   // *** BUTTONS #################################################
+  $('.ord2').click( function() { clrAdmin(); });
+  $('#headbar').click(function() {
+    var t= nBar.innerText; nBar.innerText= lastNotif; lastNotif= t;  });
+  $('.mnu, .mtb, .ord, .ord2').click(function(e) { e.stopPropagation(); });
 
   $("#mnu1").click(function()
   { // star A.
