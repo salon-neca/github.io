@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v1.0r07e \n';
+  var versionCode= 'v1.0r07f \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
   
@@ -114,7 +114,8 @@ $(document).ready(function()
     }
 
     $(row).removeClass('clean').addClass('selected');
-    nBar.innerText= xi + ' @'+ xx +':'+ cid2nme(xx);
+    var cid= $(row)[0].firstChild.innerText;
+    nBar.innerText= xi + ' @'+ cid +':'+ cid2nme(+cid);
   }
 
   function sortem(tab, col)
@@ -291,7 +292,7 @@ $(document).ready(function()
       {
 
         x[2]= x[2].replace(/\n|\r/g, ' ');;
-        var nc= 59, cl= x[2].length, ch= [];
+        var nc= 63, cl= x[2].length, ch= [];
         for(var j= 0; j < cl; j+= nc)
         {
           q= x[2].substring(j, j+nc);
@@ -304,7 +305,8 @@ $(document).ready(function()
         cs+= p +'\n    CREAMS:  '+'\n\n';
       }
     }
-    return cs;
+
+    return cs.slice(0,-2);
   }
 
   
@@ -343,18 +345,32 @@ $(document).ready(function()
     if($(etpn).hasClass('selected')) {
       subrowDelete(etpn.nextSibling); return; }
 
+    if(editMode)
+    {
+      $('#ptb>tr.extra').remove(); $('#ptb>tr').removeClass();
+      if(tbLst[1] !== 1) $('#tb>tr').addClass("clean");
+
+      
+//        $('#ptb>tr.extra').remove();
+  //      $('#ptb>tr.selected').removeClass('selected');
+
+      editRow= etpn.rowIndex -1;
+//      $('#dtEdit').val( hiTab[trx][0] );
+  //    $('.initDis').prop("disabled", false);
+    }
+
     var q= etpn.firstChild.innerText;
     var scs= 'CLIENT #ID '+ q+ ':'+ cid2nme(+q) +'\n\n'+ id2trs(+q);
-    var cols= editMode? 5:4;
+    var cols= editMode? 4:4;
     $(etpn).after(
         '<tr class="extra"><td colspan='+cols+'>'
-      + '<pre style="padding:9px 9px; margin:0; text-align:left; '
+      + '<pre style="padding:9px 9px; margin:0; text-align:left; border:1px dashed grey; '
       + 'user-select: none; pointer-events:none; font-size:14px">'
       + scs +'</pre>'
       + '<button class="ord3" style="float:right" >New Session</button>'
       + '</td></tr>');
     setRowCol();
-    rowAnim(trx, true);
+    rowAnim(etpn.rowIndex, true);
   });
 
 
@@ -484,7 +500,7 @@ $(document).ready(function()
       }
     });
 
-    sortem(curTab= 2, -1); reFresh();
+    sortem(curTab= 2, 1); reFresh();
 //    $('#mtb1').click();
     loadServer();
   }
@@ -680,11 +696,12 @@ $(document).ready(function()
       adminInfo.innerText+=
         'Made by zele-chelik!, Jul 2018. \n'; return; }
 
-        $('#ptb>tr.extra').remove();
-        $('#ptb>tr.selected').removeClass('selected');
+//    $('#ptb>tr.extra').remove();
+  //  $('#ptb>tr.selected').removeClass('selected');
+
     if(editMode= !editMode)
     {
-      $(".admin").css("display", "table-cell");
+//      $(".admin").css("display", "table-cell");
       $('.adminEdit').css('display', 'block');
     }
     else
