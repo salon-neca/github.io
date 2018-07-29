@@ -1,4 +1,4 @@
-// *** r07 abcdefgh
+// *** r08 abc
 self.addEventListener('install', e => {
   caches.delete('saloncch').then(cache => {
       caches.open('saloncch').then(cache => {

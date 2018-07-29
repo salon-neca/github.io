@@ -6,10 +6,8 @@
       "sizes":"144x144",
       "type":"image/png"
   }],
-
   "start_url":"/index.html",
   "display":"standalone",
   "background_color":"#333333",
   "theme_color":"#777777"
 }
- 
