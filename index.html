@@ -35,7 +35,7 @@
                            color:lightgrey; background:#505050" >~notificationBar</pre>
 
       <div id="headbar" style="border-bottom:1px solid grey; background:black; padding:15px 5px 0 20px" >    
-        <input class="mtb act" id="mtb1" style="margin-left:-20px" type="button" value="~tab1" >
+        <input class="mtb act" id="mtb1" style="margin-left:-20px" type="button" value="Connecting..." >
         <input class="mtb dea" id="mtb2" type="button" value="Treatments" >
         <input class="mtb dea" id="mtb3" type="button" value="System" >
         
@@ -62,26 +62,30 @@
 <pre id="tev" style="font-size:15px; line-height:17px; padding-left:50px"> ...</pre>
 -->
       <div id="tab1" class="ptab pac" style="padding:20px 14px">
+      
+        <div class="filt" style="padding:0; margin:9px 0 9px; text-align:right">
         <pre id="t1inf"
              style="font-size:17px; text-align:left; font-style:normal; border-bottom:0px solid black;
-                    padding:0 5px; margin-top:-9px; margin-bottom:9px; width:100%">~filterInfo</pre>
-      
-        <div style="padding:0; margin-top:10px; text-align:right">
-        
-          <!--input class="finf" id="in1c0" type="tel" disabled placeholder="ID" autocomplete="off" style="width:3em" -->
+                    padding:0 5px; margin-top:-9px; margin-bottom:9px; width:100%">Filters..</pre>
           <input class="finf" id="t1in1" type="text" placeholder="NAME" autocomplete="off" >
           <input class="ord" id="t1fil" type="button" value="Filter" >
           <input class="ord" id="t1clr" type="button" value="Clear Filters" >
         </div>
 
-        <div class="adminEdit" style="display:none; margin-bottomm:9px">
-          <button class="ord2" id="ta1new">New Client</button>
-          <button class="ord2" id="ta1rmv" disabled>Remove</button>
-          <button class="ord2" id="ta1edt" disabled>Edit</button>
-          <button class="ord2" id="ta1mrg" disabled>Merge</button>
+        <div class="adminEdit" style="display:none; text-align:right; margin:9px 0 9px">
+          <input class="finf" id="t1e0" type="tel" placeholder="ID" autocomplete="off" style="width:5" disabled >
+          <button class="ord" id="ta1mrg" disabled>Merge</button>
+          <button class="ord" id="ta1rmv" disabled>Remove</button>
+          <input class="ord" id="ta1sub" type="button" value="New Client">
+          <div>
+            <input class="finf" id="t1e1" type="text" placeholder="FIRST" autocomplete="off" style="width:23%" >
+            <input class="finf" id="t1e2" type="text" placeholder="LAST" autocomplete="off" style="width:25%">
+            <input class="finf" id="t1e3" type="text" placeholder="TEL." autocomplete="off" style="width:23%" >
+            <input class="finf" id="t1e4" type="text" placeholder="MOB." autocomplete="off" style="width:23%" >
+          </div>
         </div>
 
-        <table id="playerTable" style="margin-top:20px">
+        <table id="playerTable">
           <thead id="pth"><!--/thead-->
             <tr><th tabindex="1" class="admin" style="width:59px">#id</th>
               <th tabindex="1">FIRST</th>
@@ -98,24 +102,31 @@
 
       <div id="tab2" class="ptab pde"
            style="background:white; font-size:24px; padding:20px 14px">
+      
+        <div class="filt" style="padding:0; margin:9px 0 9px; text-align:right">
+          <!--input class="finf" id="in1c0" type="tel" disabled placeholder="ID" autocomplete="off" style="width:3em" -->
         <pre id="t2inf"
              style="font-size:17px; text-align:left; font-style:normal; border-bottom:0px solid black;
                     padding:0 5px; margin-top:-9px; margin-bottom:9px; width:100%">~filterInfo</pre>
-      
-        <div style="padding:0; margin-top:10px; text-align:right">
-        
-          <!--input class="finf" id="in1c0" type="tel" disabled placeholder="ID" autocomplete="off" style="width:3em" -->
           <input class="finf" id="t2in1" type="text" placeholder="NAME" autocomplete="off" >
           <input class="ord" id="t2fil" type="button" value="Filter" >
           <input class="ord" id="t2clr" type="button" value="Clear Filters" >
+        </div>
+      
+        <div class="adminEdit" style="display:none; text-align:right; margin:9px 0 9px">
+
+          <input id="dtEdit" class="finf" autocomplete="off"
+                 type="tel" placeholder="YYYYMMDDHHMM" disabled>
+          <button class="ord" id="rdt3But" disabled>Re-Date</button>
+          <button class="ord" id="rmr3But" disabled>Remove</button>
+          <button class="ord" id="mdf3But" disabled>Modify</button>
         </div>
 
         <table id="historyTable">
           <thead id="hth"><!--/thead-->
             <tr>
-              <th tabindex="1" style="width:110px">DATE</th>
+              <th tabindex="1" style="width:99px">DATE</th>
               <th tabindex="1" style="width:59px">#cid</th>
-              <th tabindex="1" class="admin" style="width:130px">NAME</th>
               <th tabindex="1">SESSION</th>
           </tr></thead>
           <tbody id="htb"></tbody> 

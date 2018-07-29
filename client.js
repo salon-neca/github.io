@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v1.0r07e \n';
+  var versionCode= 'v1.0r07h \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
   
@@ -11,7 +11,7 @@ $(document).ready(function()
 
   var dbPass= '*';
   var isLogged= false;
-  var ttxt= 'Connecting...';
+  var ttxt= 'Loading...';
 
   var curTab= 1;
   var lastTab= 0;
@@ -33,11 +33,11 @@ $(document).ready(function()
   var fltStr= [0, '~fltStr','~fltStr'];
 
 // *** PLAYER TAB
-  var plTab= [0, 'first', 'last', 'tel', 'mob'];
-  var plShw= [0, 'first', 'last', 'tel', 'mob'];
+  var plTab= [0, 'first', 'last', 'tel', 'mob', 'memo'];
+  var plShw= [0, 'first', 'last', 'tel', 'mob', 'memo'];
 // *** HISYORY TAB TABLE
-  var hiTab= ['2001-11-27', 0, 'info'];
-  var hiShw= ['2001-11-27', 0, 'name','info'];
+  var hiTab= [0, 0, 'info'];
+  var hiShw= [0, 0, 'info'];
 
   var lastNotif= '';
   function clrAdmin(a)
@@ -114,7 +114,8 @@ $(document).ready(function()
     }
 
     $(row).removeClass('clean').addClass('selected');
-    nBar.innerText= xi + ' @'+ xx +':'+ cid2nme(xx);
+    var cid= $(row)[0].firstChild.innerText;
+    nBar.innerText= xi + ' @'+ cid +':'+ cid2nme(+cid);
   }
 
   function sortem(tab, col)
@@ -123,23 +124,21 @@ $(document).ready(function()
     var rev= (col < 0);
     col= Math.abs(col)-1;
 
-    var t= (tab === 1) ? plShw : hiShw;
-    if(t.length < 1) return;
-    
-//    if(isNaN(t[0][col]))
-    { // alpha
-      t.sort(function(a, b)
-      {
-        if(b[col] > a[col]) return -1;
-        else if(b[col] < a[col]) return 1;
-        else return 0;
-      });
-    }
-//    else // numeric
-  //    t.sort(function(a, b) { return +b[col] - (+a[col]); });
-    
+    var t= plShw;
+    if(tab === 2) t= hiShw;
+    if(tab === 0) t= plTab;
+    if(tab === 3) t= hiTab;
+    if(t.length < 2) return;
+
+    // alpha... works for numbers too, sure?
+    t.sort(function(a, b)
+    {
+      if(b[col] > a[col]) return -1;
+      else if(b[col] < a[col]) return 1;
+      else return 0;
+    });
+
     if(rev) t.reverse();
-    
     if(tab === 1)
     { // *** header
       $('#pth>tr').children().css({border:'none'});
@@ -159,17 +158,42 @@ $(document).ready(function()
     }
   }
 
+  function resetEdit(tab)
+  {
+    if(!tab) tab= 1;
+    if(tab === 2)
+    { //      $('#htb>tr.extra').remove();
+      $('#htb>tr.selected').removeClass('selected'); return; }
+    
+    $('#ptb>tr.extra').remove();
+    $('#ptb>tr.selected').removeClass('selected');
 
+    $('#ta1mrg')[0].disabled= true;
+    $('#ta1rmv')[0].disabled= true;
+
+    editRow= -1;
+    $('#t1e0').val( nextID+1 );
+    $('#ta1sub').val('New Client');
+    $('#t1e1').val(''); $('#t1e2').val('');
+    $('#t1e3').val(''); $('#t1e4').val('');
+  }
+
+  // ____________________________________________________________________
   // *** tabs# redraw... ************************************************
   function freshTab1()
   {
-    nextID= 0;
+// *** ------------------------------------------------------------------------------
+// *** !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!
+// *** - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// *** nextID: at initDB(), but needed for [new-client[, [remove] & [merge] too..
+// *** ..not for [edit] tho, or is it?
+// *** ------------------------------------------------------------------------------
+//    nextID= 0;
     $("#ptb").empty();
     var i, ml= Math.min(99, plShw.length);
     for(i= 0; i < ml; i++)
     {
       var col= plShw[i];
-      if(col[0] > nextID) nextID= col[0];
       $('#ptb').append( '<tr tabindex="1">'
                         +'<td class="admin">'+ col[0]
                         +'</td><td>'+ col[1]
@@ -183,18 +207,24 @@ $(document).ready(function()
 
   var msa= ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
                           'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+  function ndt2sdt(nd)
+  {
+    var m= +(''+nd).substring(4,6);
+    return (''+nd).substring(6,8)+" " + msa[m-1]+"`"+(''+nd).substring(2,4);
+  }
+
   function freshTab2()
-  { 
+  {
     $('#htb').empty();
     var i, ml= Math.min(99, hiShw.length);
     for(i= 0; i < ml; i++)
     {
       var col= hiShw[i];
       $('#htb').append( '<tr tabindex="1">'
-                       +'<td>'+ col[0]
+                       +'<td>'+ ndt2sdt(col[0])
                        +'</td><td style="text-align:right">'+ col[1]
-                       +'</td><td class="admin" style="font-size:12px; white-space:pre">'+ col[2]
-                       +'</td><td style="text-align:right">'+ col[3]
+                       +'</td><td >'+ col[2]
                        +'</td></tr>');
     }
     recNum[2]= i;
@@ -270,6 +300,7 @@ $(document).ready(function()
   }
   // *** END REFRESH *****************************************
 
+  
   function cid2nme(c,a)
   {
     if(!a) a= ' ';
@@ -283,28 +314,32 @@ $(document).ready(function()
 
   function id2trs(rx)
   {
-    var cs= '';
+    var n= 0, cs= '';
     for(var i= 0; i < hiTab.length; i++)
     {
       var q, x= hiTab[i];
       if(x[1] === rx)
       {
-
-        x[2]= x[2].replace(/\n|\r/g, ' ');;
-        var nc= 59, cl= x[2].length, ch= [];
+        n++;
+        x[2]= x[2].replace(/\n|\r/g, ' ');
+        var nc= 64, cl= x[2].length, ch= [];
         for(var j= 0; j < cl; j+= nc)
         {
           q= x[2].substring(j, j+nc);
           if(q[0] === ' ') q= q.substr(1);
           ch.push( q );
         }
+        
+        var ns= '#'+ ('0'+n).slice(-2) +'. ';
 
-        ch= ch.join('\n             ');
-        var p= 'SESSN.DATE:  '+ x[0] +'\nTREATMENTS:  ' +ch;
-        cs+= p +'\n    CREAMS:  '+'\n\n';
+
+        ch= ch.join('\n           ');
+        var p= ns +'DATE: '+ ndt2sdt(x[0]) +'\nTREATMENT: ' +ch;
+        cs+= p +'\n   CREAMS: '+'\n\n'; //          '     :
       }
     }
-    return cs;
+
+    return cs.slice(0,-2);
   }
 
   
@@ -313,6 +348,7 @@ $(document).ready(function()
   {
     rowAnim(etpn.previousSibling.rowIndex, false);
     $(etpn).remove();
+    resetEdit(curTab);
   }
 
   $('#playerTable').click(function(e)
@@ -324,7 +360,7 @@ $(document).ready(function()
     if($(e.target).hasClass('ord3')) {
       var cid= etpn.parentNode.parentNode
                      .previousSibling.firstChild.innerText;
-      nBar.innerText= ' @'+cid+':'+cid2nme(+cid); return;
+      nBar.innerText= ' @'+ cid +':'+ cid2nme(+cid); return;
     }
 
     if(trx === 0)
@@ -343,20 +379,40 @@ $(document).ready(function()
     if($(etpn).hasClass('selected')) {
       subrowDelete(etpn.nextSibling); return; }
 
+    $('#ptb>tr.extra').remove();
+    $('#ptb>tr.selected').removeClass('selected');
+    
+    if(editMode)
+    {
+      var t= editRow= trx -1;;
+      $('#ta1sub').val('Apply Edit');
+      $('#t1e0').val( plShw[t][0] );
+      $('#t1e1').val( plShw[t][1] );
+      $('#t1e2').val( plShw[t][2] );
+      $('#t1e3').val( plShw[t][3] );
+      $('#t1e4').val( plShw[t][4] );
+
+      $('.finf')[0].disabled= false;
+    }
+
     var q= etpn.firstChild.innerText;
-    var scs= 'CLIENT #ID '+ q+ ':'+ cid2nme(+q) +'\n\n'+ id2trs(+q);
+    var scs= '      MEMO:'+'\n\n'+ id2trs(+q); //'CLIENT #ID: '+ q+ ':'+ cid2nme(+q)
     var cols= editMode? 5:4;
     $(etpn).after(
         '<tr class="extra"><td colspan='+cols+'>'
-      + '<pre style="padding:9px 9px; margin:0; text-align:left; '
+      + '<pre style="padding:9px 9px; margin:0; text-align:left; border:1px dashed grey; '
       + 'user-select: none; pointer-events:none; font-size:14px">'
       + scs +'</pre>'
       + '<button class="ord3" style="float:right" >New Session</button>'
+      + '<button class="ord3" style="float:right" >Edit Memo</button>'
       + '</td></tr>');
+    rowAnim(etpn.rowIndex, true);
     setRowCol();
-    rowAnim(trx, true);
-  });
 
+    var z= $(etpn.nextSibling);
+    if(z[0].getBoundingClientRect().bottom > window.innerHeight)
+      z[0].scrollIntoView(false); // document.documentElement.scrollTop+= h;
+  });
 
   $('#historyTable').on('click', function (e)
   { 
@@ -378,7 +434,7 @@ $(document).ready(function()
     else 
     {
       $('#htb>tr').removeClass('selected');
-      rowAnim(trx, true);
+      rowAnim(trx, true); //alert(hiTab[trx-1][2]);
     }
   });
   
@@ -433,15 +489,6 @@ $(document).ready(function()
       if(k[2].length < 2) k[2]= '~last';
       if(k[3].length < 5) k[3]= '~tel.';
       if(k[4].length < 5) k[4]= '~mob.';
-      
-//      k[1]= k[1].substr(0,15);
-  //    k[2]= k[2].substr(0,20);
-
-//      k[3]= k[3].replace(/\D/g,'').substr(0,12);
-  //    k[4]= k[4].replace(/\D/g,'').substr(0,12);
-
-//      k[3]= k[3].substr(0,12);
-  //    k[4]= k[4].substr(0,12);
 
       k[3]= k[3].toLowerCase();
       k[4]= k[4].toLowerCase();
@@ -454,9 +501,9 @@ $(document).ready(function()
       }
     });
 
+    sortem(0, -1); nextID= +plTab[0][0];
     sortem(curTab= 1, 2); reFresh();
     $('#mtb1').click();
-    
   }
 
 
@@ -469,7 +516,10 @@ $(document).ready(function()
     {
       var k= x.split('\t');
 
-      if(k[0].length < 3) k[0]= '~date';
+      k[0]= k[0].replace(/[-]/g, '');
+      if(k[0].length < 3 || isNaN(k[0])) k[0]= '~date';
+      else k[0]= +k[0];
+
       k[1]= +k[1];
       if(k[2].length < 3) k[2]= '#';
 
@@ -480,10 +530,27 @@ $(document).ready(function()
       if(k[2] !== '#')
       {
         hiTab.push([ k[0], k[1], k[2] ]);
-        hiShw.push([ k[0], k[1], cid2nme(k[1],'\n'), k[2] ]);
+        hiShw.push([ k[0], k[1], k[2] ]);
       }
     });
 
+    hiShw.forEach(function(x, c)
+    {
+        x[2]= x[2].replace(/\n|\r/g, ' ');;
+        var q, nc= 50, cl= x[2].length, ch= [];
+        for(var j= 0; j < cl; j+= nc)
+        {
+          q= x[2].substring(j, j+nc);
+          if(q[0] === ' ') q= q.substr(1);
+          ch.push( q );
+        }
+
+        ch= ch.join('\n     ');
+        var p= ' TR: ' +ch;
+        x[2]= p +'\n CR: '+' ~end';
+    });
+
+    sortem(3, 1);
     sortem(curTab= 2, -1); reFresh();
 //    $('#mtb1').click();
     loadServer();
@@ -569,6 +636,7 @@ $(document).ready(function()
       adminInfo.innerText+= 'USING:window.localStorage \n';
     
     var rawdb= hiTab.join('|');
+
    
     var hiSave= '';
     hiTab.forEach(function(x)
@@ -664,39 +732,41 @@ $(document).ready(function()
       case '#tab2': curTab= 2; nBar.innerText= tblInf[2]; break;
       case '#tab3': curTab= 3; nBar.innerText=' [~]System'; break;
     }
-
-//    reFresh();
   });
 
   // *** BUTTONS #################################################
   $('.ord2').click( function() { clrAdmin(); });
   $('#headbar').click(function() {
     var t= nBar.innerText; nBar.innerText= lastNotif; lastNotif= t;  });
-  $('.mnu, .mtb, .ord, .ord2').click(function(e) { e.stopPropagation(); });
+  $('.mnu, .mtb, .ord, .ord2, .ord3').click(function(e) { e.stopPropagation(); });
 
   $("#mnu1").click(function()
   { // star A.
     if(curTab === 3) {
       adminInfo.innerText+=
-        'Made by zele-chelik!, Jul 2018. \n'; return; }
+        ' [?]By Zele, Jul 2018. \n'; return; }
 
-        $('#ptb>tr.extra').remove();
-        $('#ptb>tr.selected').removeClass('selected');
+
+    resetEdit(curTab);
     if(editMode= !editMode)
     {
       $(".admin").css("display", "table-cell");
       $('.adminEdit').css('display', 'block');
+      $('.filt').css('display', 'none');
     }
     else
     {
       $(".admin").css("display", "none");
       $('.adminEdit').css('display', 'none');
+      $('.filt').css('display', 'block');
     }
+
+    nBar.innerText= tblInf[curTab]; 
   });
 
   $("#mnu2").click(function()
   { // arrow B.
-    if(curTab < 3) tbSpc[curTab]= (tbSpc[curTab] !== '40px')? '40px':'50px';
+    if(curTab < 3) tbSpc[curTab]= (tbSpc[curTab] !== '40px')? '40px':'59px';
     else tbSpc[curTab]= (tbSpc[curTab] !== '300px')? '300px':'auto';
     setRowSpc();
   });
@@ -732,7 +802,8 @@ $(document).ready(function()
     }
     
     sortem(curTab= 1, tbSrt[1]); reFresh();
-    if($('#t1in1').is(':focus')) $('#t1in1')[0].blur();
+    $('#t1in1')[0].focus();
+//    if($('#t1in1').is(':focus')) $('#t1in1')[0].blur();
   });
 
   $('#t1clr').click(function()
@@ -893,3 +964,4 @@ $(document).ready(function()
   $("#ssv4But").click( function() { saveDB(); }); //>Server Save<
 
 }); // THE END
+initDis
