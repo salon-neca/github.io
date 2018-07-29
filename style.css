@@ -123,16 +123,16 @@ td {
 #htb td {
   font-size:15px; white-space:pre;
 }
-#htb tr.selected, #ptb tr.selected {
-  color:white; background:grey;
+#htb tr.selR, #ptb tr.selR {
+  color:white; background:#5f5f5f;
 }
 #ptb tr.already {
-  color:white; background:#555555;
+  color:white; background:#3f3f3f;
 }
-#htb tr.clean, #ptb tr.clean {
+#htb tr.clnR, #ptb tr.clnR {
   color:black; background:white;
 }
-#htb tr:nth-child(odd):not(.clean):not(.selected),
-#ptb tr:nth-child(odd):not(.clean):not(.selected) { 
+#htb tr:nth-child(odd):not(.clnR):not(.selR),
+#ptb tr:nth-child(odd):not(.clnR):not(.selR) { 
   background:#f0f0f0;
 }

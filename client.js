@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v1.0r07h \n';
+  var versionCode= 'v0.08c \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
   
@@ -23,18 +23,18 @@ $(document).ready(function()
   var tbSrt= [0, 2,-1];
   var tbFcol= [0, 0,0];
   var tbFmod= [0, 0,0];
-  var tblInf= [0, '~tblInf1','~tblInf2'];
-  var fltInf= [0, '~fltInf1','~fltInf2'];
+  var tblInf= [0, '~tI1','~tI2'];
+  var fltInf= [0, '~fI1','~fI2'];
   
   var recNum= [0, 0,0];
   var fltNum= [0, 1,1];
   var fltMax= [0, 0,0];
   var fltInp= [0, '',''];
-  var fltStr= [0, '~fltStr','~fltStr'];
+  var fltStr= [0, '~fS1','~fS2'];
 
 // *** PLAYER TAB
-  var plTab= [0, 'first', 'last', 'tel', 'mob', 'memo'];
-  var plShw= [0, 'first', 'last', 'tel', 'mob', 'memo'];
+  var plTab= [0, 'first', 'last', 'tel', 'mob', '[memo]'];
+  var plShw= [0, 'first', 'last', 'tel', 'mob', '[memo]'];
 // *** HISYORY TAB TABLE
   var hiTab= [0, 0, 'info'];
   var hiShw= [0, 0, 'info'];
@@ -54,28 +54,32 @@ $(document).ready(function()
     {
       case 1:
         $('#ptb>tr').css({border:'none'});
-        $('#ptb>tr').not('.selected, .extra').removeClass().addClass("clean");
+        $('#ptb>tr').not('.selR, .xtrR').removeClass().addClass("clnR");
+
+        $('#ptb>tr.xtrR').css({background:'#1f1f1f'});
+        $('#ptb>tr.xtrR').find('pre').css({color:'white', background:'black', 'font-weight':'normal'});
         switch(tbLst[ct])
         {
           case 1:
-            $('#ptb>tr').not('.selected, .extra').removeClass('clean');
-            $('#ptb>tr.extra').css({color:'white', background:'black'});
+            $('#ptb>tr').not('.selR, .xtrR').removeClass('clnR');
           break;
 
           case 2:
             $('#ptb>tr').css({'border-top':'1px solid lightgrey'});
-            $('#ptb>tr.extra').css({color:'black', background:'#f0f0f0'});
+            $('#ptb>tr.xtrR').css({background:'lightgrey'});
+            $('#ptb>tr.xtrR').find('pre').css({color:'black', background:'white'});
           break;
 
           case 3:
-            $('#ptb>tr.extra').css({color:'white', background:'#3f3f3f'});
+            $('#ptb>tr.xtrR').css({background:'black'});
+            $('#ptb>tr.xtrR').find('pre').css({color:'lightgrey', background:'#202020', 'font-weight':'bold'});
           break;
         }
       break;
 
       case 2:
         $('#htb>tr').css({border:'none'});
-        $('#htb>tr').removeClass().addClass("clean");
+        $('#htb>tr').removeClass().addClass("clnR");
         switch(tbLst[ct])
         {
           case 1: $('#htb>tr').removeClass(); break; 
@@ -108,14 +112,41 @@ $(document).ready(function()
     if(!turnOn)
     {
       $(row).removeClass();
-      if(tbLst[curTab] !== 1) $(row).addClass("clean");
+      if(tbLst[curTab] !== 1) $(row).addClass('clnR');
       nBar.innerText= xi;
       return;
     }
 
-    $(row).removeClass('clean').addClass('selected');
+    $(row).removeClass('clnR').addClass('selR');
     var cid= $(row)[0].firstChild.innerText;
     nBar.innerText= xi + ' @'+ cid +':'+ cid2nme(+cid);
+  }
+
+  function resetEdit(tab, jin)
+  {
+    editRow= -1;
+    if(!tab) tab= 1;
+    if(tab === 2)
+    {
+      if(jin) return;
+      $('#htb>tr.xtrR').remove();
+      $('#htb>tr').removeClass();
+      if(tbLst[2] !== 1) $('#htb>tr').addClass('clnR');
+      return;
+    }
+
+//    $('#ta1mrg')[0].disabled= true;
+  //  $('#ta1rmv')[0].disabled= true;
+
+    $('#t1e0').val( nextID+1 );
+    $('#ta1sub').val('New Client');
+    $('#t1e1').val(''); $('#t1e2').val('');
+    $('#t1e3').val(''); $('#t1e4').val('');
+
+    if(jin) return;
+    $('#ptb>tr.xtrR').remove(); 
+    $('#ptb>tr').removeClass();
+    if(tbLst[1] !== 1) $('#ptb>tr').addClass('clnR');
   }
 
   function sortem(tab, col)
@@ -156,26 +187,6 @@ $(document).ready(function()
       $('#hth>tr').children().css({border:'none'});
       $('#hth>tr').children().eq(col).css({'border':'2px solid grey'});
     }
-  }
-
-  function resetEdit(tab)
-  {
-    if(!tab) tab= 1;
-    if(tab === 2)
-    { //      $('#htb>tr.extra').remove();
-      $('#htb>tr.selected').removeClass('selected'); return; }
-    
-    $('#ptb>tr.extra').remove();
-    $('#ptb>tr.selected').removeClass('selected');
-
-    $('#ta1mrg')[0].disabled= true;
-    $('#ta1rmv')[0].disabled= true;
-
-    editRow= -1;
-    $('#t1e0').val( nextID+1 );
-    $('#ta1sub').val('New Client');
-    $('#t1e1').val(''); $('#t1e2').val('');
-    $('#t1e3').val(''); $('#t1e4').val('');
   }
 
   // ____________________________________________________________________
@@ -236,15 +247,14 @@ $(document).ready(function()
     if(t < 0) { t*= -1; cln= true; }
     if(!t || t === 1) { t= 1; jq= $('#t1inf'); }
 
-    if(fltNum[t] === 1) fltStr[t]= '';
-
     if(cln)
     {
-      if(fltNum[t] === 1) fltStr[t]= 'Filters..';
+      if(fltNum[t] === 1) fltStr[t]= 'No Filters..';
       jq.text(fltStr[t]);
     }
     else
-    { 
+    {
+      if(fltNum[t] === 1) fltStr[t]= '';
       var fc= (tbFcol[t] === 1)? 'NAME' : 'PHONE';
       var fm= (tbFmod[t] === 1)? '<begins with>' : '<contains>';
       fltInf[t]= ''+fltNum[t]+'.'+ fc + fm +'"..'; jq.text(fltStr[t] + fltInf[t]);
@@ -309,7 +319,7 @@ $(document).ready(function()
       if(plTab[i][0] === c)
         return (plTab[i][1] +a+ plTab[i][2]);
     }
-    return '~not found';
+    return '~notFound@'+ c;
   }
 
   function id2trs(rx)
@@ -322,7 +332,7 @@ $(document).ready(function()
       {
         n++;
         x[2]= x[2].replace(/\n|\r/g, ' ');
-        var nc= 64, cl= x[2].length, ch= [];
+        var nc= 63, cl= x[2].length, ch= [];
         for(var j= 0; j < cl; j+= nc)
         {
           q= x[2].substring(j, j+nc);
@@ -332,23 +342,30 @@ $(document).ready(function()
         
         var ns= '#'+ ('0'+n).slice(-2) +'. ';
 
-
-        ch= ch.join('\n           ');
-        var p= ns +'DATE: '+ ndt2sdt(x[0]) +'\nTREATMENT: ' +ch;
-        cs+= p +'\n   CREAMS: '+'\n\n'; //          '     :
+        ch= ch.join('\n            ');
+        var p= ns +'DATE:  '+ ndt2sdt(x[0]) +'\nTREATMENT:  ' +ch;
+        cs+= p +'\n   CREAMS:  '+'\n\n'; //          '     :
       }
     }
 
-    return cs.slice(0,-2);
+    return cs; //.slice(0,-2);
   }
 
+  function id2mmo(c)
+  {
+    for(var i= 0; i < plTab.length; i++)
+    {
+      if(plTab[i][0] === c) return plTab[i][5];
+    }
+    return '~notFound@'+ c;
+  }
   
   // *** subRow-content - REMOVE
   function subrowDelete(etpn)
   {
     rowAnim(etpn.previousSibling.rowIndex, false);
     $(etpn).remove();
-    resetEdit(curTab);
+    resetEdit(curTab, 1);
   }
 
   $('#playerTable').click(function(e)
@@ -373,18 +390,18 @@ $(document).ready(function()
       return;
     }
 
-    if($(etpn).hasClass('extra')) {
+    if($(etpn).hasClass('xtrR')) {
       subrowDelete( etpn ); return; }
     
-    if($(etpn).hasClass('selected')) {
+    if($(etpn).hasClass('selR')) {
       subrowDelete(etpn.nextSibling); return; }
 
-    $('#ptb>tr.extra').remove();
-    $('#ptb>tr.selected').removeClass('selected');
     
+    // *** subRow-content - CREATE
     if(editMode)
     {
-      var t= editRow= trx -1;;
+      resetEdit(1)
+      var t= editRow= trx-1;
       $('#ta1sub').val('Apply Edit');
       $('#t1e0').val( plShw[t][0] );
       $('#t1e1').val( plShw[t][1] );
@@ -392,23 +409,43 @@ $(document).ready(function()
       $('#t1e3').val( plShw[t][3] );
       $('#t1e4').val( plShw[t][4] );
 
-      $('.finf')[0].disabled= false;
+//      $('#ta1sub')[0].disabled= false;
+//      $('.finf').attr({disabled:false});
+/*
+      $('#t1e0')[0].disabled= false;
+      $('#t1e1')[0].disabled= false;
+      $('#t1e2')[0].disabled= false;
+      $('#t1e3')[0].disabled= false;
+      $('#t1e4')[0].disabled= false;
+*/
     }
 
     var q= etpn.firstChild.innerText;
-    var scs= '      MEMO:'+'\n\n'+ id2trs(+q); //'CLIENT #ID: '+ q+ ':'+ cid2nme(+q)
+    var mm= id2mmo(+q);
+    
+    var gu, nc= 63, cl= mm.length, ch= [];
+    for(var j= 0; j < cl; j+= nc)
+    {
+      gu= mm.substring(j, j+nc);
+      if(gu[0] === ' ') gu= gu.substr(1);
+      ch.push( gu );
+    }
+    ch= ch.join('\n            ');
+    gu= id2trs(+q) +'\n**** MEMO:  '+ ch +'\n\n';
+    
+//'CLIENT #ID: '+ q+ ':'+ cid2nme(+q) :
     var cols= editMode? 5:4;
+
+    rowAnim(etpn.rowIndex, true);
     $(etpn).after(
-        '<tr class="extra"><td colspan='+cols+'>'
-      + '<pre style="padding:9px 9px; margin:0; text-align:left; border:1px dashed grey; '
+        '<tr class="xtrR"><td colspan='+cols+'>'
+      + '<pre style="padding:9px 9px; margin:3px 0 0 0; text-align:left; border:1px dashed grey; '
       + 'user-select: none; pointer-events:none; font-size:14px">'
-      + scs +'</pre>'
+      + gu +'</pre>'
       + '<button class="ord3" style="float:right" >New Session</button>'
       + '<button class="ord3" style="float:right" >Edit Memo</button>'
       + '</td></tr>');
-    rowAnim(etpn.rowIndex, true);
     setRowCol();
-
     var z= $(etpn.nextSibling);
     if(z[0].getBoundingClientRect().bottom > window.innerHeight)
       z[0].scrollIntoView(false); // document.documentElement.scrollTop+= h;
@@ -430,10 +467,10 @@ $(document).ready(function()
       return;
     }
     
-    if($(etpn).hasClass('selected')) rowAnim(trx, false);
+    if($(etpn).hasClass('selR')) rowAnim(trx, false);
     else 
     {
-      $('#htb>tr').removeClass('selected');
+//      $('#htb>tr').removeClass('selR');
       rowAnim(trx, true); //alert(hiTab[trx-1][2]);
     }
   });
@@ -442,7 +479,8 @@ $(document).ready(function()
   function importDB(d)
   { // *** UNPACK & IMPORT
     var dl= d.split('\n');
-    plTab.length= plShw.length= 0;
+    plTab.length= 0;
+    plShw.length= 0;
     dl.forEach(function(x)
     {
       var k= x.split('\t');
@@ -496,8 +534,8 @@ $(document).ready(function()
       var ts= id2trs(k[0]);
       if(ts.length > 2)
       {
-        plTab.push( k );
-        plShw.push( k );
+        plTab.push([ k[0],k[1],k[2],k[3],k[4], '~memoT..' ]);
+        plShw.push([ k[0],k[1],k[2],k[3],k[4], '~memoS..' ]);
       }
     });
 
@@ -612,7 +650,7 @@ $(document).ready(function()
       },
       success:function(r, s, x)
       {
-        if(r !== 'pOkk') {
+        if(r !== 'P@lg') {
           adminInfo.innerText+= 'FAIL@server:'+ r +'\n'; return; }
   
         adminInfo.innerText+= 
@@ -680,10 +718,10 @@ $(document).ready(function()
       },
       success:function(r, s, x)
       {
-        if(r.substring(0,4) !== 'size') {
+        if(r.substring(0,4) !== 'P@sv') {
           adminInfo.innerText+= 'FAIL@server:'+ r +'\n'; return; }
 
-        nBar.innerText+= ' [!]Server save '+ r.substring(5);
+        nBar.innerText+= ' [!]Server save '+ r.substr(5);
         adminInfo.innerText+= x.getAllResponseHeaders() +'\n'
           + 'PASS:server save '+ (rawdb.length/1024).toFixed(2) +'KB \n';
       }
@@ -782,77 +820,87 @@ $(document).ready(function()
   });
 
   // *** FILTERING ************************************
-  $('#t1fil').click(function()
-  {
-    var i1= $('#t1in1').val(),
-        os= Math.abs(tbSrt[1])-1;
+  function hntShow() {
+    nBar.innerText= tblInf[1] +' [?]Press SPACE to toggle filter modes.'; }
 
-    fltInp[1]= ''+ i1;
+  $('#t1fil, #t2fil').click(function(e)
+  {//e.stopImmediatePropagation(); e.preventDefault();
+    var inp, tis= '#t1in1', itb= +this.id[1];
+    if(!itb || isNaN(itb)) itb= 1;
+    if(itb === 2) tis= '#t2in1';
+
+    var inp= $(tis).val(),
+        tbs= Math.abs(tbSrt[itb])-1;
+
+    fltInp[itb]= ''+ inp;
     var tps= plShw.splice(0);
     plShw.length= 0;
     for(var i= 0; i < tps.length; i++)
     {
       var x= tps[i];
       var c1, t1= x[1], c2, t2= x[2];
-      if(os > 2) { t1= x[3]; t2= x[4]; }
-
-      c1= t1.indexOf(i1); c2= t2.indexOf(i1);
-      if(tbFmod[1] === 1) { if(c1 === 0 || c2 === 0) plShw.push( x ); }
-      else if(c1 >= 0 || c2 >= 0) plShw.push( x );
+      if(tbs > 2) { t1= x[3]; t2= x[4]; }
+      c1= t1.indexOf(inp); c2= t2.indexOf(inp);
+      if(tbFmod[itb] === 2) { if(c1 >= 0 || c2 >= 0) plShw.push( x ); }
+      else  { if(c1 === 0 || c2 === 0) plShw.push( x ); }
     }
-    
-    sortem(curTab= 1, tbSrt[1]); reFresh();
-    $('#t1in1')[0].focus();
-//    if($('#t1in1').is(':focus')) $('#t1in1')[0].blur();
+    sortem(curTab= itb, tbSrt[itb]);
+    reFresh(); $(tis)[0].focus();
   });
 
-  $('#t1clr').click(function()
+  $('#t1clr, #t2clr').click(function(e)
+  { //e.stopImmediatePropagation(); e.preventDefault();
+    var tis= '#t1in1', itb= +this.id[1];
+    if(!itb || isNaN(itb)) itb= 1;
+    if(itb === 2) tis= '#t2in1';
+
+    fltNum[itb]= 1; fltStr[itb]= 'No Filters..';
+    plShw.length= 0; plTab.forEach(function(x) { plShw.push( x ); });
+    sortem(curTab= itb, tbSrt[itb])
+    reFresh(); $(tis)[0].focus();
+  });
+
+  $('#t1in1, #t2in1').on('focus', function(e)
   {
-    plShw.length= 0; fltNum[1]= 1; fltStr[1]= 'Filters..';
-    plTab.forEach(function(x) { plShw.push( x ); });
-
-    sortem(curTab= 1, tbSrt[1]);
-    reFresh();
+    var i= +this.id[1]; if(!i || isNaN(i)) i= 1;
+    this.select(); tbFmod[i]= 1; tiFresh(i); hntShow();
   });
 
+  $('#t1in1, #t2in1').on('blur', function(e)
+  { //e.stopImmediatePropagation(); e.preventDefault();
+    var jq= $('#t1inf');
+    var i= +this.id[1]; 
+    if(!i || isNaN(i)) i= 1;
+
+    if(i === 2) jq= $('#t2inf');
+    if(fltNum[i] > 1) jq.text(fltStr[i]);
+    else jq.text('No Filters..');
+  });
 
   // *** INPUT TEXT FIELD ...............................
-  function hntShow() {
-    nBar.innerText= tblInf[1] +' [?]Press SPACE to toggle filter modes.'; }
-    
-  $('#t1in1').on('keyup', function(e)
+  $('#t1in1, #t2in1').on('keyup', function(e)
   {
+    var itb= +this.id[1];
+    if(!itb || isNaN(itb)) itb= 1;
+
     var t= ''+this.value;
     if(t === ' ')
     {
-      if(tbFmod[1] !== 1) {
-        tbFmod[1]= 1; tiFresh(1); hntShow(); }
-      else {
-        tbFmod[1]= 2; tiFresh(1); hntShow(); }
+      if(tbFmod[itb] !== 1) { tbFmod[itb]= 1; tiFresh(itb); hntShow(); }
+      else { tbFmod[itb]= 2; tiFresh(itb); hntShow(); }
     
       this.value= '';
       return;
     }
     else
-    if(t === '') {
-      tbFmod[1]= 1; tiFresh(1); hntShow(); }
-    else
-    if(t.length === 1)
-      nBar.innerText= tblInf[1];
+    if(t === '') { tbFmod[itb]= 1; tiFresh(itb); hntShow(); }
+    else if(t.length === 1) nBar.innerText= tblInf[itb];
 
     this.value= t.toUpperCase().replace(/[^A-Z 0-9]/, '');
   });
 
-  $('#t1in1').on('focus', function(e)
-  {
-    this.select();
-    tbFmod[1]= 1; tiFresh(1); hntShow();
-  });
-
-  
   $('.finf').on('keydown', function(e)
-  { // if(e.which === 8) this.value= '';
-//    e.preventDefault();
+  {
     if(e.which !== 9 && e.which !== 13) return;
     $(this).next().click();
   });
@@ -964,4 +1012,3 @@ $(document).ready(function()
   $("#ssv4But").click( function() { saveDB(); }); //>Server Save<
 
 }); // THE END
-initDis
