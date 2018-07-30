@@ -23,152 +23,131 @@
   <script type="text/javascript" src="/aux/aux.js"></script>
   <script type="text/javascript" src="client.js"></script>
 </head>
-  
-  <!-- body onselectstart="return false" ondragstart="return false" -->
-<body oncontextmenu="return false"
-      style="background-color:#777777; width:700px; height:100%; margin:auto">
 
-    <div id="appFrame" style="background:white; width:100%">
-    
-      <pre id="notif" style="font-size:15px; height:auto; padding:5px 9px 1px 9px;
-                           margin:0 0 -1px 0; border:none; white-space:nowrap; overflow:auto;
-                           color:lightgrey; background:#505050" >~notificationBar</pre>
+<!-- onselectstart="return false" oncontextmenu="return false"
 
-      <div id="headbar" style="border-bottom:1px solid grey; background:black; padding:15px 5px 0 20px" >    
-        <input class="mtb act" id="mtb1" style="margin-left:-20px" type="button" value="Connecting..." >
-        <input class="mtb dea" id="mtb2" type="button" value="Treatments" >
-        <input class="mtb dea" id="mtb3" type="button" value="System" >
-        
-        
-        <button class="mnu" id="mnu3">
-          <svg width="40px" height="29px" viewbox="0 0 24 30" fill="white" stroke="grey" stroke-width="1.5px">
-            <path d="M24 6h-24v-4h24v4zm0 4h-24v4h24v-4zm0 8h-24v4h24v-4z" /></svg>         
-        </button>
-        
-        <button class="mnu" id="mnu2" style="padding:7px 0 0 0">
-          <svg width="40px" height="28px" viewbox="0 0 256 450" fill="white" stroke="grey" stroke-width="30px">
-            <path d="M256 272c0 4.25-1.75 8.25-4.75 11.25l-112 112c-3 3-7 4.75-11.25 4.75s-8.25-1.75-11.25-4.75l-112-112c-3-3-4.75-7-4.75-11.25 0-8.75 7.25-16 16-16h224c8.75 0 16 7.25 16 16zM256 176c0 8.75-7.25 16-16 16h-224c-8.75 0-16-7.25-16-16 0-4.25 1.75-8.25 4.75-11.25l112-112c3-3 7-4.75 11.25-4.75s8.25 1.75 11.25 4.75l112 112c3 3 4.75 7 4.75 11.25z" /></svg>   
-        </button> 
-        
-        <button class="mnu" id="mnu1">
-           <svg width="40px" height="29px" viewbox="0 0 512 652" fill="white" stroke="grey" stroke-width="40px">
-            <path d="M512 198.525l-176.89-25.704-79.11-160.291-79.108 160.291-176.892 25.704 128 124.769-30.216 176.176 158.216-83.179 158.216 83.179-30.217-176.176 128.001-124.769z" /></svg>
-        </button>
-      </div>
-
-
-<!-- *** tabs stsrt here 
-****************************************************
-<pre id="tev" style="font-size:15px; line-height:17px; padding-left:50px"> ...</pre>
 -->
-      <div id="tab1" class="ptab pac" style="padding:20px 14px">
-      
-        <div class="filt" style="padding:0; margin:9px 0 9px; text-align:right">
-        <pre id="t1inf"
-             style="font-size:17px; text-align:left; font-style:normal; border-bottom:0px solid black;
-                    padding:0 5px; margin-top:-9px; margin-bottom:9px; width:100%">~Filters..</pre>
-          <input class="finf" id="t1in1" type="text" placeholder="NAME" autocomplete="off" >
-          <input class="ord" id="t1fil" type="button" value="Filter" >
-          <input class="ord" id="t1clr" type="button" value="Clear Filters" >
-        </div>
+<body ondragstart="return false" style="background-color:#777777; width:700px; height:100%; margin:auto">
+  
+<div id="appFrame" style="background:white; width:100%">
 
-        <div class="adminEdit" style="display:none; text-align:right; margin:9px 0 9px">
-          <input class="finf" id="t1e0" type="tel" placeholder="ID" autocomplete="off" style="width:5" disabled >
-          <button class="ord" id="ta1mrg" disabled>Merge</button>
-          <button class="ord" id="ta1rmv" disabled>Remove</button>
-          <input class="ord" id="ta1sub" type="button" value="New Client">
-          <div>
-            <input class="finf" id="t1e1" type="text" placeholder="FIRST" autocomplete="off" style="width:23%" >
-            <input class="finf" id="t1e2" type="text" placeholder="LAST" autocomplete="off" style="width:25%">
-            <input class="finf" id="t1e3" type="text" placeholder="TEL." autocomplete="off" style="width:23%" >
-            <input class="finf" id="t1e4" type="text" placeholder="MOB." autocomplete="off" style="width:23%" >
-          </div>
-        </div>
+  <pre id="notif" style="font-size:15px; padding:5px 9px 1px 9px; margin:0 0 -1px 0; height:auto; 
+    border:none; white-space:nowrap; overflow:auto; color:lightgrey; background:#505050" >~ntfBar</pre>
 
-        <table id="playerTable">
-          <thead id="pth"><!--/thead-->
-            <tr><th tabindex="1" class="admin" style="width:59px">#id</th>
-              <th tabindex="1">FIRST</th>
-              <th tabindex="1">LAST</th>
-              <th tabindex="1">TEL.</th>
-              <th tabindex="1">MOB.</th>
-            </tr>
-          </thead>
+  <div id="headbar" style="border-bottom:1px solid grey; background:black; padding:15px 5px 0 20px" >
+    <input class="mtb act" id="mtb1" style="margin-left:-20px" type="button" value="Connecting..." >
+    <input class="mtb dea" id="mtb2" type="button" value="Treatments" >
+    <input class="mtb dea" id="mtb3" type="button" value="System" >
+    <button class="mnu" id="mnu3">
+      <svg width="40px" height="29px" viewbox="0 0 24 30" fill="white" stroke="grey" stroke-width="1.5px">
+        <path d="M24 6h-24v-4h24v4zm0 4h-24v4h24v-4zm0 8h-24v4h24v-4z" /></svg>
+    </button>
+    <button class="mnu" id="mnu2" style="padding:7px 0 0 0">
+      <svg width="40px" height="28px" viewbox="0 0 256 450" fill="white" stroke="grey" stroke-width="30px">
+        <path d="M256 272c0 4.25-1.75 8.25-4.75 11.25l-112 112c-3 3-7 4.75-11.25 4.75s-8.25-1.75-11.25-4.75l-112-112c-3-3-4.75-7-4.75-11.25 0-8.75 7.25-16 16-16h224c8.75 0 16 7.25 16 16zM256 176c0 8.75-7.25 16-16 16h-224c-8.75 0-16-7.25-16-16 0-4.25 1.75-8.25 4.75-11.25l112-112c3-3 7-4.75 11.25-4.75s8.25 1.75 11.25 4.75l112 112c3 3 4.75 7 4.75 11.25z" /></svg>   
+    </button>
+    <button class="mnu" id="mnu1">
+      <svg width="40px" height="29px" viewbox="0 0 512 652" fill="white" stroke="grey" stroke-width="40px">
+        <path d="M512 198.525l-176.89-25.704-79.11-160.291-79.108 160.291-176.892 25.704 128 124.769-30.216 176.176 158.216-83.179 158.216 83.179-30.217-176.176 128.001-124.769z" /></svg>
+    </button>
+  </div>
 
-          <tbody id="ptb"></tbody> 
-        </table>
+<!-- *** tabs stsrt here
+******************************************************************************************
+-->
+  <div id="tab1" class="ptab pac" style="padding:20px 14px">
+    <div class="filt" style="padding:0; margin:9px 0 9px; text-align:right">
+      <pre id="t1inf" style="font-size:17px; text-align:left; font-style:normal;
+        border-bottom:0px solid black; padding:0 5px; margin:-9px, 0 9px; width:100%">~Filters..</pre>
+      <input class="finf" id="t1in1" type="text" placeholder="NAME" autocomplete="off" >
+      <input class="ord" id="t1fil" type="button" value="Filter" >
+      <input class="ord" id="t1clr" type="button" value="Clear Filters" >
+    </div>
+
+    <div class="adminEdit" style="display:none; text-align:right; margin:9px 0 9px">
+      <input class="finf" id="t1e0" type="tel" placeholder="ID" autocomplete="off" style="width:5" disabled >
+      <button class="ord" id="ta1mrg" disabled>Merge</button>
+      <button class="ord" id="ta1rmv" disabled>Remove</button>
+      <input class="ord" id="ta1sub" type="button" value="New Client">
+      <div>
+        <input class="finf clPinf" id="t1e1" type="text" placeholder="~frstName" autocomplete="off" style="width:23%" >
+        <input class="finf" id="t1e2" type="text" placeholder="~lastName" autocomplete="off" style="width:25%">
+        <input class="finf" id="t1e3" type="text" placeholder="~telphHom" autocomplete="off" style="width:23%" >
+        <input class="finf" id="t1e4" type="text" placeholder="~phoneMob" autocomplete="off" style="width:23%" >
       </div>
+    </div>
 
+    <table id="playerTable">
+      <thead id="pth"><!--/thead-->
+        <tr> <th tabindex="1" class="admin" style="width:59px">#id</th>
+          <th tabindex="1">FIRST</th>
+          <th tabindex="1">LAST</th>
+          <th tabindex="1">PHONE</th>
+          <th tabindex="1">MOBILE</th> </tr>
+      </thead> <tbody id="ptb"></tbody> 
+    </table>
+  </div>
 
-      <div id="tab2" class="ptab pde"
-           style="background:white; font-size:24px; padding:20px 14px">
-      
-        <div class="filt" style="padding:0; margin:9px 0 9px; text-align:right">
-        <pre id="t2inf"
-             style="font-size:17px; text-align:left; font-style:normal; border-bottom:0px solid black;
-                    padding:0 5px; margin-top:-9px; margin-bottom:9px; width:100%">~Filters..</pre>
-          <input class="finf" id="t2in1" type="text" placeholder="NAME" autocomplete="off" >
-          <input class="ord" id="t2fil" type="button" value="Filter" >
-          <input class="ord" id="t2clr" type="button" value="Clear Filters" >
-        </div>
-      
-        <div class="adminEdit" style="display:none; text-align:right; margin:9px 0 9px">
+  <div id="tab2" class="ptab pde" style="background:white; font-size:24px; padding:20px 14px">
+    <div class="filt" style="padding:0; margin:9px 0 9px; text-align:right">
+      <pre id="t2inf" style="font-size:17px; text-align:left; font-style:normal;
+        border-bottom:0px solid black; padding:0 5px; margin:-9px 0 9px; width:100%">~Filters..</pre>
+      <input class="finf" id="t2in1" type="text" placeholder="NAME" autocomplete="off" >
+      <input class="ord" id="t2fil" type="button" value="Filter" >
+      <input class="ord" id="t2clr" type="button" value="Clear Filters" >
+    </div>
 
-          <input id="dtEdit" class="finf" autocomplete="off"
-                 type="tel" placeholder="YYYYMMDDHHMM" disabled>
-          <button class="ord" id="rdt3But" disabled>Re-Date</button>
-          <button class="ord" id="rmr3But" disabled>Remove</button>
-          <button class="ord" id="mdf3But" disabled>Modify</button>
-        </div>
+    <div class="adminEdit" style="display:none; text-align:right; margin:9px 0 9px">
+      <input id="dtEdit" class="finf" autocomplete="off"
+             type="tel" placeholder="YYYYMMDDHHMM" disabled>
+      <button class="ord" id="rdt3But" disabled>Re-Date</button>
+      <button class="ord" id="rmr3But" disabled>Remove</button>
+      <button class="ord" id="mdf3But" disabled>Modify Session</button>
+    </div>
 
-        <table id="historyTable">
-          <thead id="hth"><!--/thead-->
-            <tr>
-              <th tabindex="1" style="width:99px">DATE</th>
-              <th tabindex="1" style="width:59px">#cid</th>
-              <th tabindex="1">SESSION</th>
-          </tr></thead>
-          <tbody id="htb"></tbody> 
-        </table>
-      </div>
+    <table id="historyTable">
+      <thead id="hth"><!--/thead-->
+        <tr>
+          <th tabindex="1" style="width:99px">DATE</th>
+          <th tabindex="1" style="width:59px">#cid</th>
+          <th tabindex="1">SESSION</th>
+        </tr></thead>
+      <tbody id="htb"></tbody> 
+    </table>
+  </div>
 
+  <div id="tab3" class="ptab pde" style="padding:20px 14px">
+    <div style="text-align:right; margin-top:-5px">
+      <input id="pasIn" class="finf" type="password"
+             placeholder="PASSWORD" autocomplete="off" >
+      <input class="ord" id="log4But" type="button" value="Logme" >
+    </div>
 
-      <div id="tab3" class="ptab pde" style="padding:20px 14px">
-        <div style="text-align:right; margin-top:-5px">
-          <input id="pasIn" class="finf" type="password"
-                 placeholder="PASSWORD" autocomplete="off" >
-          <input class="ord" id="log4But" type="button" value="Logme" >
-        </div>
+    <pre id="dbFrame" style="width:100%; height:400px; padding:5px;
+      border:1px solid grey;overflow:auto; margin:0; font-size:15px;
+      letter-spacing:-1px; user-select:all; line-height:17px">.aF</pre>
+    <div>
+      <button class="ord2" id="med4But">Memory Data</button>
+      <button class="ord2" id="sld4But">Server Load</button>
+      <input class="ord2" id="ssv4But" type="button" value="!Server Save" >
+      <br>
+      <button class="ord2" id="cad4But">Cache Data</button>
+      <button class="ord2" id="imc4But">Import Cache</button>
+      <button class="ord2" id="stc4But">Store Cache</button>
+      <input class="ord2" style="width:215px" id="gpc4But" type="button" value="Grant Persistance" >
+      <br>
+    </div>
+  </div>
 
-        <pre id="dbFrame"
-             style="width:100%; height:400px; padding:5px;
-                    border:1px solid grey;overflow:auto;
-                    margin:0; font-size:15px; letter-spacing:-1px;
-                    line-height:17px"> \r\n .. former frame element</pre>
-        <div>
-          <button class="ord2" id="med4But">Memory Data</button>
-          <button class="ord2" id="sld4But">Server Load</button>
-          <input class="ord2" id="ssv4But" type="button" value="!Server Save" >
-          <br>
-          <button class="ord2" id="cad4But">Cache Data</button>
-          <button class="ord2" id="imc4But">Import Cache</button>
-          <button class="ord2" id="stc4But">Store Cache</button>
-          <input class="ord2" style="width:215px" id="gpc4But" type="button" value="Grant Persistance" >
-          <br>    
-        </div>
-      </div>
-      
-    </div> <!-- BODY -->
+</div> <!-- appFrame -->
 
-    <div style="background:none; user-select:none;
-                height:300px; pointer-events:none"></div>
-
+  <div style="background:none; user-select:none; height:300px; pointer-events:none"></div>
   <!--audio id="audQuack" type="audio/wav" src="/aux/quack.wav"></audio-->
-  <script> 
+  <script>
         window.onbeforeunload= function() { return "Reload database?"; }
 
         if(navigator.serviceWorker)
-          navigator.serviceWorker.register('sw.js', { scope: '/' });
+          navigator.serviceWorker.register('sw.js', { scope:'/' });
   </script>
 </body>
 </html>
