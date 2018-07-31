@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.09e - by Zele, Jul\'18. \n';
+  var versionCode= 'v0.10b - by Zele, Jul\'18. \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
   
@@ -38,8 +38,8 @@ $(document).ready(function()
   var plTab= [0, 'first', 'last', 'tel', 'mob', '[memo]'];
   var plShw= [0, 'first', 'last', 'tel', 'mob', '[memo]'];
 // *** HISYORY TAB TABLE
-  var hiTab= [0, 0, 'info'];
-  var hiShw= [0, 0, 'info'];
+  var hiTab= [0, 0, '~trt','~crm'];
+  var hiShw= [0, 0, '~trt','~crm'];
 
   var lastNotif= '';
   function clrAdmin(a)
@@ -362,36 +362,31 @@ $(document).ready(function()
     return ret;
   }
 
-  function id2trs(rx)
+  function id2trs(rx, clean)
   {
-    var ch2, tn= 0, cs= '';
+    
+    var rFrm, rCln, ful, q, x, ch2, ppp, ns, tn= 0, cs= '';
     for(var i= 0; i < hiTab.length; i++)
     {
-      var q, x= hiTab[i];
+      x= hiTab[i];
       if(x[1] === rx)
       {
+        if(clean) return x[2]+'^'+x[3];
+
         tn++;
         x[2]= x[2].replace(/\n|\r/g, ' ');
-        var nc= 63, cl= x[2].length, ch= [];
-        for(var j= 0; j < cl; j+= nc)
-        {
-          q= x[2].substring(j, j+nc);
-          if(q[0] === ' ') q= q.substr(1);
-          ch.push( q );
-        }
-        
-        var ns= '#'+ ('0'+tn).slice(-2) +'. ';
 
-        ch= ch.join('\n            ');
+        ns= '#'+ ('0'+tn).slice(-2) +'. ';
+
         ch2= chunkStr(63, x[2]);
-        var p= ns +'DATE:  '+ ndt2sdt(x[0]) +'\nTREATMENT:  ' +ch2;
-        cs+= p +'\n   CREAMS:  '+'\n\n'; //          '     :
+
+        ppp= ns +'DATE:  '+ ndt2sdt(x[0]) +'\nTREATMENT:  ' +ch2;
+        cs+= ppp+'\n   CREAMS:  '+ chunkStr(63, x[3]) +'\n\n';
       }
     }
 
-    return cs; //.slice(0,-2);
+    return cs; //+'~'+'..creams..'; //.slice(0,-2);
   }
-
 
   function id2mmo(c)
   {
@@ -402,6 +397,14 @@ $(document).ready(function()
     return '~notFound@'+ c;
   }
 
+  function curDTM()
+  {
+    var curDate= new Date();
+    var r= curDate.getFullYear()
+               + ("00"+(curDate.getMonth()+1)).slice(-2)
+               + ("00"+curDate.getDate()).slice(-2);
+    return r.substr(2);
+  }
 
   // *** subRow-content - REMOVE
   function subrowDelete(etpn)
@@ -425,7 +428,7 @@ $(document).ready(function()
       {
         epp= et.previousSibling;
         $(epp).before(
-           '<textarea rows="5" style="font-size:19px; width:100%; '
+           '<textarea placeholder="MEMO" rows="5" style="font-size:19px; width:100%; '
           +'border:1px solid red; user-select:text; font-weight:bold; '
           +'margin-bottom:3px; padding:9px" ></textarea>');
 
@@ -458,6 +461,49 @@ $(document).ready(function()
         }
         epp.previousSibling.previousSibling.innerText=
           id2trs(+cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(+cid)) +'\n\n';
+        epp.remove();
+      }
+      else
+      if(et.value[0] === 'N')
+      {
+//        tmp= id2trs(+cid, 1).split('^'); tmp[0],tmp[1]
+        $(et).before(
+           '<textarea placeholder="~treatment" rows="5" style="font-size:19px; width:100%; '
+          +'border:1px solid red; user-select:text; font-weight:bold; '
+          +'margin-bottom:3px; padding:9px" ></textarea>');
+
+        $(et).before(
+           '<textarea placeholder="~creams" rows="3" style="font-size:19px; width:100%; '
+          +'border:1px solid red; user-select:text; font-weight:bold; '
+          +'margin-bottom:3px; padding:9px" ></textarea>');
+
+        et.value= 'Finish';
+        et.nextSibling.disabled= true;
+        tmp= et.previousSibling; //creams
+        epp= tmp.previousSibling; //treatment
+
+        tmp= $(et).closest('tr');
+        if(tmp[0].getBoundingClientRect().bottom > window.innerHeight)
+          tmp[0].scrollIntoView(false); // document.documentElement.scrollTop+= h;
+        
+        epp.focus();
+      }
+      else
+      if(et.value[0] === 'F')
+      {
+        et.value= 'New Session';
+        et.nextSibling.disabled= false;
+        tmp= et.previousSibling; //creams
+        epp= tmp.previousSibling; //treatment
+
+//tmp.innerText= 'cr';
+//epp.innerText= 'tr';
+
+        // *** save hiTab
+        hiTab.push([ curDTM(), +cid, epp.value, tmp.value ]);
+        epp.previousSibling.previousSibling.innerText=
+          id2trs(+cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(+cid)) +'\n\n';
+        tmp.remove();
         epp.remove();
       }
 
@@ -519,8 +565,8 @@ $(document).ready(function()
 
     $(row).after(
         '<tr class="xtrR"><td colspan='+ (editMode? 5:4) +'>'
-      + '<pre style="padding:9px 9px; margin:5px 0 7px; text-align:left; '
-      + 'font-size:14px; border:1px dashed grey; pointer-events:none">' //
+      + '<pre style="padding:9px 9px; margin:5px 0 7px; text-align:left; '//pointer-events:none
+      + 'font-size:14px; border:1px dashed grey; user-select:text">' //
       + ''+ xTxt +'</pre>' 
       + '<pre style="font-size:17px; width:330px; ' //border-right:1px solid red; '
       + 'pointer-events:none; padding:3px 5px; float:left">'+ plInf +'</pre>'
@@ -654,8 +700,8 @@ $(document).ready(function()
       
       if(k[2] !== '#')
       {
-        hiTab.push([ k[0], k[1], k[2] ]);
-        hiShw.push([ k[0], k[1], k[2] ]);
+        hiTab.push([ k[0], k[1], k[2], '~crmT' ]);
+        hiShw.push([ k[0], k[1], k[2], '~crmS' ]);
       }
     });
 
