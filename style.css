@@ -62,9 +62,10 @@
 
 .ord3 {
   border:1px solid lightgrey;
-  width:140px; height:35px;
+  /*width:auto; height:auto;*/
+  padding:7px 25px;
   color:white; background:#5f5f5f;
-  margin:9px; font-size:15px;
+  margin:0 7px 15px; font-size:15px;
 }
 .ord3:hover {
   background:#909090;
