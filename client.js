@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.09d - by Zele, Jul\'18. \n';
+  var versionCode= 'v0.09e - by Zele, Jul\'18. \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
   
@@ -121,7 +121,7 @@ $(document).ready(function()
       return;
     }
     $(r).removeClass('clnR').addClass('selR');
-    nBar.innerText= b + ' [@]'+ c +':'+ cid2nme(+c);
+    nBar.innerText= b + ' [@]'+ c +':'+ id2nme(+c);
   }
 
   function resetEdit(tab, jin)
@@ -337,7 +337,7 @@ $(document).ready(function()
   // *** END REFRESH *****************************************
 
   
-  function cid2nme(c,a)
+  function id2nme(c,a)
   {
     if(!a) a= ' ';
     for(var i= 0; i < plTab.length; i++)
@@ -348,15 +348,29 @@ $(document).ready(function()
     return '~notFound@'+ c;
   }
 
+  function chunkStr(nc, s)
+  {  
+    var ret='', ch= [];
+    s= s.replace(/\n|\r/g, ' ');
+    for(var j= 0; j < s.length; j+= nc)
+    {
+      ret= s.substring(j, j+nc);
+      if(ret[0] === ' ') ret= '-'+ret.substr(1);
+      ch.push( ret );
+    }
+    ret= ch.join('\n            ');
+    return ret;
+  }
+
   function id2trs(rx)
   {
-    var n= 0, cs= '';
+    var ch2, tn= 0, cs= '';
     for(var i= 0; i < hiTab.length; i++)
     {
       var q, x= hiTab[i];
       if(x[1] === rx)
       {
-        n++;
+        tn++;
         x[2]= x[2].replace(/\n|\r/g, ' ');
         var nc= 63, cl= x[2].length, ch= [];
         for(var j= 0; j < cl; j+= nc)
@@ -366,16 +380,18 @@ $(document).ready(function()
           ch.push( q );
         }
         
-        var ns= '#'+ ('0'+n).slice(-2) +'. ';
+        var ns= '#'+ ('0'+tn).slice(-2) +'. ';
 
         ch= ch.join('\n            ');
-        var p= ns +'DATE:  '+ ndt2sdt(x[0]) +'\nTREATMENT:  ' +ch;
+        ch2= chunkStr(63, x[2]);
+        var p= ns +'DATE:  '+ ndt2sdt(x[0]) +'\nTREATMENT:  ' +ch2;
         cs+= p +'\n   CREAMS:  '+'\n\n'; //          '     :
       }
     }
 
     return cs; //.slice(0,-2);
   }
+
 
   function id2mmo(c)
   {
@@ -385,7 +401,8 @@ $(document).ready(function()
     }
     return '~notFound@'+ c;
   }
-  
+
+
   // *** subRow-content - REMOVE
   function subrowDelete(etpn)
   {
@@ -396,40 +413,52 @@ $(document).ready(function()
 
   $('#playerTable').click(function(e)
   {
-    var tmp, et= e.target;
+    var tmp, cid, et= e.target;
     
     if($(et).hasClass('ord3'))
     {
-      var cid= $(et).closest('tr')[0].previousSibling.firstChild.innerText;
-      nBar.innerText= ' @'+ cid +':'+ cid2nme(+cid);
+      cid= $(et).closest('tr')[0].previousSibling.firstChild.innerText;
+      nBar.innerText= ' @'+ cid +':'+ id2nme(+cid);
 
+      var epp;
       if(et.value[0] === 'E')
       {
-        tmp= et.previousSibling;
-        $(tmp).before(
+        epp= et.previousSibling;
+        $(epp).before(
            '<textarea rows="5" style="font-size:19px; width:100%; '
           +'border:1px solid red; user-select:text; font-weight:bold; '
           +'margin-bottom:3px; padding:9px" ></textarea>');
 
         et.value= 'Apply Edit';
         et.previousSibling.disabled= true;
-        tmp.previousSibling.innerText= id2mmo(+cid);
-        tmp.previousSibling.focus();
+        epp= epp.previousSibling;
+        epp.innerText= id2mmo(+cid);
+
+        tmp= $(et).closest('tr');
+        if(tmp[0].getBoundingClientRect().bottom > window.innerHeight)
+          tmp[0].scrollIntoView(false); // document.documentElement.scrollTop+= h;
+        
+        epp.focus();
       }
       else
       if(et.value[0] === 'A')
-      { 
+      {
         et.value= 'Edit Memo';
-        et.previousSibling.disabled= false;
+        epp= et.previousSibling;
+        epp.disabled= false;
 
+        epp= epp.previousSibling;
         // *** save plTab
         for(var i=0; i < plTab.length; i++)
         {
-          var x= plTab[i];
-          if(x[0] === +cid) nBar.innerText= 'Apply @'+ x[0] +':'+ x[1] +' '+ x[2];
+          if(plTab[i][0] === +cid)
+          { //nBar.innerText= 'Apply @'+ x[0] +':'+ x[1] +' '+ x[2];
+            plTab[i][5]= epp.value;
+          }
         }
-        
-        et.previousSibling.previousSibling.remove();
+        epp.previousSibling.previousSibling.innerText=
+          id2trs(+cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(+cid)) +'\n\n';
+        epp.remove();
       }
 
       return;
@@ -445,7 +474,7 @@ $(document).ready(function()
     {
       row= $('#ptb>tr')[tx-1];
       ti= +row.cells[5].innerText;
-      
+      cid= row.cells[0].innerText;
     }
     else tx= 0;
 
@@ -461,7 +490,6 @@ $(document).ready(function()
 //    else      alert('Ooops! This was not supposed to happen: #playerTable.click()');
     
 //    if($(et).hasClass('xtrR')) { subrowDelete( et ); return; }
-    
     if($(row).hasClass('selR')) { subrowDelete(row.nextSibling); return; }
 
     // *** subRow-content - CREATE
@@ -482,38 +510,25 @@ $(document).ready(function()
       $('#ta1sub')[0].disabled= true;
     }
 
-    var q= row.firstChild.innerText;
-    var gu, mm= id2mmo(+q),
-        nc= 63, cl= mm.length, ch= [];
+    var xTxt= id2trs(+cid) +'\n**** MEMO:  '
+                + chunkStr(63, id2mmo(+cid)) +'\n\n';
 
-    for(var j= 0; j < cl; j+= nc)
-    {
-      gu= mm.substring(j, j+nc);
-      if(gu[0] === ' ') gu= gu.substr(1);
-      ch.push( gu );
-    }
+    var cn= 31, plInf= 'id@ '+ cid +':'+ id2nme(+cid);
+    if(plInf.length > cn) plInf= plInf.substr(0,cn-2) +'..';
+    else plInf= plInf.substr(0,cn);
 
-    ch= ch.join('\n            ');
-    gu= id2trs(+q) +'\n**** MEMO:  '+ ch +'\n\n';
-    
-    var cols= editMode? 5:4;
-    var pis= 31, pli= 'id@ '+ q+ ':'+ cid2nme(+q);
-//        '- - - - -1- - - - -2- - - - -3Emmlj'
-    if(pli.length > pis)
-      pli= pli.substr(0,pis-2) +'..';
- 
-    rowAnim(tx, true);
     $(row).after(
-        '<tr class="xtrR"><td colspan='+cols+'>'
+        '<tr class="xtrR"><td colspan='+ (editMode? 5:4) +'>'
       + '<pre style="padding:9px 9px; margin:5px 0 7px; text-align:left; '
       + 'font-size:14px; border:1px dashed grey; pointer-events:none">' //
-      + ''+ gu +'</pre>' 
+      + ''+ xTxt +'</pre>' 
       + '<pre style="font-size:17px; width:330px; ' //border-right:1px solid red; '
-      + 'pointer-events:none; padding:3px 5px; float:left">'+ pli.substr(0,pis) +'</pre>'
+      + 'pointer-events:none; padding:3px 5px; float:left">'+ plInf +'</pre>'
       + '<input class="ord3" type="button" style="float:right" value="New Session" >'
       + '<input class="ord3" type="button" style="float:right" value="Edit Memo" >'
       + '</td></tr>');
 
+    rowAnim(tx, true);
     setRowCol();
 
     tmp= $(row.nextSibling);
