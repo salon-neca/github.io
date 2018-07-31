@@ -58,7 +58,7 @@
   <div id="tab1" class="ptab pac" style="padding:20px 14px">
     <div class="filt" style="padding:0; margin:9px 0 9px; text-align:right">
       <pre id="t1inf" style="font-size:17px; text-align:left; font-style:normal;
-        border-bottom:0px solid black; padding:0 5px; margin:-9px, 0 9px; width:100%">~Filters..</pre>
+        border-bottom:0px solid black; padding:0 5px; margin:-9px 0 9px; width:100%">~Filters..</pre>
       <input class="finf" id="t1in1" type="text" placeholder="NAME" autocomplete="off" >
       <input class="ord" id="t1fil" type="button" value="Filter" >
       <input class="ord" id="t1clr" type="button" value="Clear Filters" >
@@ -71,9 +71,9 @@
       <input class="ord" id="ta1sub" type="button" value="New Client">
       <div>
         <input class="finf clPinf" id="t1e1" type="text" placeholder="~frstName" autocomplete="off" style="width:23%" >
-        <input class="finf" id="t1e2" type="text" placeholder="~lastName" autocomplete="off" style="width:25%">
-        <input class="finf" id="t1e3" type="text" placeholder="~telphHom" autocomplete="off" style="width:23%" >
-        <input class="finf" id="t1e4" type="text" placeholder="~phoneMob" autocomplete="off" style="width:23%" >
+        <input class="finf clPinf" id="t1e2" type="text" placeholder="~lastName" autocomplete="off" style="width:25%">
+        <input class="finf clPinf" id="t1e3" type="text" placeholder="~phone" autocomplete="off" style="width:23%" >
+        <input class="finf clPinf" id="t1e4" type="text" placeholder="~mobile" autocomplete="off" style="width:23%" >
       </div>
     </div>
 
@@ -86,6 +86,8 @@
           <th tabindex="1">MOBILE</th> </tr>
       </thead> <tbody id="ptb"></tbody> 
     </table>
+    <br>
+    <button class="ord2" id="t1all" disabled> Show All </button>
   </div>
 
   <div id="tab2" class="ptab pde" style="background:white; font-size:24px; padding:20px 14px">
@@ -114,6 +116,8 @@
         </tr></thead>
       <tbody id="htb"></tbody> 
     </table>
+    <br>
+    <button class="ord2" id="t2all" disabled> Show All </button>
   </div>
 
   <div id="tab3" class="ptab pde" style="padding:20px 14px">
