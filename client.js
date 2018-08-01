@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.10b - by Zele, Jul\'18. \n';
+  var versionCode= 'v0.10f - by Zele, Jul\'18. \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
   
@@ -38,8 +38,8 @@ $(document).ready(function()
   var plTab= [0, 'first', 'last', 'tel', 'mob', '[memo]'];
   var plShw= [0, 'first', 'last', 'tel', 'mob', '[memo]'];
 // *** HISYORY TAB TABLE
-  var hiTab= [0, 0, '~trt','~crm'];
-  var hiShw= [0, 0, '~trt','~crm'];
+  var hiTab= [0, 0, '~tr','~cr'];
+  var hiShw= [0, 0, '~tr','~cr'];
 
   var lastNotif= '';
   function clrAdmin(a)
@@ -141,7 +141,7 @@ $(document).ready(function()
     $('#ta1rmv')[0].disabled= true;
     $('#ta1sub')[0].disabled= false;
 
-    $('#t1e0').val( 'next id@ '+nextID+1 );
+    $('#t1e0').val( 'next id@ '+ nextID );
     $('#ta1sub').val('New Client');
     $('#t1e1').val(''); $('#t1e2').val('');
     $('#t1e3').val(''); $('#t1e4').val('');
@@ -203,6 +203,75 @@ $(document).ready(function()
         $('#t2in1').attr({placeholder:'SESSION'}); tbFcol[2]= 'SESSION'; }
     }
   }
+  
+  function curDTM()
+  {
+    var curDate= new Date();
+    var r= curDate.getFullYear()
+               + ("00"+(curDate.getMonth()+1)).slice(-2)
+               + ("00"+curDate.getDate()).slice(-2);
+    return r.substr(2);
+  }
+
+  function chunkStr(nc, s)
+  { //alert(1);
+    var ret='', ch= [];
+    s= s.replace(/\n|\r/g, ' ');
+    for(var i= 0; i < s.length; i+= nc)
+    {
+      ret= s.substring(i, i+nc);
+      if(ret[0] === ' ') ret= '-'+ret.substr(1);
+      ch.push( ret );
+    }
+    return ch.join('\n            ');
+  }
+
+  function id2nme(c,a)
+  {
+    if(!a) a= ' ';
+    for(var i= 0; i < plTab.length; i++)
+    {
+      if(plTab[i][0] === c) 
+        return (plTab[i][1] +a+ plTab[i][2]);
+    }
+    return '~notFound@'+ c;
+  }
+
+
+  function id2trs(rx)
+  {
+    var rFrm, rCln, ful, q, x, ch2, ppp, ns, tn= 0, cs= '';
+    for(var i= 0; i < hiTab.length; i++)
+    {
+      x= hiTab[i];
+      if(x[1] === rx)
+      {
+          //return x[2]+'^'+x[3];
+
+        tn++;
+        x[2]= x[2].replace(/\n|\r/g, ' ');
+
+        ns= '#'+ ('0'+tn).slice(-2) +'. ';
+
+        ch2= chunkStr(63, x[2]);
+
+        ppp= ns +'DATE:  '+ ndt2sdt(x[0]) +'\nTREATMENT:  ' +ch2;
+        cs+= ppp+'\n   CREAMS:  '+ chunkStr(63, x[3]) +'\n\n';
+      }
+    }
+
+    return cs; //+'~'+'..creams..'; //.slice(0,-2);
+  }
+
+  function id2mmo(c)
+  {
+    for(var i= 0; i < plTab.length; i++)
+    {
+      if(plTab[i][0] === c) return plTab[i][5];
+    }
+    return '~notFound@'+ c;
+  }
+
 
   // ____________________________________________________________________
   // *** tabs# redraw... ************************************************
@@ -210,7 +279,7 @@ $(document).ready(function()
   {
 // *** ------------------------------------------------------------------------------
 // *** !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!!  !!
-// *** - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// **~* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // *** nextID: at initDB(), but needed for [new-client[, [remove] & [merge] too..
 // *** ..not for [edit] tho, or is it?
 // *** ------------------------------------------------------------------------------
@@ -248,19 +317,24 @@ $(document).ready(function()
 
   function freshTab2()
   {
+    
     $('#htb').empty();
     if(tbAll[2] === 0) tbAll[2]= hiShw.length;
-    var i, ml= Math.min(tbAll[2], hiShw.length);
+    var i, col, tr, cr, ml= Math.min(tbAll[2], hiShw.length);
+
     for(i= 0; i < ml; i++)
     {
-      var col= hiShw[i];
+      col= hiShw[i];
+ //     tr= chunkStr(50, col[2]); tr= tr.replace(/[^]/g, '\n     ');
+   //   cr= chunkStr(50, col[3]); cr= cr.replace(/[^]/g, '\n     ');
       $('#htb').append( '<tr tabindex="1">'
-                       +'<td>'+ ndt2sdt(col[0])
+                       +'<td style="text-align:center">'+ ndt2sdt(col[0])
                        +'</td><td style="text-align:right">'+ col[1]
-                       +'</td><td >'+ col[2]
+                       +'</td><td >'+ ' TR: '+ col[2] +'\n CR: '+ col[3]
                        +'</td><td style="display:none">'+ i
                        +'</td></tr>');
     }
+
     recNum[2]= i;
     tbAll[2]= tbAll[0];
     if(i === hiShw.length) $('#t2all')[0].disabled= true;
@@ -336,75 +410,6 @@ $(document).ready(function()
   }
   // *** END REFRESH *****************************************
 
-  
-  function id2nme(c,a)
-  {
-    if(!a) a= ' ';
-    for(var i= 0; i < plTab.length; i++)
-    {
-      if(plTab[i][0] === c) 
-        return (plTab[i][1] +a+ plTab[i][2]);
-    }
-    return '~notFound@'+ c;
-  }
-
-  function chunkStr(nc, s)
-  {  
-    var ret='', ch= [];
-    s= s.replace(/\n|\r/g, ' ');
-    for(var j= 0; j < s.length; j+= nc)
-    {
-      ret= s.substring(j, j+nc);
-      if(ret[0] === ' ') ret= '-'+ret.substr(1);
-      ch.push( ret );
-    }
-    ret= ch.join('\n            ');
-    return ret;
-  }
-
-  function id2trs(rx, clean)
-  {
-    
-    var rFrm, rCln, ful, q, x, ch2, ppp, ns, tn= 0, cs= '';
-    for(var i= 0; i < hiTab.length; i++)
-    {
-      x= hiTab[i];
-      if(x[1] === rx)
-      {
-        if(clean) return x[2]+'^'+x[3];
-
-        tn++;
-        x[2]= x[2].replace(/\n|\r/g, ' ');
-
-        ns= '#'+ ('0'+tn).slice(-2) +'. ';
-
-        ch2= chunkStr(63, x[2]);
-
-        ppp= ns +'DATE:  '+ ndt2sdt(x[0]) +'\nTREATMENT:  ' +ch2;
-        cs+= ppp+'\n   CREAMS:  '+ chunkStr(63, x[3]) +'\n\n';
-      }
-    }
-
-    return cs; //+'~'+'..creams..'; //.slice(0,-2);
-  }
-
-  function id2mmo(c)
-  {
-    for(var i= 0; i < plTab.length; i++)
-    {
-      if(plTab[i][0] === c) return plTab[i][5];
-    }
-    return '~notFound@'+ c;
-  }
-
-  function curDTM()
-  {
-    var curDate= new Date();
-    var r= curDate.getFullYear()
-               + ("00"+(curDate.getMonth()+1)).slice(-2)
-               + ("00"+curDate.getDate()).slice(-2);
-    return r.substr(2);
-  }
 
   // *** subRow-content - REMOVE
   function subrowDelete(etpn)
@@ -468,16 +473,16 @@ $(document).ready(function()
       {
 //        tmp= id2trs(+cid, 1).split('^'); tmp[0],tmp[1]
         $(et).before(
-           '<textarea placeholder="~treatment" rows="5" style="font-size:19px; width:100%; '
+           '<textarea placeholder="TREATMENT" rows="5" style="font-size:19px; width:100%; '
           +'border:1px solid red; user-select:text; font-weight:bold; '
           +'margin-bottom:3px; padding:9px" ></textarea>');
 
         $(et).before(
-           '<textarea placeholder="~creams" rows="3" style="font-size:19px; width:100%; '
+           '<textarea placeholder="CREAMS" rows="3" style="font-size:19px; width:100%; '
           +'border:1px solid red; user-select:text; font-weight:bold; '
           +'margin-bottom:3px; padding:9px" ></textarea>');
 
-        et.value= 'Finish';
+        et.value= 'Finish and Save';
         et.nextSibling.disabled= true;
         tmp= et.previousSibling; //creams
         epp= tmp.previousSibling; //treatment
@@ -496,19 +501,22 @@ $(document).ready(function()
         tmp= et.previousSibling; //creams
         epp= tmp.previousSibling; //treatment
 
-//tmp.innerText= 'cr';
-//epp.innerText= 'tr';
-
         // *** save hiTab
         hiTab.push([ curDTM(), +cid, epp.value, tmp.value ]);
         epp.previousSibling.previousSibling.innerText=
           id2trs(+cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(+cid)) +'\n\n';
-        tmp.remove();
-        epp.remove();
-      }
 
+        tmp.remove(); epp.remove();
+
+        sortem(3, 1); hiShw.length= 0;
+        hiTab.forEach(function(x) { hiShw.push( x ); });
+
+        sortem(curTab= 2, -1); reFresh();
+        $('#mtb1').click();
+      }
       return;
     }
+
 
     if($(et).is('textarea')) { e.stopPropagation(); return; }
 
@@ -603,6 +611,7 @@ $(document).ready(function()
     else {
       //$('#htb>tr').removeClass('selR');
       rowAnim(trx, true);
+//      $(etpn).css({'word-wrap':'break-word'});
       //alert(hiTab[trx-1][2]);
     }
   });
@@ -616,7 +625,6 @@ $(document).ready(function()
     dl.forEach(function(x)
     {
       var k= x.split('\t');
-      k[0]= +k[0];
 
       k[1]= k[1].toUpperCase();
       k[2]= k[2].toUpperCase();
@@ -663,15 +671,15 @@ $(document).ready(function()
       k[3]= k[3].toLowerCase();
       k[4]= k[4].toLowerCase();
 
-      var ts= id2trs(k[0]);
-      if(ts.length > 2)
+      var ts= id2trs(+k[0]);
+      if(ts.length > 0)
       {
-        plTab.push([ k[0],k[1],k[2],k[3],k[4], '~memoT..' ]);
-        plShw.push([ k[0],k[1],k[2],k[3],k[4], '~memoS..' ]);
+        plTab.push([ +k[0],k[1],k[2],k[3],k[4], '' ]);
+        plShw.push([ +k[0],k[1],k[2],k[3],k[4], '' ]);
       }
     });
 
-    sortem(0, -1); nextID= +plTab[0][0];
+    sortem(0, -1); nextID= +plTab[0][0]+1;
     sortem(curTab= 1, 2); reFresh();
     $('#mtb1').click();
   }
@@ -679,46 +687,22 @@ $(document).ready(function()
 
   function importDB2(d)
   {
-    var dl= d.split('\n');
-    hiTab.length= 0;
-    hiShw.length= 0;
-    dl.forEach(function(x, c)
+    var k, dl= d.split('\n');
+    hiTab.length= 0; hiShw.length= 0;
+    dl.forEach(function(x)
     {
-      var k= x.split('\t');
-
+      k= x.split('\t');
       k[0]= k[0].substr(2);
       k[0]= k[0].replace(/[-]/g, '');
-      if(k[0].length < 5 || isNaN(k[0])) k[0]= '~date';
-      else  k[0]= +k[0];
+      if(k[2].length < 2 ||
+         k[0].length < 5 || isNaN(k[0])) k[2]= '#';
 
-      k[1]= +k[1];
-      if(k[2].length < 3) k[2]= '#';
-
-//      k[0]= k[0].substr(0,10);
-  //    k[2]= k[2].substr(0,200);
-      k[2]= k[2].toLowerCase();
-      
       if(k[2] !== '#')
       {
-        hiTab.push([ k[0], k[1], k[2], '~crmT' ]);
-        hiShw.push([ k[0], k[1], k[2], '~crmS' ]);
+        k[2]= k[2].toLowerCase();
+        hiTab.push([ +k[0], +k[1], k[2], '' ]);
+        hiShw.push([ +k[0], +k[1], k[2], '' ]);
       }
-    });
-
-    hiShw.forEach(function(x, c)
-    {
-        x[2]= x[2].replace(/\n|\r/g, ' ');;
-        var q, nc= 50, cl= x[2].length, ch= [];
-        for(var j= 0; j < cl; j+= nc)
-        {
-          q= x[2].substring(j, j+nc);
-          if(q[0] === ' ') q= q.substr(1);
-          ch.push( q );
-        }
-
-        ch= ch.join('\n     ');
-        var p= ' TR: ' +ch;
-        x[2]= p +'\n CR: '+' ~end';
     });
 
     sortem(3, 1);
@@ -992,8 +976,8 @@ $(document).ready(function()
 
   function ft2f()
   {
+    return;
   }
-//textarea
 
   $('#t1fil, #t2fil').click(function(e)
   {//e.stopImmediatePropagation(); e.preventDefault();
@@ -1066,9 +1050,9 @@ $(document).ready(function()
 
     a= Math.abs(tbSrt[tn]) -1;
     if(a === 1 || a === 2)
-      this.value= t.toUpperCase().replace(/[^A-Z ]/, '');
+      this.value= t.toUpperCase().replace(/[^A-Z ]/g, '');
     else
-      this.value= t.toUpperCase().replace(/[^0-9]/, '');
+      this.value= t.toUpperCase().replace(/[^0-9]/g, '');
     
   });
 
@@ -1079,22 +1063,71 @@ $(document).ready(function()
   });
 
 // *** &&...
-  $('.clPinf').on('input', function()
+  $('.clPinf').on('keyup', function()
   {
-    $('#ta1mrg')[0].disabled= true;
+//    $('#ta1mrg')[0].disabled= true;
     $('#ta1rmv')[0].disabled= true;
     $('#ta1sub')[0].disabled= false;
+      this.value= this.value.toUpperCase().replace(/[^A-Z]/g, '');
   });
 
 
   // *** TAB 1 : ADMIN BUTTONS **********************************
-  // *** To be, or no delete?
-/*  $('#rli1But').click( //>Remove Last ID<
-    function() { plTab.splice(nextID-1, 1); reFresh(); });
+  $('#ta1rmv').click( //>Remove<
+  function()
+  {
+  //  alert(0);
+    var i, x, fnd= -1, cid= +$('#t1e0')[0].value;
 
-  $("#rma1But").click(function() { //>Remove All<
-    plTab.length= 0; hiTab.length= 0; reFresh(); });
-*/
+    for(i= 0; i < plTab.length; i++)
+    {
+      x= plTab[i];
+      if(x[0] === cid) { fnd= i; break; }
+    }
+
+    if(fnd > 0)
+    {
+      plShw.length= 0;
+      plTab.splice(fnd, 1);
+      plTab.forEach(function(x) { plShw.push( x ); });
+
+//      editMode= false;
+      fltNum[1]= 1; fltStr[1]= 'No Filters..';
+      sortem(0, -1); nextID= +plTab[0][0]+1;
+      sortem(curTab= 1, tbSrt[1]); reFresh();
+      $('#mtb1').click();
+//      nBar.innerText= ' #er= '+editRow+ ' deleted!';
+    }
+    else
+      nBar.innerText= 'not found';
+  });
+
+  $("#ta1sub").click(function()
+  { //>New / Edit<
+
+    var cid= nextID;
+    if(this.value[0] === 'N')
+    {
+/*      alert('1='+$('#t1e1')[0].value+'  2='+ $('#t1e2')[0].value
+            +'  3='+$('#t1e3')[0].value+'  4='+ $('#t1e4')[0].value);*/
+      plTab.push([ cid, $('#t1e1')[0].value, $('#t1e2')[0].value,
+                  $('#t1e3')[0].value, $('#t1e4')[0].value, 'mjhjkkppp' ]);
+
+
+//      editMode= false;
+      fltNum[1]= 1; fltStr[1]= 'No Filters..';
+    //  alert(0);
+      sortem(0, -1); nextID= +plTab[0][0]+1;
+      plShw.length= 0;
+  //    alert(2);
+      plTab.forEach(function(x) { plShw.push( x ); });
+      sortem(curTab= 1, tbSrt[1]); reFresh();
+      $('#mtb1').click();
+//      alert(9);
+    }
+
+  });
+
 
 
   // *** TAB 2 : ADMIN BUTTONS **********************************
@@ -1182,6 +1215,6 @@ $(document).ready(function()
   });
 
   $("#sld4But").click( function() { loadDB(); }); //>Server Load<
-  $("#ssv4But").click( function() { saveDB(); }); //>Server Save<
+//  $("#ssv4But").click( function() { saveDB(); }); //>Server Save<
 
 }); // THE END

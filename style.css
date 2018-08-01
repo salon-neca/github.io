@@ -112,6 +112,8 @@ table {
   position:relative;
   table-layout:fixed;
   border-collapse:collapse;
+
+  font-size:17px;
 }
 th {
   padding:9px 5px;
@@ -119,10 +121,12 @@ th {
   font-size:15px; font-weight:bold;
 }
 td {
-  font-size:17px; padding:5px 9px;
+  padding:5px 9px;
 }
 #htb td {
-  font-size:15px; white-space:pre;
+  font-size:15px; font-weight:500;
+  white-space:pre; overflow:hidden;
+  text-overflow:ellipsis; line-height:17px;
 }
 #htb tr.selR, #ptb tr.selR {
   color:white; background:#7f7f7f;
