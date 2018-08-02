@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.10p - by Zele, Jul\'18. \n';
+  var versionCode= 'v0.11c ::Zele, Aug\'18. \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:19999});
   
@@ -21,7 +21,7 @@ $(document).ready(function()
   var tbSpc= [0, '40px','40px','300px'];
   var tbLst= [0, 1,1];
   var tbSrt= [0, 2,-1];
-  var tbAll= [20, 20,20];
+  var tbAll= [99, 99,99];
 
   var tbFmod= [0, 1,1];
   var tbFcol= [0, '',''];
@@ -139,7 +139,7 @@ $(document).ready(function()
 
     $('#ta1mrg')[0].disabled= true;
     $('#ta1rmv')[0].disabled= true;
-    $('#ta1sub')[0].disabled= false;
+    $('#ta1sub')[0].disabled= true;
 
     $('#t1e0').val( 'next id@ '+ nextID );
     $('#ta1sub').val('New Client');
@@ -219,7 +219,7 @@ $(document).ready(function()
   function chunkStr(nc, s)
   { //alert(1);
     var ret='', ch= [];
-    s= s.replace(/\n|\r/g, ' ');
+//    s= s.replace(/\n|\r/g, ' ');
     for(var i= 0; i < s.length; i+= nc)
     {
       ret= s.substring(i, i+nc);
@@ -252,7 +252,7 @@ $(document).ready(function()
           //return x[2]+'^'+x[3];
 
         tn++;
-        x[2]= x[2].replace(/\n|\r/g, ' ');
+//        x[2]= x[2].replace(/\n|\r/g, ' ');
 
         ns= '#'+ ('0'+tn).slice(-2) +'. ';
 
@@ -422,15 +422,16 @@ $(document).ready(function()
     $(etpn).remove();
     resetEdit(curTab, 1);
   }
-/*  
-  function svHtab(a, b, c, d, et)
+
+  function svHtab()
   {
+    /*
         // *** save hiTab
         hiTab.push([ a, b, c, d ]);
         et.previousSibling.previousSibling.innerText=
-          id2trs(+b) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(+b)) +'\n\n';
+          id2trs(+b) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(+b)) +'\n\n';*/        
   }
-*/
+
   var noRst= true;
   $('#playerTable').click(function(e)
   {
@@ -441,14 +442,14 @@ $(document).ready(function()
       cid= $(et).closest('tr')[0].previousSibling.firstChild.innerText;
       nBar.innerText= ' @'+ cid +':'+ id2nme(+cid);
 
-      var epp;
+      var tre, cre, epp;
       if(et.value[0] === 'E')
       {
         epp= et.previousSibling;
         $(epp).before(
-           '<textarea placeholder="MEMO" rows="5" style="font-size:19px; width:100%; '
-          +'border:1px solid red; user-select:text; font-weight:bold; '
-          +'margin-bottom:3px; padding:9px" ></textarea>');
+           '<textarea placeholder="MEMO" rows="5" style="font-size:18px; width:644px; '
+          +'border:1px solid red; user-select:text; '//font-weight:bold; '
+          +'margin:3px; padding:9px" ></textarea>');
 
         et.value= 'Apply Edit';
         et.previousSibling.disabled= true;
@@ -486,14 +487,14 @@ $(document).ready(function()
       {
 //        tmp= id2trs(+cid, 1).split('^'); tmp[0],tmp[1]
         $(et).before(
-           '<textarea placeholder="TREATMENT" rows="5" style="font-size:19px; width:100%; '
-          +'border:1px solid red; user-select:text; font-weight:bold; '
-          +'margin-bottom:3px; padding:9px" ></textarea>');
+           '<textarea placeholder="TREATMENT" rows="5" style="font-size:18px; width:644px; '
+          +'border:1px solid red; user-select:text; '//font-weight:bold; '
+          +'margin:3px; padding:9px" ></textarea>');
 
         $(et).before(
-           '<textarea placeholder="CREAMS" rows="3" style="font-size:19px; width:100%; '
-          +'border:1px solid red; user-select:text; font-weight:bold; '
-          +'margin-bottom:3px; padding:9px" ></textarea>');
+           '<textarea placeholder="CREAMS" rows="3" style="font-size:18px; width:644px; '
+          +'border:1px solid red; user-select:text; '// font-weight:bold; '
+          +'margin:3px; padding:9px" ></textarea>');
 
         et.value= 'Finish and Save';
         et.nextSibling.disabled= true;
@@ -514,10 +515,10 @@ $(document).ready(function()
         tmp= et.previousSibling; //creams
         epp= tmp.previousSibling; //treatment
 
-        var tre= epp.value, cre= tmp.value;
+        tre= epp.value, cre= tmp.value;
         tmp.remove(); epp.remove();
 
-//        et.previousSibling.previousSibling.innerText= 'Saving, please wait...';
+        et.previousSibling.previousSibling.innerText= 'Saving, please wait...';
   //      svHtab(curDTM(), cid, tre, cre, et);
 
         // *** save hiTab
@@ -525,12 +526,15 @@ $(document).ready(function()
         et.previousSibling.previousSibling.innerText=
           id2trs(+cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(+cid)) +'\n\n';
 
-        hiShw.length= 0; 
-        hiTab.forEach(function(x) { hiShw.push( x ); });
+        setTimeout(function()
+        {
+          hiShw.length= 0; 
+          hiTab.forEach(function(x) { hiShw.push( x ); });
 
-        sortem(3, 1); 
-        sortem(curTab= 2, -1); reFresh();
-        $('#mtb1').click();
+          sortem(3, 1); 
+          sortem(curTab= 2, -1); reFresh();
+          $('#mtb1').click();
+        }, 99);
       }
       return;
     }
@@ -689,6 +693,16 @@ $(document).ready(function()
       k[3]= k[3].toLowerCase();
       k[4]= k[4].toLowerCase();
 
+      k[1]= k[1].replace(/\n|\r|\t/gi, ' #');
+      k[2]= k[2].replace(/\n|\r|\t/gi, ' #');
+      k[3]= k[3].replace(/\n|\r|\t/gi, ' #');
+      k[4]= k[4].replace(/\n|\r|\t/gi, ' #');
+      
+      k[1]= k[1].replace(/\s+/gi,' ').trim();
+      k[2]= k[2].replace(/\s+/gi,' ').trim();
+      k[3]= k[3].replace(/\s+/gi,' ').trim();
+      k[4]= k[4].replace(/\s+/gi,' ').trim();
+
 //      var ts= id2trs(+k[0]);
   //    if(ts.length > 3)
       {
@@ -715,13 +729,18 @@ $(document).ready(function()
 //      k= dl[i].split('\t');
       
 //      k[1]= k[1].substr(2);
-      k[1]= k[1].replace(/[-]/g, '');
-      if(k[2].length < 1 ||
+      k[1]= k[1].replace(/[-]/gi, '');
+
+      k[2]= k[2].toLowerCase();
+      k[2]= k[2].replace(/[@]/gi, ':');
+      k[2]= k[2].replace(/\n|\r|\t/gi, ' #');
+      k[2]= k[2].replace(/\s+/g,' ').trim();
+
+      if(k[2].length < 3 ||
          k[1].length < 5 || isNaN(k[1])) k[2]= '#';
 
       if(k[2] !== '#')
-      {
-        k[2]= k[2].toLowerCase().replace(/\s+/g,' ').trim();
+      { 
         hiTab.push([ +k[1], +k[0], k[2], '' ]);
         hiShw.push([ +k[1], +k[0], k[2], '' ]);
       }
@@ -1019,6 +1038,7 @@ $(document).ready(function()
     var i, x, c1, tn= 2, qs= '#t2in1';
     var inp= $(qs).val(), ts= Math.abs(tbSrt[tn])-1;
 
+    inp= inp.toLowerCase();
     fltInp[tn]= inp;
     hiShw.length= 0;
     for(i= 0; i < dd.length; i++)
@@ -1112,18 +1132,19 @@ $(document).ready(function()
     else
     if(t.length === 1) nBar.innerText= tblInf[tn];
 
-      a= Math.abs(tbSrt[tn]) -1;
+    a= Math.abs(tbSrt[tn]) -1;
     if(tn !== 2)
-    {
+    { // *** tab1
       if(a === 1 || a === 2)
-        this.value= t.toUpperCase().replace(/[^A-Z ]/g, '');
+        this.value= t.toUpperCase().replace(/[^A-Z ]/gi, '');
       else
         this.value= t.toUpperCase().replace(/[^0-9]/g, '');
       return;
     }
 
+    // *** tab2
     if(a > 1)
-      this.value= t.toUpperCase().replace(/[^A-Z @,/+]/gi, '');
+      this.value= t.toUpperCase().replace(/[^A-Z 0-9@,.:/-/+]/gi, '');
     else
       this.value= t.toUpperCase().replace(/[^0-9]/g, '');
   });
@@ -1137,10 +1158,28 @@ $(document).ready(function()
 // *** &&...
   $('.clPinf').on('keyup', function()
   {
-//    $('#ta1mrg')[0].disabled= true;
-    $('#ta1rmv')[0].disabled= true;
-    $('#ta1sub')[0].disabled= false;
-      this.value= this.value.toUpperCase().replace(/[^A-Z]/g, '');
+    var ii= +this.id[3], tn= curTab;
+    //jq= $('#t1inf');
+    
+    if(tn !== 2)
+    { // *** tab1
+      if(ii > 2)
+      {
+        //    $('#ta1mrg')[0].disabled= true;
+        $('#ta1rmv')[0].disabled= true;
+        $('#ta1sub')[0].disabled= false;
+        this.value= this.value.toUpperCase().replace(/[^0-9]/g, '');
+        return;
+      }
+      //    $('#ta1mrg')[0].disabled= true;
+      $('#ta1rmv')[0].disabled= true;
+      $('#ta1sub')[0].disabled= false;
+      this.value= this.value.toUpperCase().replace(/[^A-Z \-]/gi, '');
+      return;
+    }
+
+    // *** tab2
+    
   });
 
 
@@ -1238,12 +1277,15 @@ $(document).ready(function()
   
   // *** class="ord2" : DARK BOTTOM BUTTON
   $("#cad4But").click( function() { // >Cache Data<
+    adminInfo.innerText+= '~inProgress...';
 //    loadCache(false);
   });
   $("#imc4But").click( function() { // >Import Cache<
+    adminInfo.innerText+= '~inProgress...';
 //    ttxt= 'IMPORT'; loadCache(true);
   });
   $("#stc4But").click( function() { // >Store Cache<
+    adminInfo.innerText+= '~inProgress...';
 //    saveDB(true);
   });
 
@@ -1303,6 +1345,9 @@ $(document).ready(function()
   });
 
   $("#sld4But").click( function() { loadDB(); }); //>Server Load<
-//  $("#ssv4But").click( function() { saveDB(); }); //>Server Save<
+  $("#ssv4But").click( function() {
+    adminInfo.innerText+= '~inProgress...';
+//    saveDB();
+  }); //>Server Save<
 
 }); // THE END
