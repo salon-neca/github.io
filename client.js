@@ -1,8 +1,8 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.10f - by Zele, Jul\'18. \n';
+  var versionCode= 'v0.10h - by Zele, Jul\'18. \n';
   var appPath= 'https://sns.glitch.me';
-  $.ajaxSetup({async:true, cache:false, timeout:9999});
+  $.ajaxSetup({async:true, cache:false, timeout:19999});
   
   var nBar= document.getElementById('notif');
   var adminInfo= document.getElementById('dbFrame');
@@ -40,7 +40,7 @@ $(document).ready(function()
 // *** HISYORY TAB TABLE
   var hiTab= [0, 0, '~tr','~cr'];
   var hiShw= [0, 0, '~tr','~cr'];
-
+  
   var lastNotif= '';
   function clrAdmin(a)
   {
@@ -164,13 +164,16 @@ $(document).ready(function()
     if(tab === 3) t= hiTab;
     if(t.length < 2) return;
 
-    // alpha... works for numbers too, sure?
-    t.sort(function(a, b)
-    {
-      if(b[col] > a[col]) return -1;
-      else if(b[col] < a[col]) return 1;
-      else return 0;
-    });
+//    if(isNaN(t[0][col]))
+    { // alpha
+      t.sort(function(a, b)
+      {
+        if(b[col] > a[col]) return -1;
+        else if(b[col] < a[col]) return 1;
+        else return 0;
+      });
+    }
+//    else // numeric      t.sort(function(a, b) { return +b[col] - (+a[col]); });
 
     if(rev) t.reverse();
     if(tab === 1)
@@ -210,7 +213,7 @@ $(document).ready(function()
     var r= curDate.getFullYear()
                + ("00"+(curDate.getMonth()+1)).slice(-2)
                + ("00"+curDate.getDate()).slice(-2);
-    return r.substr(2);
+    return r; //.substr(2);
   }
 
   function chunkStr(nc, s)
@@ -311,8 +314,9 @@ $(document).ready(function()
   
   function ndt2sdt(nd)
   {
-    var m= +(''+nd).substring(2,4);
-    return (''+nd).substring(4,6)+" " + msa[m-1]+"`"+(''+nd).substr(0,2);
+    nd= (''+nd);
+    var m= +(nd.substr(4,2));
+    return nd.substr(6,2) +' '+ msa[m-1] +" "+ nd.substr(0,4);
   }
 
   function freshTab2()
@@ -418,7 +422,16 @@ $(document).ready(function()
     $(etpn).remove();
     resetEdit(curTab, 1);
   }
-
+/*  
+  function svHtab(a, b, c, d, et)
+  {
+        // *** save hiTab
+        hiTab.push([ a, b, c, d ]);
+        et.previousSibling.previousSibling.innerText=
+          id2trs(+b) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(+b)) +'\n\n';
+  }
+*/
+  var noRst= true;
   $('#playerTable').click(function(e)
   {
     var tmp, cid, et= e.target;
@@ -501,16 +514,21 @@ $(document).ready(function()
         tmp= et.previousSibling; //creams
         epp= tmp.previousSibling; //treatment
 
-        // *** save hiTab
-        hiTab.push([ curDTM(), +cid, epp.value, tmp.value ]);
-        epp.previousSibling.previousSibling.innerText=
-          id2trs(+cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(+cid)) +'\n\n';
-
+        var tre= epp.value, cre= tmp.value;
         tmp.remove(); epp.remove();
 
-        sortem(3, 1); hiShw.length= 0;
+//        et.previousSibling.previousSibling.innerText= 'Saving, please wait...';
+  //      svHtab(curDTM(), cid, tre, cre, et);
+
+        // *** save hiTab
+        hiTab.push([ curDTM(), +cid, tre, cre ]);
+        et.previousSibling.previousSibling.innerText=
+          id2trs(+cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(+cid)) +'\n\n';
+
+        hiShw.length= 0; 
         hiTab.forEach(function(x) { hiShw.push( x ); });
 
+        sortem(3, 1); 
         sortem(curTab= 2, -1); reFresh();
         $('#mtb1').click();
       }
@@ -549,8 +567,9 @@ $(document).ready(function()
     // *** subRow-content - CREATE
     if(editMode)
     {
-      resetEdit(1);
-      editRow= tx= ti; tx++;
+      resetEdit(1, noRst);
+      if(noRst) editRow= tx;
+      else {editRow= tx= ti; tx++; }
 
       $('#ta1sub').val('Apply Edit');
       $('#t1e0').val( plShw[ti][0] );
@@ -563,7 +582,7 @@ $(document).ready(function()
       $('#ta1rmv')[0].disabled= false;
       $('#ta1sub')[0].disabled= true;
     }
-
+    
     var xTxt= id2trs(+cid) +'\n**** MEMO:  '
                 + chunkStr(63, id2mmo(+cid)) +'\n\n';
 
@@ -629,7 +648,6 @@ $(document).ready(function()
       k[1]= k[1].toUpperCase();
       k[2]= k[2].toUpperCase();
 
-
       if(k[3][3] === '-') k[3]= k[3].replace('-', '');
       if(k[4][3] === '-') k[4]= k[4].replace('-', '');
         
@@ -665,14 +683,14 @@ $(document).ready(function()
 
       if(k[1].length < 2) k[1]= '~first';
       if(k[2].length < 2) k[2]= '~last';
-      if(k[3].length < 5) k[3]= '~tel.';
+      if(k[3].length < 5) k[3]= '~pho.';
       if(k[4].length < 5) k[4]= '~mob.';
 
       k[3]= k[3].toLowerCase();
       k[4]= k[4].toLowerCase();
 
-      var ts= id2trs(+k[0]);
-      if(ts.length > 0)
+//      var ts= id2trs(+k[0]);
+  //    if(ts.length > 3)
       {
         plTab.push([ +k[0],k[1],k[2],k[3],k[4], '' ]);
         plShw.push([ +k[0],k[1],k[2],k[3],k[4], '' ]);
@@ -687,26 +705,32 @@ $(document).ready(function()
 
   function importDB2(d)
   {
-    var k, dl= d.split('\n');
-    hiTab.length= 0; hiShw.length= 0;
+    var i, k, dl= d.split('\n');
+    hiTab.length= 0;
+    hiShw.length= 0;
     dl.forEach(function(x)
+//    for(i= 0; i < 999; i++)
     {
       k= x.split('\t');
-      k[0]= k[0].substr(2);
-      k[0]= k[0].replace(/[-]/g, '');
-      if(k[2].length < 2 ||
-         k[0].length < 5 || isNaN(k[0])) k[2]= '#';
+//      k= dl[i].split('\t');
+      
+//      k[1]= k[1].substr(2);
+      k[1]= k[1].replace(/[-]/g, '');
+      if(k[2].length < 1 ||
+         k[1].length < 5 || isNaN(k[1])) k[2]= '#';
 
       if(k[2] !== '#')
       {
-        k[2]= k[2].toLowerCase();
-        hiTab.push([ +k[0], +k[1], k[2], '' ]);
-        hiShw.push([ +k[0], +k[1], k[2], '' ]);
+        k[2]= k[2].toLowerCase().replace(/\s+/g,' ').trim();
+        hiTab.push([ +k[1], +k[0], k[2], '' ]);
+        hiShw.push([ +k[1], +k[0], k[2], '' ]);
       }
     });
 
     sortem(3, 1);
     sortem(curTab= 2, -1); reFresh();
+
+    
 //    $('#mtb1').click();
     loadServer();
   }
@@ -900,6 +924,14 @@ $(document).ready(function()
     if(curTab === 3) {
       adminInfo.innerText+= ' [?]Unused slot, haa... \n'; return; }
 
+    var i, sIs= [],
+        sRs= $('#ptb')[0].getElementsByClassName('selR');
+    
+    //alert('a='+sRs.length);
+    for(i= 0; i < sRs.length; i++)
+      sIs.push( sRs[i].rowIndex );
+    
+//    alert('oo='+sIs);
     resetEdit(curTab);
     if(editMode= !editMode)
     {
@@ -914,7 +946,14 @@ $(document).ready(function()
       $('.filt').css('display', 'block');
     }
 
-    nBar.innerText= tblInf[curTab]; 
+    noRst= true;
+      sIs.forEach(function(i)
+      {
+        var jj= $('#ptb>tr')[i-1];
+        $(jj.firstChild).click();
+      });
+//    noRst= false;
+    nBar.innerText= tblInf[curTab];
   });
 
   $("#mnu2").click(function()
@@ -1085,21 +1124,23 @@ $(document).ready(function()
       if(x[0] === cid) { fnd= i; break; }
     }
 
-    if(fnd > 0)
+    if(fnd >= 0)
     {
-      plShw.length= 0;
-      plTab.splice(fnd, 1);
-      plTab.forEach(function(x) { plShw.push( x ); });
-
-//      editMode= false;
       fltNum[1]= 1; fltStr[1]= 'No Filters..';
+
+      plTab.splice(fnd, 1);
+
+      plShw.length= 0;
+      plTab.forEach(function(x) { plShw.push( x ); });
+      
       sortem(0, -1); nextID= +plTab[0][0]+1;
       sortem(curTab= 1, tbSrt[1]); reFresh();
+      
       $('#mtb1').click();
-//      nBar.innerText= ' #er= '+editRow+ ' deleted!';
+      nBar.innerText= ' [!]Deleted';
     }
     else
-      nBar.innerText= 'not found';
+      nBar.innerText= ' [!]Not found';
   });
 
   $("#ta1sub").click(function()
@@ -1108,24 +1149,19 @@ $(document).ready(function()
     var cid= nextID;
     if(this.value[0] === 'N')
     {
-/*      alert('1='+$('#t1e1')[0].value+'  2='+ $('#t1e2')[0].value
-            +'  3='+$('#t1e3')[0].value+'  4='+ $('#t1e4')[0].value);*/
-      plTab.push([ cid, $('#t1e1')[0].value, $('#t1e2')[0].value,
-                  $('#t1e3')[0].value, $('#t1e4')[0].value, 'mjhjkkppp' ]);
-
-
-//      editMode= false;
       fltNum[1]= 1; fltStr[1]= 'No Filters..';
-    //  alert(0);
-      sortem(0, -1); nextID= +plTab[0][0]+1;
+
+      plTab.push([ cid, $('#t1e1')[0].value, $('#t1e2')[0].value,
+                  $('#t1e3')[0].value, $('#t1e4')[0].value, '' ]);
+
       plShw.length= 0;
-  //    alert(2);
       plTab.forEach(function(x) { plShw.push( x ); });
+      
+      editMode= true;
+      sortem(0, -1); nextID= +plTab[0][0]+1;
       sortem(curTab= 1, tbSrt[1]); reFresh();
       $('#mtb1').click();
-//      alert(9);
     }
-
   });
 
 
