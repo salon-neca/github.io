@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.10h - by Zele, Jul\'18. \n';
+  var versionCode= 'v0.10p - by Zele, Jul\'18. \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:19999});
   
@@ -975,24 +975,24 @@ $(document).ready(function()
 
   // *** FILTERING ************************************
   function hntShow() {
-    nBar.innerText= tblInf[1] +' [?]Press SPACE to toggle filter modes.'; }
+    nBar.innerText= tblInf[curTab] +' [?]Press SPACE to toggle filter modes.'; }
 
   function ft1f()
   {
     var dd= plShw.splice(0);
-    var x, c1, c2, qs= '#t1in1';
-    var inp= $(qs).val(), ts= Math.abs(tbSrt[1])-1;
+    var i, x, c1, c2, tn= 1, qs= '#t1in1';
+    var inp= $(qs).val(), ts= Math.abs(tbSrt[tn])-1;
 
-    fltInp[1]= inp;
+    fltInp[tn]= inp;
     plShw.length= 0;
-    for(var i= 0; i < dd.length; i++)
+    for(i= 0; i < dd.length; i++)
     {
       x= dd[i];
       if(ts === 0)
       {
-        var c1= ''+x[0];
+        c1= ''+x[0];
         c1= c1.indexOf(inp);
-        if(tbFmod[1] === 2) {
+        if(tbFmod[tn] === 2) {
           if(c1 >= 0) plShw.push( x ); }
         else {
           if(c1 === 0) plShw.push( x ); }
@@ -1005,7 +1005,7 @@ $(document).ready(function()
           c1= x[3].indexOf(inp);
           c2= x[4].indexOf(inp);
         }
-        if(tbFmod[1] === 2) {
+        if(tbFmod[tn] === 2) {
           if(c1 >= 0 || c2 >= 0) plShw.push( x ); }
         else {
           if(c1 === 0 || c2 === 0) plShw.push( x ); }
@@ -1015,7 +1015,22 @@ $(document).ready(function()
 
   function ft2f()
   {
-    return;
+    var dd= hiShw.splice(0);
+    var i, x, c1, tn= 2, qs= '#t2in1';
+    var inp= $(qs).val(), ts= Math.abs(tbSrt[tn])-1;
+
+    fltInp[tn]= inp;
+    hiShw.length= 0;
+    for(i= 0; i < dd.length; i++)
+    {
+      x= dd[i];
+      c1= ''+x[ts];
+      c1= c1.indexOf(inp);
+      if(tbFmod[tn] === 2) {
+        if(c1 >= 0) hiShw.push( x ); }
+      else {
+        if(c1 === 0) hiShw.push( x ); }
+    }
   }
 
   $('#t1fil, #t2fil').click(function(e)
@@ -1024,10 +1039,10 @@ $(document).ready(function()
     if(tn !== 2) { tn= 1; ft1f(); } else ft2f();
 
     sortem(curTab= tn, tbSrt[tn]);
-    reFresh();
+    reFresh(); 
 
     if(tn !== 2) $('#t1in1')[0].focus();
-    else $('#t2in1')[0].focus();
+    else { $("#mtb2").click(); $('#t2in1')[0].focus(); }
   });
 
   $('#t1clr, #t2clr').click(function(e)
@@ -1036,9 +1051,19 @@ $(document).ready(function()
     if(tn !== 2) { tn= 1; js= '#t1in1'; }
 
     fltNum[tn]= 1; fltStr[tn]= 'No Filters..';
-    plShw.length= 0; plTab.forEach(function(x) { plShw.push( x ); });
+
+    if(tn !== 2)
+    {
+      plShw.length= 0; plTab.forEach(function(x) { plShw.push( x ); });
+      sortem(curTab= tn, tbSrt[tn])
+      reFresh(); $(js)[0].focus();
+      return;
+    }
+
+    hiShw.length= 0; hiTab.forEach(function(x) { hiShw.push( x ); });
     sortem(curTab= tn, tbSrt[tn])
-    reFresh(); $(js)[0].focus();
+    reFresh(); $("#mtb2").click(); $(js)[0].focus();
+     
   });
 
   $('#t1in1, #t2in1').on('focus', function(e)
@@ -1087,12 +1112,20 @@ $(document).ready(function()
     else
     if(t.length === 1) nBar.innerText= tblInf[tn];
 
-    a= Math.abs(tbSrt[tn]) -1;
-    if(a === 1 || a === 2)
-      this.value= t.toUpperCase().replace(/[^A-Z ]/g, '');
+      a= Math.abs(tbSrt[tn]) -1;
+    if(tn !== 2)
+    {
+      if(a === 1 || a === 2)
+        this.value= t.toUpperCase().replace(/[^A-Z ]/g, '');
+      else
+        this.value= t.toUpperCase().replace(/[^0-9]/g, '');
+      return;
+    }
+
+    if(a > 1)
+      this.value= t.toUpperCase().replace(/[^A-Z @,/+]/gi, '');
     else
       this.value= t.toUpperCase().replace(/[^0-9]/g, '');
-    
   });
 
   $('.finf').on('keydown', function(e)
@@ -1147,9 +1180,9 @@ $(document).ready(function()
   { //>New / Edit<
 
     var cid= nextID;
+    fltNum[1]= 1; fltStr[1]= 'No Filters..';
     if(this.value[0] === 'N')
-    {
-      fltNum[1]= 1; fltStr[1]= 'No Filters..';
+    { // *** NEW
 
       plTab.push([ cid, $('#t1e1')[0].value, $('#t1e2')[0].value,
                   $('#t1e3')[0].value, $('#t1e4')[0].value, '' ]);
@@ -1157,11 +1190,30 @@ $(document).ready(function()
       plShw.length= 0;
       plTab.forEach(function(x) { plShw.push( x ); });
       
-      editMode= true;
       sortem(0, -1); nextID= +plTab[0][0]+1;
       sortem(curTab= 1, tbSrt[1]); reFresh();
       $('#mtb1').click();
     }
+
+    // *** EDIT
+    cid= +$('#t1e0')[0].value;
+    for(var i=0; i < plTab.length; i++)
+    {
+      if(plTab[i][0] === cid)
+      { //nBar.innerText= 'Apply @'+ x[0] +':'+ x[1] +' '+ x[2];
+        plTab[i][1]= $('#t1e1')[0].value;
+        plTab[i][2]= $('#t1e2')[0].value;
+        plTab[i][3]= $('#t1e3')[0].value;
+        plTab[i][4]= $('#t1e4')[0].value
+      }
+    }
+    
+    plShw.length= 0;
+    plTab.forEach(function(x) { plShw.push( x ); });
+
+    sortem(0, -1); nextID= +plTab[0][0]+1;
+    sortem(curTab= 1, tbSrt[1]); reFresh();
+    $('#mtb1').click();
   });
 
 
