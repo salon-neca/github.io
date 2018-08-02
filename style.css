@@ -112,8 +112,6 @@ table {
   position:relative;
   table-layout:fixed;
   border-collapse:collapse;
-
-  font-size:17px;
 }
 th {
   padding:9px 5px;
@@ -121,7 +119,7 @@ th {
   font-size:15px; font-weight:bold;
 }
 td {
-  padding:5px 9px;
+  font-size:17px; padding:5px 9px;
 }
 #htb td {
   font-size:15px; font-weight:500;
