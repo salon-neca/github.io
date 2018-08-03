@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.11c ::Zele, Aug\'18. \n';
+  var versionCode= 'v0.s01a ::Zele, Aug\'18. \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:19999});
   
@@ -29,17 +29,16 @@ $(document).ready(function()
   var fltInf= [0, '~fI1','~fI2'];
 
   var recNum= [0, 0,0];
-  var fltNum= [0, 1,1];
+  var recFil= [0, 0,0];
+  var fltNum= [0, 0,0];
   var fltMax= [0, 0,0];
   var fltInp= [0, '',''];
   var fltStr= [0, '~fS1','~fS2'];
 
 // *** PLAYER TAB
-  var plTab= [0, 'first', 'last', 'tel', 'mob', '[memo]'];
-  var plShw= [0, 'first', 'last', 'tel', 'mob', '[memo]'];
+  var plTab= [0, 'first', 'last', 'tel', 'mob', '[memo]', 0];
 // *** HISYORY TAB TABLE
   var hiTab= [0, 0, '~tr','~cr'];
-  var hiShw= [0, 0, '~tr','~cr'];
   
   var lastNotif= '';
   function clrAdmin(a)
@@ -112,10 +111,11 @@ $(document).ready(function()
     var b, c, r= $(jq)[i];
     if(curTab !== 2) c= r.firstChild.innerText;
     else c= r.firstChild.nextSibling.innerText;
-//alert('cid='+cid);];
+    
     if(curTab === 2) b= tblInf[2]; else b= tblInf[1];
     if(!o)
     {
+//      editRow= -1;
       $(r).removeClass(); nBar.innerText= b;
       if(tbLst[curTab] !== 1) $(r).addClass('clnR');
       return;
@@ -158,13 +158,11 @@ $(document).ready(function()
     var rev= (col < 0);
     col= Math.abs(col)-1;
 
-    var t= plShw;
-    if(tab === 2) t= hiShw;
-    if(tab === 0) t= plTab;
-    if(tab === 3) t= hiTab;
+    var t= plTab;
+    if(tab !== 1) t= hiTab;
     if(t.length < 2) return;
 
-//    if(isNaN(t[0][col]))
+    if(isNaN(t[0][col]))
     { // alpha
       t.sort(function(a, b)
       {
@@ -173,7 +171,8 @@ $(document).ready(function()
         else return 0;
       });
     }
-//    else // numeric      t.sort(function(a, b) { return +b[col] - (+a[col]); });
+    else // numeric
+      t.sort(function(a, b) { return +b[col] - (+a[col]); });
 
     if(rev) t.reverse();
     if(tab === 1)
@@ -219,7 +218,7 @@ $(document).ready(function()
   function chunkStr(nc, s)
   { //alert(1);
     var ret='', ch= [];
-//    s= s.replace(/\n|\r/g, ' ');
+    s= s.replace(/\n|\r/g, ' ');
     for(var i= 0; i < s.length; i+= nc)
     {
       ret= s.substring(i, i+nc);
@@ -243,25 +242,25 @@ $(document).ready(function()
 
   function id2trs(rx)
   {
-    var rFrm, rCln, ful, q, x, ch2, ppp, ns, tn= 0, cs= '';
-    for(var i= 0; i < hiTab.length; i++)
+    var i, rFrm, rCln, ful, q, x, ch2, ppp, ns, tn= 0;
+    var trs= [], cs= '';
+    
+    for(i= 0; i < hiTab.length; i++)
     {
       x= hiTab[i];
       if(x[1] === rx)
       {
-          //return x[2]+'^'+x[3];
-
         tn++;
-//        x[2]= x[2].replace(/\n|\r/g, ' ');
-
-        ns= '#'+ ('0'+tn).slice(-2) +'. ';
-
-        ch2= chunkStr(63, x[2]);
-
-        ppp= ns +'DATE:  '+ ndt2sdt(x[0]) +'\nTREATMENT:  ' +ch2;
-        cs+= ppp+'\n   CREAMS:  '+ chunkStr(63, x[3]) +'\n\n';
+        trs.push([ +x[0], chunkStr(63, x[2]), chunkStr(63, x[3]) ]);
       }
     }
+
+    trs.forEach(function(tr, i)
+    {
+      ns= '#'+ ('0'+i).slice(-2) +'. ';
+      ppp= ns +'DATE:  '+ ndt2sdt(tr[0]) +'\nTREATMENT:  ' +tr[1];
+      cs+= ppp+'\n   CREAMS:  '+ tr[2] +'\n\n';
+    });
 
     return cs; //+'~'+'..creams..'; //.slice(0,-2);
   }
@@ -288,24 +287,29 @@ $(document).ready(function()
 // *** ------------------------------------------------------------------------------
 //    nextID= 0;
     $("#ptb").empty();
-    if(tbAll[1] === 0) tbAll[1]= plShw.length;
-    var i, ml= Math.min(tbAll[1], plShw.length);
-    for(i= 0; i < ml; i++)
+    if(tbAll[1] === 0) tbAll[1]= plTab.length;
+    var i, rn= 0, ml= Math.min(tbAll[1], plTab.length);
+    for(i= 0; rn < ml && i < plTab.length; i++)
     {
-      var col= plShw[i];
-      $('#ptb').append( '<tr tabindex="1">'
+      var col= plTab[i];
+      if(col[6] >= fltNum[1])
+      {
+        $('#ptb').append( '<tr tabindex="1">'
                         +'<td class="admin">'+ col[0]
                         +'</td><td>'+ col[1]
                         +'</td><td>'+ col[2]
                         +'</td><td>'+ col[3]
-                        +'</td><td>'+ col[4]
-                        +'</td><td style="display:none">'+ i
+                        +'</td><td>'+ col[4] //+col[5]
+                        +'</td><td style="display:none">'+ (rn++)
                         +'</td></tr>' );
+      }
     }
-    recNum[1]= i;
+
+    recNum[1]= rn;
     tbAll[1]= tbAll[0];
 
-    if(i === plShw.length) $('#t1all')[0].disabled= true;
+    if(fltNum[1] === 0) recFil[1]= plTab.length;
+    if(i === plTab.length) $('#t1all')[0].disabled= true;
     else $('#t1all')[0].disabled= false;
   }
 
@@ -323,12 +327,12 @@ $(document).ready(function()
   {
     
     $('#htb').empty();
-    if(tbAll[2] === 0) tbAll[2]= hiShw.length;
-    var i, col, tr, cr, ml= Math.min(tbAll[2], hiShw.length);
+    if(tbAll[2] === 0) tbAll[2]= hiTab.length;
+    var i, col, tr, cr, ml= Math.min(tbAll[2], hiTab.length);
 
     for(i= 0; i < ml; i++)
     {
-      col= hiShw[i];
+      col= hiTab[i];
  //     tr= chunkStr(50, col[2]); tr= tr.replace(/[^]/g, '\n     ');
    //   cr= chunkStr(50, col[3]); cr= cr.replace(/[^]/g, '\n     ');
       $('#htb').append( '<tr tabindex="1">'
@@ -341,7 +345,8 @@ $(document).ready(function()
 
     recNum[2]= i;
     tbAll[2]= tbAll[0];
-    if(i === hiShw.length) $('#t2all')[0].disabled= true;
+    
+    if(i === hiTab.length) $('#t2all')[0].disabled= true;
     else $('#t2all')[0].disabled= false;
   }
 
@@ -353,12 +358,12 @@ $(document).ready(function()
 
     if(cln)
     {
-      if(fltNum[tn] === 1) fltStr[tn]= 'No Filters..';
+      if(fltNum[tn] === 0) fltStr[tn]= 'No Filters..';
       jq.text(fltStr[tn]);
       return;
     }
 
-    if(fltNum[tn] === 1) fltStr[tn]= '';
+    if(fltNum[tn] === 0) fltStr[tn]= '';
     var fc= tbFcol[tn]; //(tbFcol[t] === 1)? 'NAME' : 'PHONE';
     var fm= (tbFmod[tn] === 1)? '<begins with>' : '<contains>';
     fltInf[tn]= ''+fltNum[tn]+'.'+ fc + fm +'"..';
@@ -373,18 +378,18 @@ $(document).ready(function()
     {
       case 1: freshTab1();
         j1= $('#t1fil'), j2= $('#t1in1');
-        a= recNum[i]; b= plShw.length; c= plTab.length;
+        a= recNum[i]; b= recFil[i]; c= plTab.length;
       break;
       case 2: freshTab2();
         j1= $('#t2fil'), j2= $('#t2in1');
-        a= recNum[i]; b= hiShw.length; c= hiTab.length;
+        a= recNum[i]; b= recFil[i]; c= hiTab.length;
       break;
     }
     
     setRowSpc(); setRowCol();
     nBar.innerText= tblInf[i]= ' [#]'+ a +'/'+ b +'('+ c +')';
     
-        if(fltNum[i] === 1)
+        if(fltNum[i] === 0)
         {
           j1[0].disabled= false;
           j2[0].disabled= false;
@@ -394,7 +399,7 @@ $(document).ready(function()
         if(b < fltMax[i] && fltNum[i] < 3)
         {
           fltMax[i]= b;
-          if(fltNum[i]++ === 2)
+          if(fltNum[i] === 2)
           {
             j1[0].disabled= true;
             j2[0].disabled= true;
@@ -420,19 +425,10 @@ $(document).ready(function()
   {
     rowAnim(etpn.previousSibling.rowIndex, false);
     $(etpn).remove();
-    resetEdit(curTab, 1);
+    resetEdit(curTab);
   }
 
-  function svHtab()
-  {
-    /*
-        // *** save hiTab
-        hiTab.push([ a, b, c, d ]);
-        et.previousSibling.previousSibling.innerText=
-          id2trs(+b) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(+b)) +'\n\n';*/        
-  }
-
-  var noRst= true;
+  var noRst= false;
   $('#playerTable').click(function(e)
   {
     var tmp, cid, et= e.target;
@@ -480,7 +476,7 @@ $(document).ready(function()
         }
         epp.previousSibling.previousSibling.innerText=
           id2trs(+cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(+cid)) +'\n\n';
-        epp.remove();
+        $(epp).remove();
       }
       else
       if(et.value[0] === 'N')
@@ -516,25 +512,17 @@ $(document).ready(function()
         epp= tmp.previousSibling; //treatment
 
         tre= epp.value, cre= tmp.value;
-        tmp.remove(); epp.remove();
-
-        et.previousSibling.previousSibling.innerText= 'Saving, please wait...';
-  //      svHtab(curDTM(), cid, tre, cre, et);
+        $(epp).remove(); $(tmp).remove();
 
         // *** save hiTab
         hiTab.push([ curDTM(), +cid, tre, cre ]);
+          sortem(curTab= 2, -1);
         et.previousSibling.previousSibling.innerText=
           id2trs(+cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(+cid)) +'\n\n';
 
-        setTimeout(function()
-        {
-          hiShw.length= 0; 
-          hiTab.forEach(function(x) { hiShw.push( x ); });
-
-          sortem(3, 1); 
-          sortem(curTab= 2, -1); reFresh();
-          $('#mtb1').click();
-        }, 99);
+        //setTimeout(function() {
+        reFresh(); $('#mtb1').click(); 
+        //}, 99);
       }
       return;
     }
@@ -568,19 +556,20 @@ $(document).ready(function()
 //    if($(et).hasClass('xtrR')) { subrowDelete( et ); return; }
     if($(row).hasClass('selR')) { subrowDelete(row.nextSibling); return; }
 
+    noRst= false;
+    resetEdit(1, noRst);
+    tx= ti; tx++;
+    editRow= tx;
+
     // *** subRow-content - CREATE
     if(editMode)
     {
-      resetEdit(1, noRst);
-      if(noRst) editRow= tx;
-      else {editRow= tx= ti; tx++; }
-
       $('#ta1sub').val('Apply Edit');
-      $('#t1e0').val( plShw[ti][0] );
-      $('#t1e1').val( plShw[ti][1] );
-      $('#t1e2').val( plShw[ti][2] );
-      $('#t1e3').val( plShw[ti][3] );
-      $('#t1e4').val( plShw[ti][4] );
+      $('#t1e0').val( plTab[ti][0] );
+      $('#t1e1').val( plTab[ti][1] );
+      $('#t1e2').val( plTab[ti][2] );
+      $('#t1e3').val( plTab[ti][3] );
+      $('#t1e4').val( plTab[ti][4] );
 
       $('#ta1mrg')[0].disabled= false;
       $('#ta1rmv')[0].disabled= false;
@@ -644,7 +633,6 @@ $(document).ready(function()
   { // *** UNPACK & IMPORT
     var dl= d.split('\n');
     plTab.length= 0;
-    plShw.length= 0;
     dl.forEach(function(x)
     {
       var k= x.split('\t');
@@ -706,8 +694,7 @@ $(document).ready(function()
 //      var ts= id2trs(+k[0]);
   //    if(ts.length > 3)
       {
-        plTab.push([ +k[0],k[1],k[2],k[3],k[4], '' ]);
-        plShw.push([ +k[0],k[1],k[2],k[3],k[4], '' ]);
+        plTab.push([ +k[0],k[1],k[2],k[3],k[4], '', 0 ]);
       }
     });
 
@@ -721,7 +708,6 @@ $(document).ready(function()
   {
     var i, k, dl= d.split('\n');
     hiTab.length= 0;
-    hiShw.length= 0;
     dl.forEach(function(x)
 //    for(i= 0; i < 999; i++)
     {
@@ -742,7 +728,6 @@ $(document).ready(function()
       if(k[2] !== '#')
       { 
         hiTab.push([ +k[1], +k[0], k[2], '' ]);
-        hiShw.push([ +k[1], +k[0], k[2], '' ]);
       }
     });
 
@@ -942,15 +927,9 @@ $(document).ready(function()
   { // star A.
     if(curTab === 3) {
       adminInfo.innerText+= ' [?]Unused slot, haa... \n'; return; }
-
-    var i, sIs= [],
-        sRs= $('#ptb')[0].getElementsByClassName('selR');
+//    sRs= $('#ptb')[0].getElementsByClassName('selR');
     
-    //alert('a='+sRs.length);
-    for(i= 0; i < sRs.length; i++)
-      sIs.push( sRs[i].rowIndex );
-    
-//    alert('oo='+sIs);
+    var er= editRow-1;
     resetEdit(curTab);
     if(editMode= !editMode)
     {
@@ -965,13 +944,9 @@ $(document).ready(function()
       $('.filt').css('display', 'block');
     }
 
-    noRst= true;
-      sIs.forEach(function(i)
-      {
-        var jj= $('#ptb>tr')[i-1];
-        $(jj.firstChild).click();
-      });
-//    noRst= false;
+    var jj= $('#ptb>tr')[er];
+    $(jj.firstChild).click();
+
     nBar.innerText= tblInf[curTab];
   });
 
@@ -998,23 +973,31 @@ $(document).ready(function()
 
   function ft1f()
   {
-    var dd= plShw.splice(0);
-    var i, x, c1, c2, tn= 1, qs= '#t1in1';
+    var i, x, c1, c2, tn= 1, rf= 0, qs= '#t1in1';
     var inp= $(qs).val(), ts= Math.abs(tbSrt[tn])-1;
 
+    fltNum[tn]++;
     fltInp[tn]= inp;
-    plShw.length= 0;
-    for(i= 0; i < dd.length; i++)
+    var fn= fltNum[tn];
+    for(i= 0; i < plTab.length; i++)
     {
-      x= dd[i];
+      x= plTab[i];
       if(ts === 0)
       {
         c1= ''+x[0];
         c1= c1.indexOf(inp);
         if(tbFmod[tn] === 2) {
-          if(c1 >= 0) plShw.push( x ); }
+          if(c1 >= 0 && x[6]+1 >= fn) {
+            rf++;
+            x[6]= fn; //else x[6]= 0;
+          }
+        }
         else {
-          if(c1 === 0) plShw.push( x ); }
+          if(c1 === 0 && x[6]+1 >= fn) {
+            rf++;
+            x[6]= fn; //else x[6]= 0;
+          }
+        }
       }
       else
       {
@@ -1025,31 +1008,42 @@ $(document).ready(function()
           c2= x[4].indexOf(inp);
         }
         if(tbFmod[tn] === 2) {
-          if(c1 >= 0 || c2 >= 0) plShw.push( x ); }
+          if((c1 >= 0 || c2 >= 0) && x[6]+1 >= fn) {
+            rf++;
+            x[6]= fn; //else x[6]= 0;
+          }
+        }
         else {
-          if(c1 === 0 || c2 === 0) plShw.push( x ); }
+          if((c1 === 0 || c2 === 0) && x[6]+1 >= fn) {
+            rf++;
+            x[6]= fn; //else x[6]= 0;
+          }
+        }
       }
     }
+    recFil[1]= rf;
   }
 
   function ft2f()
   {
-    var dd= hiShw.splice(0);
     var i, x, c1, tn= 2, qs= '#t2in1';
     var inp= $(qs).val(), ts= Math.abs(tbSrt[tn])-1;
 
     inp= inp.toLowerCase();
     fltInp[tn]= inp;
-    hiShw.length= 0;
-    for(i= 0; i < dd.length; i++)
+    for(i= 0; i < hiTab.length; i++)
     {
-      x= dd[i];
+      x= hiTab[i];
       c1= ''+x[ts];
       c1= c1.indexOf(inp);
+/*
       if(tbFmod[tn] === 2) {
-        if(c1 >= 0) hiShw.push( x ); }
+//        if(c1 >= 0)
+      }
       else {
-        if(c1 === 0) hiShw.push( x ); }
+//        if(c1 === 0)
+      }
+*/
     }
   }
 
@@ -1070,17 +1064,22 @@ $(document).ready(function()
     var js= '#t2in1', tn= +this.id[1];
     if(tn !== 2) { tn= 1; js= '#t1in1'; }
 
-    fltNum[tn]= 1; fltStr[tn]= 'No Filters..';
+    fltNum[tn]= 0; fltStr[tn]= 'No Filters..';
 
     if(tn !== 2)
     {
-      plShw.length= 0; plTab.forEach(function(x) { plShw.push( x ); });
+      plTab.forEach(function(x) {
+        x[6]= 0;
+      });
       sortem(curTab= tn, tbSrt[tn])
       reFresh(); $(js)[0].focus();
+      
       return;
     }
+/*
+    hiTab.forEach(function(x) {
 
-    hiShw.length= 0; hiTab.forEach(function(x) { hiShw.push( x ); });
+    });*/
     sortem(curTab= tn, tbSrt[tn])
     reFresh(); $("#mtb2").click(); $(js)[0].focus();
      
@@ -1095,11 +1094,11 @@ $(document).ready(function()
 
   $('#t1in1, #t2in1').on('blur', function(e)
   { //e.stopImmediatePropagation(); e.preventDefault();
-    var jq= $('#t1inf');
+    var jq= $('#t2inf');
     var i= +this.id[1]; 
-    if(i === 2) jq= $('#t2inf'); else i= 1;
+    if(i !== 2) { i= 1; jq= $('#t1inf'); }
 
-    if(fltNum[i] > 1) jq.text(fltStr[i]);
+    if(fltNum[i] > 0) jq.text(fltStr[i]);
     else jq.text('No Filters..');
   });
 
@@ -1198,15 +1197,14 @@ $(document).ready(function()
 
     if(fnd >= 0)
     {
-      fltNum[1]= 1; fltStr[1]= 'No Filters..';
+      fltNum[1]= 0; fltStr[1]= 'No Filters..';
 
       plTab.splice(fnd, 1);
 
-      plShw.length= 0;
-      plTab.forEach(function(x) { plShw.push( x ); });
-      
-      sortem(0, -1); nextID= +plTab[0][0]+1;
-      sortem(curTab= 1, tbSrt[1]); reFresh();
+
+      sortem(curTab= 1, tbSrt[1]);
+      nextID= +plTab[0][0]+1;
+      reFresh();
       
       $('#mtb1').click();
       nBar.innerText= ' [!]Deleted';
@@ -1219,18 +1217,17 @@ $(document).ready(function()
   { //>New / Edit<
 
     var cid= nextID;
-    fltNum[1]= 1; fltStr[1]= 'No Filters..';
+    fltNum[1]= 0; fltStr[1]= 'No Filters..';
     if(this.value[0] === 'N')
     { // *** NEW
 
       plTab.push([ cid, $('#t1e1')[0].value, $('#t1e2')[0].value,
                   $('#t1e3')[0].value, $('#t1e4')[0].value, '' ]);
 
-      plShw.length= 0;
-      plTab.forEach(function(x) { plShw.push( x ); });
+      sortem(curTab= 1, tbSrt[1]);
+      nextID= +plTab[0][0]+1;
+      reFresh();
       
-      sortem(0, -1); nextID= +plTab[0][0]+1;
-      sortem(curTab= 1, tbSrt[1]); reFresh();
       $('#mtb1').click();
     }
 
@@ -1246,12 +1243,9 @@ $(document).ready(function()
         plTab[i][4]= $('#t1e4')[0].value
       }
     }
-    
-    plShw.length= 0;
-    plTab.forEach(function(x) { plShw.push( x ); });
-
-    sortem(0, -1); nextID= +plTab[0][0]+1;
-    sortem(curTab= 1, tbSrt[1]); reFresh();
+    sortem(curTab= 1, tbSrt[1]);
+    nextID= +plTab[0][0]+1;
+    reFresh();
     $('#mtb1').click();
   });
 
