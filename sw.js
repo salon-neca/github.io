@@ -1,9 +1,10 @@
-// *** s01 abcdefgh
+// *** s01 abcdefghi
 self.addEventListener('install', e => {
   caches.delete('saloncch').then(cache => {
       caches.open('saloncch').then(cache => {
         return cache.addAll([ '/', '/index.html', '/client.js', '/style.css',
-                 '/manifest.json', '/aux/aux.js', '/aux/ibm.ttf', '/aux/quack.wav' ])
+                 '/manifest.json', '/aux/aux.js', '/aux/ibm.ttf', '/aux/quack.wav',
+                  '/aux/a.jpg', '/aux/b.png', '/aux/c.png'])
           .then(() => self.skipWaiting());
       }); });
 });

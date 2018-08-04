@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.s01h ::Zele, Aug\'18. \n';
+  var versionCode= 'v0.s01i ::Zele, Aug\'18. \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:19999});
   
