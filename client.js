@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.s01i ::Zele, Aug\'18. \n';
+  var versionCode= 'v0.s01p ::Zele, Aug\'18. \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:19999});
   
@@ -15,9 +15,9 @@ $(document).ready(function()
 
   var curTab= 1;
   var lastTab= 0;
-//  var editRow= -1;
-  var edtRow= [-1, -1,-1];
+
   var curSpid= -1;
+  var edtRow= [-1, -1,-1];
   var editMode= false;
   var eefmod= [0, 0,0];
 
@@ -129,13 +129,26 @@ $(document).ready(function()
 
   function resetEdit(tab, jin)
   {
-//    editRow= curSpid= -1;
-
     if(tab !== 2) tab= 1;
     eefmod[tab]= 0;
         edtRow[tab]= curSpid= -1
     if(tab === 2)
     {
+      if(jin) return;
+      $('#htb>tr.xtrR').remove();
+      $('#htb>tr').removeClass();
+      if(tbLst[2] !== 1) $('#htb>tr').addClass('clnR');
+
+      $('#ta2rdt')[0].disabled= true;
+      $('#ta2rmv')[0].disabled= true;
+      $('#ta2sub')[0].disabled= true;
+
+      $('#ta2sub').val('Edit Session');
+      $('#t2e0').val( '' );
+
+      $('.clPinf').css({display:'none'});
+      $('#t1e1').val(''); $('#t1e2').val(''); $('#t1e3').val('');
+
       if(jin) return;
       $('#htb>tr.xtrR').remove();
       $('#htb>tr').removeClass();
@@ -188,14 +201,14 @@ $(document).ready(function()
       $('#pth>tr').children().css({border:'none'});
       $("#pth>tr").children().eq(col).css({border:'2px solid grey'});
       
-      $('#t1in1').val('');
+      $('#t1F').val('');
       if(col === 0) {
-        $('#t1in1').attr({placeholder:'#id'}); tbFcol[1]= '#id'; }
+        $('#t1F').attr({placeholder:'#id'}); tbFcol[1]= '#id'; }
       else
       if(col < 3) {
-        $('#t1in1').attr({placeholder:'NAME'}); tbFcol[1]= 'NAME'; }
+        $('#t1F').attr({placeholder:'NAME'}); tbFcol[1]= 'NAME'; }
       else {
-        $('#t1in1').attr({placeholder:'PHONE'}); tbFcol[1]= 'PHONE'; }
+        $('#t1F').attr({placeholder:'PHONE'}); tbFcol[1]= 'PHONE'; }
     }
     else
     if(tab === 2)
@@ -203,14 +216,14 @@ $(document).ready(function()
       $('#hth>tr').children().css({border:'none'});
       $('#hth>tr').children().eq(col).css({'border':'2px solid grey'});
 
-      $('#t2in1').val('');
+      $('#t2F').val('');
       if(col === 0) {
-        $('#t2in1').attr({placeholder:'DATE'}); tbFcol[2]= 'DATE'; }
+        $('#t2F').attr({placeholder:'DATE'}); tbFcol[2]= 'DATE'; }
       else
       if(col === 1) {
-        $('#t2in1').attr({placeholder:'#cid'}); tbFcol[2]= '#cid'; }
+        $('#t2F').attr({placeholder:'#cid'}); tbFcol[2]= '#cid'; }
       else {
-        $('#t2in1').attr({placeholder:'SESSION'}); tbFcol[2]= 'SESSION'; }
+        $('#t2F').attr({placeholder:'SESSION'}); tbFcol[2]= 'SESSION'; }
     }
   }
   
@@ -371,9 +384,9 @@ $(document).ready(function()
 
   function tiFresh(tn)
   {
-    var cln= false, jq= $('#t2inf');
+    var cln= false, jq= $('#t2FinfBar');
     if(tn < 0) { tn*= -1; cln= true; }
-    if(tn !== 2) { tn= 1; jq= $('#t1inf'); }
+    if(tn !== 2) { tn= 1; jq= $('#t1FinfBar'); }
 
     if(cln)
     {
@@ -404,11 +417,11 @@ $(document).ready(function()
     switch(curTab)
     {
       case 1: freshTab1();
-        j1= $('#t1fil'), j2= $('#t1in1');
+        j1= $('#t1fil'), j2= $('#t1F');
         a= recNum[i]; b= recFil[i]; c= plTab.length;
       break;
       case 2: freshTab2();
-        j1= $('#t2fil'), j2= $('#t2in1');
+        j1= $('#t2fil'), j2= $('#t2F');
         a= recNum[i]; b= recFil[i]; c= hiTab.length;
       break;
     }
@@ -480,11 +493,12 @@ $(document).ready(function()
 //alert(0);
 //        $('#historyTable>tr').children('td').eq(1).click();
         
-        $('#mtb2').click();
-        
 //        editRow= -1;
-        edtRow[1]= -1;
+        edtRow[2]= 1;
+        $('#mtb2').click();
+
         reFresh();
+        $("#mnu1").click();
         $('#t2fil')[0].disabled= true;
       }
       else
@@ -610,7 +624,7 @@ $(document).ready(function()
     tx= ti; tx++;
 //    editRow= tx;
     edtRow[1]= tx;
-    curSpid[1]= +cid;
+    curSpid= +cid;
 
     // *** subRow-content - CREATE
     if(editMode)
@@ -644,7 +658,7 @@ $(document).ready(function()
         + ''+ xTxt +'</pre>' 
         + '<pre style="font-size:17px; width:330px; ' //border-right:1px solid red; '
         + 'pointer-events:none; padding:3px 5px; float:left">'+ plInf +'</pre>'
-        + '<input class="ord3" type="button" style="float:right" value="Edit Sessions" >'
+        + '<input class="ord3" type="button" style="float:right" value="Edit Treatments" >'
         + '</td></tr>');
     }
     else
@@ -671,27 +685,51 @@ $(document).ready(function()
 
 
   $('#historyTable').on('click', function (e)
-  { 
-    var etpn= e.target.parentNode;
-    if(etpn.rowIndex === undefined) etpn= e.target;
-    var trx= etpn.rowIndex;
+  {
+    
+    var tmp, row, cid, tx, tn= 2; //, et= e.target;
+    
+    row= e.target.parentNode;
+    if(row.rowIndex === undefined) row= e.target;
+    var trx= row.rowIndex;
 
     if(trx === 0)
     {
-      var os= tbSrt[2], s= e.target.cellIndex;
+      var os= tbSrt[tn], s= e.target.cellIndex;
       s= (0 < os && Math.abs(os) -1 === s)? -(s+1) : s+1;
-      sortem(2, s);
+      sortem(tn, s);
       
       reFresh();
       return;
     }
     
-    if($(etpn).hasClass('selR')) rowAnim(trx, false);
-    else {
-      //$('#htb>tr').removeClass('selR');
+    if($(row).hasClass('selR'))
+      rowAnim(trx, false);
+    else
+    {
+      //    +$('#t1e0')[0].val
+
+      noRst= false;
+      resetEdit(tn, noRst);
+
+      edtRow[tn]= trx;
+      cid= $(row)[0].cells[1].innerText;
+      curSpid= +cid;
+
+      if(editMode)
+      {
+        $('#ta2sub').val('Edit Session');
+        $('#t2e0').val( +cid );
+        $('#t2e1').val( row.cells[0].innerText );
+        $('#t2e2').val( row.cells[2].innerText );
+        $('#t2e3').val( row.cells[3].innerText );
+
+        $('#ta2rdt')[0].disabled= true;
+        $('#ta2rmv')[0].disabled= false;
+        $('#ta2sub')[0].disabled= false;
+      }
+
       rowAnim(trx, true);
-//      $(etpn).css({'word-wrap':'break-word'});
-      //alert(hiTab[trx-1][2]);
     }
   });
   
@@ -1061,7 +1099,7 @@ $(document).ready(function()
 
   function ft1f()
   {
-    var i, x, c1, c2, tn= 1, rf= 0, qs= '#t1in1';
+    var i, x, c1, c2, tn= 1, rf= 0, qs= '#t1F';
     var inp= $(qs).val(), ts= Math.abs(tbSrt[tn])-1;
 
     fltNum[tn]++;
@@ -1114,7 +1152,7 @@ $(document).ready(function()
 
   function ft2f()
   {
-    var i, x, c1, tn= 2, rf= 0, qs= '#t2in1';
+    var i, x, c1, tn= 2, rf= 0, qs= '#t2F';
     var inp= $(qs).val(), ts= Math.abs(tbSrt[tn])-1;
 
     fltNum[tn]++;
@@ -1150,14 +1188,14 @@ $(document).ready(function()
 
     reFresh(); 
 
-    if(tn !== 2) $('#t1in1')[0].focus();
-    else { $("#mtb2").click(); $('#t2in1')[0].focus(); }
+    if(tn !== 2) $('#t1F')[0].focus();
+    else { $("#mtb2").click(); $('#t2F')[0].focus(); }
   });
 
   $('#t1clr, #t2clr').click(function(e)
   { //e.stopImmediatePropagation(); e.preventDefault();
-    var js= '#t2in1', tn= +this.id[1];
-    if(tn !== 2) { tn= 1; js= '#t1in1'; }
+    var js= '#t2F', tn= +this.id[1];
+    if(tn !== 2) { tn= 1; js= '#t1F'; }
 
     fltNum[tn]= 0; fltStr[tn]= 'No Filters..';
 
@@ -1182,18 +1220,18 @@ $(document).ready(function()
      
   });
 
-  $('#t1in1, #t2in1').on('focus', function(e)
+  $('#t1F, #t2F').on('focus', function(e)
   {
     var i= +this.id[1]; if(i !== 2) i= 1;
     this.select(); //tbFmod[i]= 1;
     tiFresh(i); hntShow();
   });
 
-  $('#t1in1, #t2in1').on('blur', function(e)
+  $('#t1F, #t2F').on('blur', function(e)
   { //e.stopImmediatePropagation(); e.preventDefault();
-    var jq= $('#t2inf');
+    var jq= $('#t2FinfBar');
     var i= +this.id[1]; 
-    if(i !== 2) { i= 1; jq= $('#t1inf'); }
+    if(i !== 2) { i= 1; jq= $('#t1FinfBar'); }
 
     if(fltNum[i] > 0) jq.text(fltStr[i]);
     else jq.text('No Filters..');
@@ -1208,7 +1246,7 @@ $(document).ready(function()
 
 
   // *** INPUT TEXT FIELD ...............................
-  $('#t1in1, #t2in1').on('keyup', function(e)
+  $('#t1F, #t2F').on('keyup', function(e)
   {
     var a, tn= +this.id[1];
     if(tn !== 2) tn= 1;
@@ -1255,26 +1293,29 @@ $(document).ready(function()
   $('.clPinf').on('keyup', function()
   {
     var ii= +this.id[3], tn= curTab;
-    //jq= $('#t1inf');
+    //jq= $('#t1FinfBar');
     
     if(tn !== 2)
     { // *** tab1
       if(ii > 2)
-      {
-        //    $('#ta1mrg')[0].disabled= true;
-        $('#ta1rmv')[0].disabled= true;
-        $('#ta1sub')[0].disabled= false;
         this.value= this.value.toUpperCase().replace(/[^0-9]/g, '');
-        return;
-      }
+      else
+        this.value= this.value.toUpperCase().replace(/[^A-Z \-]/gi, '');
+
       //    $('#ta1mrg')[0].disabled= true;
       $('#ta1rmv')[0].disabled= true;
       $('#ta1sub')[0].disabled= false;
-      this.value= this.value.toUpperCase().replace(/[^A-Z \-]/gi, '');
       return;
     }
+
     // *** tab2
-    
+    if(ii < 1)
+      this.value= this.value.toUpperCase().replace(/[^0-9]/g, '');
+    else
+      this.value= this.value.toUpperCase().replace(/[^A-Z \-]/gi, '');
+
+    $('#ta2rmv')[0].disabled= true;
+    $('#ta2sub')[0].disabled= false;
   });
 
 
@@ -1354,7 +1395,7 @@ $(document).ready(function()
           plTab[i][1]= $('#t1e1')[0].value;
           plTab[i][2]= $('#t1e2')[0].value;
           plTab[i][3]= $('#t1e3')[0].value;
-          plTab[i][4]= $('#t1e4')[0].value
+          plTab[i][4]= $('#t1e4')[0].value;
         }
       }
 
@@ -1367,6 +1408,48 @@ $(document).ready(function()
       $('#t1fil')[0].disabled= true;
 
       $('#mtb1').click();
+    }
+
+  });
+
+  $("#ta2sub").click(function()
+  {
+    var i, cid, tn= 2;
+    fltNum[tn]= 0; fltStr[tn]= 'No Filters..';
+
+    if(this.value[0] === 'E')
+    { // *** EDIT SESSION
+      alert(0);
+      $('#ta2rmv')[0].disabled= true;
+      $('.clPinf').css({display:'inline'});
+      $('#t2e2').focus();
+      
+      $(this).val('Apply Edit');
+      alert(0);
+    }
+    else
+    if(this.value[0] === 'A')
+    { // *** APPLY EDIT
+      cid= eefmod[curTab]= +$('#t1e0')[0].value;
+      for(i=0; i < hiTab.length; i++)
+      {
+        if(hiTab[i][1] === cid)
+        { //nBar.innerText= 'Apply @'+ x[0] +':'+ x[1] +' '+ x[2];
+//          hiTab[i][1]= $('#t2e1')[0].value;
+          hiTab[i][2]= $('#t2e2')[0].value;
+          hiTab[i][3]= $('#t3e3')[0].value;
+        }
+      }
+
+      curTab= 2;
+      reFresh();
+
+//      editRow= 1;
+      edtRow[1]= 1;
+//      eefmod[1]= 0;
+      $('#t2fil')[0].disabled= true;
+
+      $('#mtb2').click();
     }
 
   });
