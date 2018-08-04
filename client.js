@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.s01c ::Zele, Aug\'18. \n';
+  var versionCode= 'v0.s01h ::Zele, Aug\'18. \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:19999});
   
@@ -15,7 +15,8 @@ $(document).ready(function()
 
   var curTab= 1;
   var lastTab= 0;
-  var editRow= -1;
+//  var editRow= -1;
+  var edtRow= [-1, -1,-1];
   var curSpid= -1;
   var editMode= false;
   var eefmod= [0, 0,0];
@@ -40,7 +41,7 @@ $(document).ready(function()
 // *** PLAYER TAB
   var plTab= [0, 'first', 'last', 'tel', 'mob', '[memo]', 0];
 // *** HISYORY TAB TABLE
-  var hiTab= [0, 0, '~tr','~cr'];
+  var hiTab= [0, 0, '~tr','~cr', 0];
   
   var lastNotif= '';
   function clrAdmin(a)
@@ -128,10 +129,11 @@ $(document).ready(function()
 
   function resetEdit(tab, jin)
   {
-    editRow= curSpid= -1;
+//    editRow= curSpid= -1;
+
     if(tab !== 2) tab= 1;
     eefmod[tab]= 0;
-    
+        edtRow[tab]= curSpid= -1
     if(tab === 2)
     {
       if(jin) return;
@@ -262,7 +264,7 @@ $(document).ready(function()
     }
 
     trs.sort(function(a, b) {
-      return +b[0] - (+a[0]); });
+      return +a[0] - (+b[0]); });
 
     trs.forEach(function(tr, i)
     {
@@ -292,13 +294,17 @@ $(document).ready(function()
     nextID= plTab.length +2000;
 
     $("#ptb").empty();
-    if(tbAll[1] === 0) tbAll[1]= plTab.length;
-    var tth, i, x, rn= 0;
+    if(tbAll[1] === 0)
+      tbAll[1]= plTab.length;
+
+    var i, x, tth, rn= 0;
     var ml= Math.min(tbAll[1], plTab.length);
     for(i= 0; rn < ml && i < plTab.length; i++)
     {
       x= plTab[i];
-      tth= (eefmod[1] === 0)? (x[6] >= fltNum[1]) : (x[0] === eefmod[1]);
+      tth= (eefmod[1] === 0)?
+        (x[6] >= fltNum[1]) : (x[0] === eefmod[1]);
+
       if(tth)
       {
         $('#ptb').append( '<tr tabindex="1">'
@@ -332,27 +338,33 @@ $(document).ready(function()
 
   function freshTab2()
   {
-    
     $('#htb').empty();
-    if(tbAll[2] === 0) tbAll[2]= hiTab.length;
-    var i, col, tr, cr, ml= Math.min(tbAll[2], hiTab.length);
+    if(tbAll[2] === 0)
+      tbAll[2]= hiTab.length;
 
-    for(i= 0; i < ml; i++)
+    var i, x, tth, rn= 0;;
+    var ml= Math.min(tbAll[2], hiTab.length);
+    for(i= 0; rn < ml && i < hiTab.length; i++)
     {
-      col= hiTab[i];
- //     tr= chunkStr(50, col[2]); tr= tr.replace(/[^]/g, '\n     ');
-   //   cr= chunkStr(50, col[3]); cr= cr.replace(/[^]/g, '\n     ');
-      $('#htb').append( '<tr tabindex="1">'
-                       +'<td style="text-align:center">'+ ndt2sdt(col[0])
-                       +'</td><td style="text-align:right">'+ col[1]
-                       +'</td><td >'+ ' TR: '+ col[2] +'\n CR: '+ col[3]
-                       +'</td><td style="display:none">'+ i
-                       +'</td></tr>');
+      x= hiTab[i];
+      tth= (eefmod[2] === 0)?
+        (x[4] >= fltNum[2]) : (x[1] === eefmod[2]);
+
+      if(tth)
+      {
+        $('#htb').append( '<tr tabindex="1">'
+                         +'<td style="text-align:center">'+ ndt2sdt(x[0])
+                         +'</td><td style="text-align:right">'+ x[1]
+                         +'</td><td >'+ ' TR: '+ x[2] +'\n CR: '+ x[3]
+                         +'</td><td style="display:none">'+ (rn++)
+                         +'</td></tr>');
+      }
     }
 
-    recNum[2]= i;
+    recNum[2]= rn;
     tbAll[2]= tbAll[0];
     
+    if(fltNum[2] === 0) recFil[2]= hiTab.length;
     if(i === hiTab.length) $('#t2all')[0].disabled= true;
     else $('#t2all')[0].disabled= false;
   }
@@ -365,8 +377,13 @@ $(document).ready(function()
 
     if(cln)
     {
-      if(eefmod[tn] > 0) {
-        jq.text('1.ID<equals>"'+ eefmod[tn] +'"'); return; }
+      if(eefmod[tn] > 0)
+      {
+        var cid= eefmod[tn];
+        jq.text('1.ID<equals>"'+ cid +'"  '
+                +'2.NAME<equals>"'+ id2nme(+cid) +'"');
+                return;
+      }
 
       if(fltNum[tn] === 0) fltStr[tn]= 'No Filters..';
       jq.text(fltStr[tn]);
@@ -425,13 +442,6 @@ $(document).ready(function()
     if(editMode) $(".admin").css("display", "table-cell");
     else $(".admin").css("display", "none");
 
-    if(eefmod[curTab] > 0)
-    {
-      var jj= $('#htb>tr')[0];
-      if(curTab !== 2) jj= $('#ptb>tr')[0];
-      $(jj.firstChild).click();
-    }
-    
     lastTab= curTab;
   }
   // *** END REFRESH *****************************************
@@ -456,6 +466,28 @@ $(document).ready(function()
       nBar.innerText= ' @'+ cid +':'+ id2nme(+cid);
 
       var tre, cre, epp;
+      if(editMode && et.value[0] === 'E')
+      {
+        for(i= 0; i < hiTab.length; i++)
+        {
+          if(hiTab[i][0] === +cid) hiTab[i][4]= 9;
+          else hiTab[i][4]= 0;
+        }
+
+        eefmod[2]= +cid;
+//        sortem(curTab= 2, 1);
+        
+//alert(0);
+//        $('#historyTable>tr').children('td').eq(1).click();
+        
+        $('#mtb2').click();
+        
+//        editRow= -1;
+        edtRow[1]= -1;
+        reFresh();
+        $('#t2fil')[0].disabled= true;
+      }
+      else
       if(et.value[0] === 'E')
       {
         epp= et.previousSibling;
@@ -532,14 +564,14 @@ $(document).ready(function()
         $(epp).remove(); $(tmp).remove();
 
         // *** save hiTab
-        hiTab.push([ curDTM(), +cid, tre, cre ]);
-        sortem(curTab= 2, 1);
+        hiTab.push([ curDTM(), +cid, tre, cre, 0 ]);
         et.previousSibling.previousSibling.innerText=
           id2trs(+cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(+cid)) +'\n\n';
 
-//        setTimeout(function() {
+        setTimeout(function() {
+          sortem(curTab= 2, 1);
           reFresh(); $('#mtb1').click();
-  //      }, 99);
+        }, 99);
       }
       return;
     }
@@ -576,7 +608,8 @@ $(document).ready(function()
     noRst= false;
     resetEdit(1, noRst);
     tx= ti; tx++;
-    editRow= tx;
+//    editRow= tx;
+    edtRow[1]= tx;
     curSpid[1]= +cid;
 
     // *** subRow-content - CREATE
@@ -601,17 +634,33 @@ $(document).ready(function()
     if(plInf.length > cn) plInf= plInf.substr(0,cn-2) +'..';
     else plInf= plInf.substr(0,cn);
 
-    $(row).after(
-        '<tr class="xtrR"><td colspan='+ (editMode? 5:4) +'>'
-      + '<pre style="padding:9px 9px; margin:5px 0 7px; text-align:left; '//pointer-events:none
-      + 'font-size:14px; border:1px dashed grey; user-select:text">' //
-      + ''+ xTxt +'</pre>' 
-      + '<pre style="font-size:17px; width:330px; ' //border-right:1px solid red; '
-      + 'pointer-events:none; padding:3px 5px; float:left">'+ plInf +'</pre>'
-      + '<input class="ord3" type="button" style="float:right" value="New Session" >'
-      + '<input class="ord3" type="button" style="float:right" value="Edit Memo" >'
-      + '</td></tr>');
-
+    
+    if(editMode)
+    {
+      $(row).after(
+          '<tr class="xtrR"><td colspan='+ (editMode? 5:4) +'>'
+        + '<pre style="padding:9px 9px; margin:5px 0 7px; text-align:left; '//pointer-events:none
+        + 'font-size:14px; border:1px dashed grey; user-select:text">' //
+        + ''+ xTxt +'</pre>' 
+        + '<pre style="font-size:17px; width:330px; ' //border-right:1px solid red; '
+        + 'pointer-events:none; padding:3px 5px; float:left">'+ plInf +'</pre>'
+        + '<input class="ord3" type="button" style="float:right" value="Edit Sessions" >'
+        + '</td></tr>');
+    }
+    else
+    {
+      $(row).after(
+          '<tr class="xtrR"><td colspan='+ (editMode? 5:4) +'>'
+        + '<pre style="padding:9px 9px; margin:5px 0 7px; text-align:left; '//pointer-events:none
+        + 'font-size:14px; border:1px dashed grey; user-select:text">' //
+        + ''+ xTxt +'</pre>' 
+        + '<pre style="font-size:17px; width:330px; ' //border-right:1px solid red; '
+        + 'pointer-events:none; padding:3px 5px; float:left">'+ plInf +'</pre>'
+        + '<input class="ord3" type="button" style="float:right" value="New Session" >'
+        + '<input class="ord3" type="button" style="float:right" value="Edit Memo" >'
+        + '</td></tr>');
+    }
+      
     rowAnim(tx, true);
     setRowCol();
 
@@ -744,11 +793,11 @@ $(document).ready(function()
 
       if(k[2] !== '#')
       { 
-        hiTab.push([ +k[1], +k[0], k[2], '' ]);
+        hiTab.push([ +k[1], +k[0], k[2], '', 0 ]);
       }
     });
 
-    sortem(curTab= 2, -1); reFresh();
+    sortem(curTab= 2, 1); reFresh();
 //    $('#mtb1').click();
     loadServer();
   }
@@ -809,8 +858,18 @@ $(document).ready(function()
       },
       success:function(r, s, x)
       {
-        if(r !== 'P@lg') {
-          adminInfo.innerText+= 'FAIL@server:'+ r +'\n'; return; }
+        if(r !== 'P@lg')
+        {
+          adminInfo.innerText+= 'FAIL@server:'+ r +'\n';
+
+          if(dbPass !== 'justWakingUpServer')
+            $("#log4But").val('LogMe: wrong password, try again!');
+
+          dbPass= '*';
+          $('#pasIn').val('').focus();
+
+          return;
+        }
   
         adminInfo.innerText+= 
           x.getAllResponseHeaders() +'\n'+ 'PASS:logme logged \n';
@@ -904,7 +963,9 @@ $(document).ready(function()
     loadServer2();
   }
 
-  // *** action starts here *********************************                     
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // *** action starts here **********************************                    
   if(navigator.storage) {
     navigator.storage.persisted().then(function(getP) {
       if(getP) {
@@ -914,6 +975,8 @@ $(document).ready(function()
   }
   clrAdmin();
 //  loadDB();
+  dbPass= 'justWakingUpServer';
+  logMe();
 
 
   // *** tab buttons listener ********************************
@@ -947,8 +1010,11 @@ $(document).ready(function()
     if(curTab === 3) {
       adminInfo.innerText+= ' [?]Unused slot, haa... \n'; return; }
 //    sRs= $('#ptb')[0].getElementsByClassName('selR');
+
+    var js= '#htb>tr', tl= hiTab.length;
+    if(curTab !== 2) { js= '#ptb>tr'; tl= plTab.length; }
     
-    var er= editRow-1;
+    var er= edtRow[curTab] -1; //editRow-1;
     resetEdit(curTab);
     if(editMode= !editMode)
     {
@@ -963,8 +1029,11 @@ $(document).ready(function()
       $('.filt').css('display', 'block');
     }
 
-    var jj= $('#ptb>tr')[er];
-    $(jj.firstChild).click();
+    if(er >= 0 && er < tl ) // && eefmod[curTab === 0
+    {
+      var jj= $(js)[er];
+      $(jj.firstChild).click();
+    }
 
     nBar.innerText= tblInf[curTab];
   });
@@ -1008,13 +1077,13 @@ $(document).ready(function()
         if(tbFmod[tn] === 2) {
           if(c1 >= 0 && x[6]+1 >= fn) {
             rf++;
-            x[6]= fn; //else x[6]= 0;
+            x[6]= fn;
           }
         }
         else {
           if(c1 === 0 && x[6]+1 >= fn) {
             rf++;
-            x[6]= fn; //else x[6]= 0;
+            x[6]= fn;
           }
         }
       }
@@ -1029,13 +1098,13 @@ $(document).ready(function()
         if(tbFmod[tn] === 2) {
           if((c1 >= 0 || c2 >= 0) && x[6]+1 >= fn) {
             rf++;
-            x[6]= fn; //else x[6]= 0;
+            x[6]= fn;
           }
         }
         else {
           if((c1 === 0 || c2 === 0) && x[6]+1 >= fn) {
             rf++;
-            x[6]= fn; //else x[6]= 0;
+            x[6]= fn;
           }
         }
       }
@@ -1045,24 +1114,31 @@ $(document).ready(function()
 
   function ft2f()
   {
-    var i, x, c1, tn= 2, qs= '#t2in1';
+    var i, x, c1, tn= 2, rf= 0, qs= '#t2in1';
     var inp= $(qs).val(), ts= Math.abs(tbSrt[tn])-1;
 
-    inp= inp.toLowerCase();
-    fltInp[tn]= inp;
+    fltNum[tn]++;
+    fltInp[tn]= inp.toLowerCase();
+
+    var fn= fltNum[tn];
     for(i= 0; i < hiTab.length; i++)
     {
       x= hiTab[i];
       c1= ''+x[ts];
       c1= c1.indexOf(inp);
-/*
+
       if(tbFmod[tn] === 2) {
-//        if(c1 >= 0)
+        if(c1 >= 0 && x[6]+1 >= fn) {
+          rf++;
+          x[6]= fn;
+        }
       }
       else {
-//        if(c1 === 0)
+        if(c1 === 0 && x[6]+1 >= fn) {
+          rf++;
+          x[6]= fn;
+        }
       }
-*/
     }
   }
 
@@ -1071,7 +1147,7 @@ $(document).ready(function()
     var tn= +this.id[1];
     if(tn !== 2) { tn= 1; ft1f(); } else ft2f();
 
-//    sortem(curTab= tn, tbSrt[tn]);
+
     reFresh(); 
 
     if(tn !== 2) $('#t1in1')[0].focus();
@@ -1096,11 +1172,12 @@ $(document).ready(function()
       
       return;
     }
-/*
-    hiTab.forEach(function(x) {
 
-    });*/
-//    sortem(curTab= tn, tbSrt[tn])
+    hiTab.forEach(function(x) {
+      x[4]= 0;
+    });
+
+    resetEdit(curTab);
     reFresh(); $("#mtb2").click(); $(js)[0].focus();
      
   });
@@ -1220,10 +1297,6 @@ $(document).ready(function()
 
       plTab.splice(fnd, 1);
 
-
-//      sortem(curTab= 1, tbSrt[1]);
-  //    nextID= +plTab[0][0]+1;
-  
       reFresh();
       
       $('#mtb1').click();
@@ -1248,21 +1321,25 @@ $(document).ready(function()
     else
     if(this.value[0] === 'C')
     { // *** CONFIRM NEW
-      cid= eefmod[curTab]= nextID;
+      cid= eefmod[curTab]= nextID++;
       plTab.push([ cid, $('#t1e1')[0].value, $('#t1e2')[0].value,
-                  $('#t1e3')[0].value, $('#t1e4')[0].value, '' ]);
+                  $('#t1e3')[0].value, $('#t1e4')[0].value, '', 0 ]);
 
-      sortem(curTab= 1, tbSrt[1]);
-      nextID++; //+plTab[0][0]+1;
+      sortem(curTab= 1, tbSrt[1])
       reFresh();
 
-      eefmod[curTab]= 0;
+//      editRow= 1;
+      edtRow[1]= 1;
+      eefmod[1]= 0;
+      $('#t1fil')[0].disabled= true;
+
       $('#mtb1').click();
     }
     else
     if(this.value[0] === 'E')
     { // *** EDIT CLIENT
       $('#ta1sub').val('Apply Edit');
+      $('#ta1rmv')[0].disabled= true;
       $('.clPinf').css({display:'inline'});
       $('#t1e1').focus();
     }
@@ -1280,8 +1357,15 @@ $(document).ready(function()
           plTab[i][4]= $('#t1e4')[0].value
         }
       }
+
+      curTab= 1;
       reFresh();
-      eefmod[curTab]= 0;
+
+//      editRow= 1;
+      edtRow[1]= 1;
+      eefmod[1]= 0;
+      $('#t1fil')[0].disabled= true;
+
       $('#mtb1').click();
     }
 
@@ -1306,17 +1390,17 @@ $(document).ready(function()
   // *** TAB 3 : ADMIN BUTTONS ***************************************
   $('#showPass').click(function() { //img>Show Password});
     $('#hmLog').css({display:'block'});
+    window.scrollTo(0, 999);
+
     $('#pasIn').focus();
-    dbPass= 'justWakingUpServer'; logMe();
   });
 
   $("#log4But").click(function() { //>Log In<
     if(isLogged) return;
     dbPass= $('#pasIn').val();
+    
+    $("#log4But").val('Logging, please wait...');
     logMe();
-
-    if(!isLogged) $(this).val('LogMe: wrong Password, try again...');;
-  
   });
   
   // *** class="ord2" : DARK BOTTOM BUTTON
