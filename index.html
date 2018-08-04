@@ -34,7 +34,7 @@
 
   <img src="/aux/c.png" style="width:100%; margin-bottom:-9px" />
   <img src="/aux/a.jpg" style="width:100%; margin-bottom:-9px" />
-  <div style="background:orange; padding:9px; color:white; text-align:right">
+  <div style="background:orange; padding:19px 9px 9px; color:white; text-align:right">
     <p style="text-align:left; margin:0"><b>Enquire, or Book/Cancel Appointment Online... </b></p>
     <textarea placeholder="MESSAGE TEXT" rows="5" style="font-size:15px; width:100%;
           border:1px solid red; user-select:text; margin:5px 0 -9px; padding:9px" ></textarea>
@@ -42,7 +42,7 @@
   </div>
   <img src="/aux/b.png" id="showPass" style="width:30%; margin:19px" />
 
-    <div id="hmLog" style="text-align:center; margin-bottom:59px; display:none">
+    <div id="hmLog" style="padding-bottom:19px; text-align:center; display:none">
       <input id="pasIn" class="finf" type="password"
              placeholder="PASSWORD" autocomplete="off" >
       <input class="ord" id="log4But" type="button" value="Logme" >
@@ -77,24 +77,22 @@
 -->
   <div id="tab1" class="ptab pac" style="padding:20px 14px">
     <div class="filt" style="padding:0; margin:9px 0 9px; text-align:right">
-      <pre id="t1inf" style="font-size:17px; text-align:left; font-style:normal;
+      <pre id="t1FinfBar" style="font-size:17px; text-align:left; font-style:normal;
         border-bottom:0px solid black; padding:0 5px; margin:-9px 0 9px; width:100%">~Filters..</pre>
-      <input class="finf" id="t1in1" type="text" placeholder="NAME" autocomplete="off" >
+      <input class="finf" id="t1F" type="text" placeholder="NAME" autocomplete="off" >
       <input class="ord" id="t1fil" type="button" value="Filter" >
       <input class="ord" id="t1clr" type="button" value="Clear Filters" >
     </div>
 
     <div class="adminEdit" style="display:none; text-align:right; margin:9px 0 9px">
-      <input class="finf" id="t1e0" type="tel" placeholder="ID" autocomplete="off" style="width:5" disabled >
+      <input class="finf" id="t1e0" type="tel" placeholder="ID" autocomplete="off" style="width:5em" disabled >
       <button class="ord" id="ta1mrg" disabled>Merge</button>
       <button class="ord" id="ta1rmv" disabled>Remove</button>
       <input class="ord" id="ta1sub" type="button" value="New Client">
-      <div>
         <input class="finf clPinf" id="t1e1" type="text" placeholder="~frstName" autocomplete="off" style="display:none; width:23%" >
         <input class="finf clPinf" id="t1e2" type="text" placeholder="~lastName" autocomplete="off" style="display:none; width:25%">
         <input class="finf clPinf" id="t1e3" type="text" placeholder="~phone" autocomplete="off" style="display:none; width:23%" >
         <input class="finf clPinf" id="t1e4" type="text" placeholder="~mobile" autocomplete="off" style="display:none; width:23%" >
-      </div>
     </div>
 
     <table id="playerTable">
@@ -112,19 +110,25 @@
 
   <div id="tab2" class="ptab pde" style="background:white; font-size:24px; padding:20px 14px">
     <div class="filt" style="padding:0; margin:9px 0 9px; text-align:right">
-      <pre id="t2inf" style="font-size:17px; text-align:left; font-style:normal;
+      <pre id="t2FinfBar" style="font-size:17px; text-align:left; font-style:normal;
         border-bottom:0px solid black; padding:0 5px; margin:-9px 0 9px; width:100%">~Filters..</pre>
-      <input class="finf" id="t2in1" type="text" placeholder="NAME" autocomplete="off" >
+      <input class="finf" id="t2F" type="text" placeholder="~date" autocomplete="off" >
       <input class="ord" id="t2fil" type="button" value="Filter" >
       <input class="ord" id="t2clr" type="button" value="Clear Filters" >
     </div>
 
     <div class="adminEdit" style="display:none; text-align:right; margin:9px 0 9px">
-      <input id="dtEdit" class="finf" autocomplete="off"
-             type="tel" placeholder="YYYYMMDDHHMM" disabled>
-      <button class="ord" id="rdt3But" disabled>Re-Date</button>
-      <button class="ord" id="rmr3But" disabled>Remove</button>
-      <button class="ord" id="mdf3But" disabled>Modify Session</button>
+      <input id="t2e0" class="finf" autocomplete="off"
+             type="tel" placeholder="~#cid" style="width:5em" disabled>
+      <input id="t2e1" class="finf" autocomplete="off"
+             type="tel" placeholder="~yyyymmdd"  style="width:9em" disabled>
+      <button class="ord" id="ta2rdt" disabled>Re-Date</button>
+      <button class="ord" id="ta2rmv" disabled>Remove</button>
+      <input class="ord" id="ta2sub" type="button" value="Edit Session" disabled >
+        <textarea class="clPinf" id="t2e2" rows="5" placeholder="~treatment"
+               style="display:none; width:100%; font-size:18px; border:1px solid red; user-select:text" ></textarea>
+        <textarea class="clPinf" id="t2e3" rows="3" placeholder="~creams"
+               style="display:none; width:100%; font-size:18px; border:1px solid red; user-select:text" ></textarea>
     </div>
 
     <table id="historyTable">
