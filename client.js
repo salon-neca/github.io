@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.s03c ::Zele, Aug\'18. \n';
+  var versionCode= 'v0.s03e ::Zele, Aug\'18. \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
   
@@ -42,7 +42,7 @@ $(document).ready(function()
 // *** PLAYER TAB
   var plTab= [0, 'first', 'last', 'tel', 'mob', '[memo]', 0];
 // *** HISYORY TAB TABLE
-  var hiTab= [0, 0, '~tr','~cr', 0];
+  var hiTab= [0, 0, '~tr','~cr', 0, 0];
   
   var lastNotif= '';
   function clrAdmin(a)
@@ -192,7 +192,9 @@ $(document).ready(function()
     if(tab !== 1) t= hiTab;
     if(t.length < 2) return;
 
-    if(isNaN(t[0][col]))
+    var ist= !(col === 0 || col === 6)
+    if(tab === 2) ist= (col === 2 || col === 3);
+    if(ist)
     { // alpha
       t.sort(function(a, b)
       {
@@ -202,7 +204,7 @@ $(document).ready(function()
       });
     }
     else // numeric
-      t.sort(function(a, b) { return +b[col] - (+a[col]); });
+      t.sort(function(a, b) { return b[col] - a[col]; });
 
     if(rev) t.reverse();
     if(tab === 1)
@@ -388,8 +390,8 @@ $(document).ready(function()
       if(eefmod[0] === 0 && eefmod[2] > 0)
         tth= (x[1] === eefmod[2]);
       else
-      if(eefmod[0] > 0 && eefmod[2] > 0)
-        tth= (x[1] === eefmod[2] && x[0] === eefmod[0]);
+      if(eefmod[0] > 0)
+        tth= (x[5] === eefmod[0]);
 
       if(tth)
       {
@@ -398,6 +400,7 @@ $(document).ready(function()
                          +'</td><td style="text-align:right">'+ x[1]
                          +'</td><td >'+ ' TR: '+ x[2] +'\n CR: '+ x[3]
                          +'</td><td style="display:none">'+ (rn++)
+                         +'</td><td style="display:none">'+ x[5]
                          +'</td></tr>');
       }
     }
@@ -571,7 +574,7 @@ $(document).ready(function()
         et.scrollTop= et.scrollHeight;
         $(epp).remove();
         
-        saveDB();
+//        saveDB();
       }
       else
       if(et.value[0] === 'N')
@@ -607,9 +610,9 @@ $(document).ready(function()
         $(epp).remove(); $(tmp).remove();
 
         // *** save hiTab
-        hiTab.push([ curDTM(), cid, tre, cre, 0 ]);
+        hiTab.push([ curDTM(), cid, tre, cre, 0, hiTab.length+1 ]);
 
-        id2formatAllDates(cid);
+//        id2formatAllDates(cid);
         
         et= et.previousSibling.previousSibling;
         et.innerText= id2trs(cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(cid)) +'\n\n';
@@ -733,7 +736,7 @@ $(document).ready(function()
   $('#historyTable').on('click', function (e)
   {
     
-    var a, tmp, row, cid, tx, tn= 2; //, et= e.target;
+    var a, tmp, row, cid, hid, tx, tn= 2; //, et= e.target;
     
     row= e.target.parentNode;
     if(row.rowIndex === undefined) row= e.target;
@@ -756,8 +759,11 @@ $(document).ready(function()
     {
       resetEdit(tn, noRst);
       edtRow[tn]= tx;
-      cid= $(row)[0].cells[1].innerText;
-      curSpid= cid= +cid;
+      cid= +$(row)[0].cells[1].innerText;
+      
+//alert(8);
+      hid= +$(row)[0].cells[4].innerText;
+      curSpid= cid
 
       if(editMode)
       {
@@ -766,11 +772,14 @@ $(document).ready(function()
 
         $('#ta2sub').val('Edit Session');
         $('#t2e0').val( cid );
+        
+        $('#t2e0h').val( hid );
 
         dtm= +sdt2ndt(row.cells[0].innerText);
         a= ''+ dtm;
 
 
+//alert(1);
         $('#t2e1y').val( a.substr(0,4) );
         $('#t2e1m').val( a.substr(4,2) );
         $('#t2e1d').val( a.substr(6,2) );
@@ -1002,29 +1011,37 @@ $(document).ready(function()
 
   function importDBnew(d)
   {
-    var tt, loP, loH, x= d.split('$');
+    var tt, tp, th, loP, loH, x= d.split('$');
     
-    plTab.length= 0;
+    plTab.length= 0; tp= [];
     loP= x[0].split('|');
     loP.forEach(function(row) {
       tt= row.split('^');
       tt[0]= +tt[0];
-      plTab.push( tt );
+      tt[1]= ''+tt[1];
+      tt[2]= ''+tt[2];
+      tt[3]= ''+tt[3];
+      tt[4]= ''+tt[4];
+      tt[5]= ''+tt[5];
+      tt[6]= 0;
+      tp.push( tt );
     });
+    plTab= tp.splice(0);
 
-    hiTab.length= 0;
+    hiTab.length= 0; th= []
     loH= x[1].split('|');
-    loH.forEach(function(row) {
+    loH.forEach(function(row, cnt) {
       tt= row.split('^');
       tt[0]= +tt[0];
       tt[1]= +tt[1];
+      tt[2]= ''+tt[2];
+      tt[3]= ''+tt[3];
+      tt[4]= 0;
+      tt[5]= cnt+1;
 
-      hiTab.push( tt );
+      th.push( tt );
     });
-
-    
-    hiTab.forEach(function(row) {
-       });
+    hiTab= th.splice(0);
 
     sortem(curTab= 2, 1);
     reFresh();
@@ -1517,18 +1534,21 @@ $(document).ready(function()
     a= Math.abs(tbSrt[tn]) -1;
     if(tn !== 2)
     { // *** tab1
-      if(a === 1 || a === 2)
-        this.value= t.toUpperCase().replace(/[^A-Z ]/gi, '');
+      if(a === 0)
+        this.value= t.replace(/[^0-9]/g, '');
       else
-        this.value= t.toUpperCase().replace(/[^0-9]/g, '');
+      if(a < 3)
+        this.value= t.toUpperCase().replace(/[^A-Z \-]/gi, '');
+      else
+        this.value= t.replace(/[^0-9]/gi, '');
       return;
     }
 
     // *** tab2
     if(a > 1)
-      this.value= t.toUpperCase().replace(/[^A-Z 0-9@,.:/-/+]/gi, '');
+      this.value= t.toUpperCase().replace(/[^A-Z 0-9\+]/gi, '');
     else
-      this.value= t.toUpperCase().replace(/[^0-9]/g, '');
+      this.value= t.replace(/[^0-9]/g, '');
   });
 
   $('.finf').on('keydown', function(e)
@@ -1540,32 +1560,44 @@ $(document).ready(function()
 // *** &&...
   $('.clPinf').on('keyup', function()
   {
-    var ii= +this.id[3], tn= curTab;
+    var ii, tv, tn= curTab;
+    if(this.id.length < 4) ii= -1;
+    else ii= +this.id[3];
     
-    if(ii !== 0) ii= 1;
+    tv= ''+this.value;
+    tv= tv.toUpperCase();
      // *** tab1
-      if(ii === 0)
-        this.value= this.value.replace(/[^0-9]/g, '');
-      else
-        this.value= this.value.toLowerCase().replace(/[^A-Z 0-9]\-,\+,/gi, '');
+    if(ii < 0)
+      this.value= tv.replace(/[^A-Z 0-9]\-,\+,/gi, '');
+    else
+    if(ii === 0)
+      this.value= tv.replace(/[^0-9]/g, '');
+    else
+    if(ii < 3)
+      this.value= tv.replace(/[^A-Z \-]/gi, '');
+    else
+    if(ii > 2)
+      this.value= tv.replace(/[^0-9]/g, '');
 
-      //    $('#ta1mrg')[0].disabled= true;
-      $('#ta1rmv')[0].disabled= true;
-      $('#ta1sub')[0].disabled= false;
-      return;
+    //    $('#ta1mrg')[0].disabled= true;
+    $('#ta1rmv')[0].disabled= true;
+    $('#ta1sub')[0].disabled= false;
+    return;
     
   });
 
   $('.clPinf2').on('keyup', function()
   {
-    var ii= +this.id[3], tn= curTab;
+    var ii= +this.id[3], tv, tn= curTab;
 
     if(ii !== 1) ii= 0;
+
+    tv=  this.value.toLowerCase();
     // *** tab2
       if(ii === 1)
-        this.value= this.value.replace(/[^0-9]/g, '');
+        this.value= tv.replace(/[^0-9]/g, '');
       else
-        this.value= this.value.toLowerCase().replace(/[^A-Z 0-9\+.\-,]/gi, '');
+        this.value= tv.replace(/[^A-Z 0-9\+.\-,]/gi, '');
 
     $('#ta2rmv')[0].disabled= true;
     $('#ta2sub')[0].disabled= false;
@@ -1577,6 +1609,8 @@ $(document).ready(function()
   function()
   {
   //  alert(0);
+        if(!confirm('Are you surd?')) return;
+
     var i, x, fnd= -1, cid= $('#t1e0')[0].value;
 
     for(i= 0; i < plTab.length; i++)
@@ -1595,10 +1629,47 @@ $(document).ready(function()
       
       $('#mtb1').click();
       nBar.innerText= ' [!]Deleted';
+      
+//saveDB();
     }
     else
       nBar.innerText= ' [!]Not found';
   });
+
+  $('#ta2rmv').click( //>Remove<
+  function()
+  {
+    
+        if(!confirm('Are you surd?')) return;
+
+//    alert(0);
+  //  alert(0);
+    var i, x, fnd= -1, hid= +$('#t2e0h')[0].value;
+
+    for(i= 0; i < hiTab.length; i++)
+    {
+      x= hiTab[i];
+      if(x[5] === hid) { fnd= i; break; }
+    }
+//alert('= '+fnd);
+
+    if(fnd >= 0)
+    {
+      fltNum[2]= 0; fltStr[2]= 'No Filters..';
+
+      hiTab.splice(fnd, 1);
+
+      reFresh();
+      
+      $('#mtb2').click();
+      nBar.innerText= ' [!]Deleted';
+      
+//saveDB();
+    }
+    else
+      nBar.innerText= ' [!]Not found';
+  });
+
 
   $("#ta1sub").click(function()
   {
@@ -1630,7 +1701,7 @@ $(document).ready(function()
 
       $('#mtb1').click();
       
-saveDB();
+//saveDB();
     }
     else
     if(this.value[0] === 'E')
@@ -1665,13 +1736,13 @@ saveDB();
       $('#t1fil')[0].disabled= true;
 
       $('#mtb1').click();
-saveDB();
+//saveDB();
     }
   });
 
   $("#ta2sub").click(function()
   {
-    var a, i, cid, dtm, tn= 2;
+    var a, i, cid, hid, dtm, tn= 2;
     fltNum[tn]= 0; fltStr[tn]= 'No Filters..';
 
     if(this.value[0] === 'E')
@@ -1701,6 +1772,8 @@ saveDB();
         +$('#t2e1d')[0].value + $('#t2e1h')[0].value;
       dtm= +a;
       cid= eefmod[curTab]= +$('#t2e0')[0].value;
+      
+      hid= +$('#t2e0h')[0].value;
 //      alert('= '+a);
 
       var rn, x; //, ss= $('#t2e2')[0].value;
@@ -1708,7 +1781,9 @@ saveDB();
       for(i= 0; i < hiTab.length; i++)
       {
         x= hiTab[i];
-        if(x[0] === dtm && x[1] === cid)
+//        if(x[0] === dtm && x[1] === cid)
+  
+        if(x[5] === hid)
         { //nBar.innerText= 'Apply @'+ x[0] +':'+ x[1] +' '+ x[2];
 
           rn= i;
@@ -1729,7 +1804,7 @@ saveDB();
 //      id2formatAllDates(cid);
 
 //      eefmod[2]= 0;
-      eefmod[0]= dtm;
+      eefmod[0]= hid;
 
       sortem(curTab= 2, 1);
       reFresh();
@@ -1741,7 +1816,7 @@ saveDB();
       $('#mtb2').click();
 //      alert(9);
       
-      saveDB();
+//      saveDB();
     }
   });
 
