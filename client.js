@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.s02c ::Zele, Aug\'18. \n';
+  var versionCode= 'v0.s02e ::Zele, Aug\'18. \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
   
@@ -142,12 +142,13 @@ $(document).ready(function()
 
 
       $('#ta2rmv')[0].disabled= true;
-      $('#ta2sub')[0].disabled= false;
+      $('#ta2sub')[0].disabled= true;
 
       $('#ta2sub').val('Edit Session');
       $('#t2e0').val( '' );
 
-      $('.clPinf').css({display:'none'});
+//      $('.clPinf').css({display:'none'});
+      $('.clPinf2').css({'border-color':'black', background:'white'});
       $('#t1e1').val(''); $('#t1e2').val(''); $('#t1e3').val('');
 
       if(jin) return;
@@ -375,8 +376,13 @@ $(document).ready(function()
     for(i= 0; rn < ml && i < hiTab.length; i++)
     {
       x= hiTab[i];
-      tth= (eefmod[2] === 0)?
-        (x[4] >= fltNum[2]) : (x[1] === eefmod[2]);
+      
+      tth= (x[4] >= fltNum[2]);
+      if(eefmod[0] === 0 && eefmod[2] > 0)
+        tth= (x[1] === eefmod[2]);
+      else
+      if(eefmod[0] > 0 && eefmod[2] > 0)
+        tth= (x[1] === eefmod[2] && x[0] === eefmod[0]);
 
       if(tth)
       {
@@ -1306,10 +1312,11 @@ $(document).ready(function()
   $('#t1fil, #t2fil').click(function(e)
   {//e.stopImmediatePropagation(); e.preventDefault();
     var tn= +this.id[1];
-    if(tn !== 2) { tn= 1; ft1f(); } else ft2f();
+    if(tn !== 2) { tn= 1; eefmod[tn]= 0; ft1f(); }
+    else { eefmod[0]= eefmod[tn]= 0; ft2f(); }
 
-
-    reFresh(); 
+    
+    reFresh();
 
     if(tn !== 2) $('#t1F')[0].focus();
     else { $("#mtb2").click(); $('#t2F')[0].focus(); }
@@ -1324,10 +1331,9 @@ $(document).ready(function()
 
     if(tn !== 2)
     {
-      plTab.forEach(function(x) {
-        x[6]= 0;
-      });
+      plTab.forEach(function(x) { x[6]= 0; });
 
+      eefmod[1]= 0;
       resetEdit(curTab);
       reFresh(); $(js)[0].focus();
       
@@ -1338,8 +1344,12 @@ $(document).ready(function()
       x[4]= 0;
     });
 
+    eefmod[0]= eefmod[2]= 0;
+
     resetEdit(curTab);
-    reFresh(); $("#mtb2").click(); $(js)[0].focus();
+    reFresh();
+    $("#mtb2").click();
+    $(js)[0].focus();
      
   });
 
@@ -1406,7 +1416,7 @@ $(document).ready(function()
   });
 
 // *** &&...
-  $('.clPinf').on('keyup', function()
+  $('.clPinf, .clPinf2').on('keyup', function()
   {
     var ii= +this.id[3], tn= curTab;
     //jq= $('#t1FinfBar');
@@ -1539,7 +1549,7 @@ $(document).ready(function()
     { // *** EDIT SESSION
       $(this).val('Apply Edit');
       $('#ta2rmv')[0].disabled= true;
-      $('.clPinf').css({display:'inline'});
+      $('.clPinf2').css({'border-color':'red', background:'FloralWhite'});
       $('#t2e2').focus();
       
       $('#ta2sub')[0].disabled= true;
@@ -1554,13 +1564,15 @@ $(document).ready(function()
       cid= eefmod[curTab]= +$('#t2e0')[0].value;
       alert('= '+a);
 
-      var x; //, ss= $('#t2e2')[0].value;
+      var rn, x; //, ss= $('#t2e2')[0].value;
       
       for(i= 0; i < hiTab.length; i++)
       {
         x= hiTab[i];
         if(x[0] === dtm && x[1] === cid)
         { //nBar.innerText= 'Apply @'+ x[0] +':'+ x[1] +' '+ x[2];
+
+          rn= i;
           x[2]= $('#t2e2')[0].value;
           x[3]= $('#t2e3')[0].value;
 
@@ -1573,18 +1585,22 @@ $(document).ready(function()
         $('#t2e1h').val( a.substr(8,2) );
         
 */
-          $('.clPinf').css({display:'none'});
+
+//          $('.clPinf').css({display:'none'});
+          $('.clPinf2').css({'border-color':'black', background:'white'});
           break;
         }
       }
 
       id2formatAllDates(cid);
 
+//      eefmod[2]= 0;
+      eefmod[0]= hiTab[rn][0];
+
       sortem(curTab= 2, 1);
       reFresh();
 
-//      edtRow[2]= 1;
-//      eefmod[2]= 0;
+      edtRow[2]= 1;
       $('#t2fil')[0].disabled= true;
 
   //    alert(0);
