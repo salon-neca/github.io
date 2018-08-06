@@ -27,8 +27,16 @@
 
 .finf {  
   border:1px solid grey;
-  margin:5px 0 9px 0; padding:3px 5px;    
+  margin:5px 0 9px 0; padding:3px 5px;
   font-size:17px; text-align:center;
+}
+
+.clPinf {
+  width:23%; background:FloralWhite;
+  user-select:text; resize:none;
+  font-size:17px; text-align:center;
+  margin:5px 0 9px 0; padding:3px 5px;
+  display:none; border:1px solid red;
 }
 
 .ord {
@@ -65,7 +73,7 @@
   /*width:auto; height:auto;*/
   padding:7px 25px;
   color:white; background:#5f5f5f;
-  margin:0 7px 15px; font-size:15px;
+  margin:0 3px 15px 5px; font-size:15px;
 }
 .ord3:hover {
   background:#909090;
