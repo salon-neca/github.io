@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.s02e ::Zele, Aug\'18. \n';
+  var versionCode= 'v0.s02h ::Zele, Aug\'18. \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
   
@@ -147,7 +147,14 @@ $(document).ready(function()
       $('#ta2sub').val('Edit Session');
       $('#t2e0').val( '' );
 
-//      $('.clPinf').css({display:'none'});
+        $('#t2e1y')[0].disabled= true;
+        $('#t2e1m')[0].disabled= true;
+        $('#t2e1d')[0].disabled= true;
+        $('#t2e1h')[0].disabled= true;
+        
+        $('#t2e2')[0].disabled= true;
+        $('#t2e3')[0].disabled= true;
+        
       $('.clPinf2').css({'border-color':'black', background:'white'});
       $('#t1e1').val(''); $('#t1e2').val(''); $('#t1e3').val('');
 
@@ -747,23 +754,45 @@ $(document).ready(function()
       resetEdit(tn, noRst);
       edtRow[tn]= tx;
       cid= $(row)[0].cells[1].innerText;
-      curSpid= +cid;
+      curSpid= cid= +cid;
 
       if(editMode)
       {
-        $('#ta2sub').val('Edit Session');
-        $('#t2e0').val( +cid );
+        var i, x, dtm,
+            trt= 'trtInit', crmr= 'crmInit';
 
-        a= ''+sdt2ndt(row.cells[0].innerText);
-//        alert('= '+a);
+        $('#ta2sub').val('Edit Session');
+        $('#t2e0').val( cid );
+
+        dtm= +sdt2ndt(row.cells[0].innerText);
+        a= ''+ dtm;
+
+
         $('#t2e1y').val( a.substr(0,4) );
         $('#t2e1m').val( a.substr(4,2) );
         $('#t2e1d').val( a.substr(6,2) );
         $('#t2e1h').val( a.substr(8,2) );
-        
-        $('#t2e2').val( row.cells[2].innerText );
-        $('#t2e3').val( row.cells[3].innerText );
+  
+      
+/*        $('#t2e1y')[0].disabled= true;
+        $('#t2e1m')[0].disabled= true;
+        $('#t2e1d')[0].disabled= true;
+        $('#t2e1h')[0].disabled= true;
+*/
 
+
+        for(i= 0; i < hiTab.length; i++)
+        {
+          x= hiTab[i];
+          if(x[0] === dtm && x[1] === cid)
+          {
+            $('#t2e2').val( x[2] );
+            $('#t2e3').val( x[3] );
+//        $('#t2e2')[0].disabled= true;
+  //      $('#t2e3')[0].disabled= true;            
+            break;
+          }
+        }
 
         $('#ta2rmv')[0].disabled= false;
         $('#ta2sub')[0].disabled= false;
@@ -1416,29 +1445,33 @@ $(document).ready(function()
   });
 
 // *** &&...
-  $('.clPinf, .clPinf2').on('keyup', function()
+  $('.clPinf').on('keyup', function()
   {
     var ii= +this.id[3], tn= curTab;
-    //jq= $('#t1FinfBar');
     
     if(tn !== 2)
     { // *** tab1
-      if(ii > 2)
-        this.value= this.value.toUpperCase().replace(/[^0-9]/g, '');
+      if(ii === 0)
+        this.value= this.value.replace(/[^0-9]/g, '');
       else
-        this.value= this.value.toUpperCase().replace(/[^A-Z \-]/gi, '');
+        this.value= this.value.toUpperCase().replace(/[^A-Z 0-9]\-\+/gi, '');
 
       //    $('#ta1mrg')[0].disabled= true;
       $('#ta1rmv')[0].disabled= true;
       $('#ta1sub')[0].disabled= false;
       return;
     }
+  });
+
+  $('.clPinf2').on('keyup', function()
+  {
+    var ii= +this.id[3], tn= curTab;
 
     // *** tab2
-    if(ii < 1)
-      this.value= this.value.toUpperCase().replace(/[^0-9]/g, '');
-    else
-      this.value= this.value.toUpperCase().replace(/[^A-Z \-]/gi, '');
+      if(ii === 1)
+        this.value= this.value.replace(/[^0-9]/g, '');
+      else
+        this.value= this.value.toLowerCase().replace(/[^A-Z 0-9\+.\-,\\n]/gi, '');
 
     $('#ta2rmv')[0].disabled= true;
     $('#ta2sub')[0].disabled= false;
@@ -1551,7 +1584,17 @@ $(document).ready(function()
       $('#ta2rmv')[0].disabled= true;
       $('.clPinf2').css({'border-color':'red', background:'FloralWhite'});
       $('#t2e2').focus();
-      
+  
+ /*
+        $('#t2e1y')[0].disabled= false;
+        $('#t2e1m')[0].disabled= false;
+        $('#t2e1d')[0].disabled= false;
+        $('#t2e1h')[0].disabled= false;
+  */
+        
+        $('#t2e2')[0].disabled= false;
+        $('#t2e3')[0].disabled= false;
+            
       $('#ta2sub')[0].disabled= true;
     }
     else
@@ -1562,7 +1605,7 @@ $(document).ready(function()
         +$('#t2e1d')[0].value + $('#t2e1h')[0].value;
       dtm= +a;
       cid= eefmod[curTab]= +$('#t2e0')[0].value;
-      alert('= '+a);
+//      alert('= '+a);
 
       var rn, x; //, ss= $('#t2e2')[0].value;
       
@@ -1576,17 +1619,12 @@ $(document).ready(function()
           x[2]= $('#t2e2')[0].value;
           x[3]= $('#t2e3')[0].value;
 
-/*
-        a= ''+sdt2ndt(row.cells[0].innerText);
-//        alert('= '+a);
-        $('#t2e1y').val( a.substr(0,4) );
-        $('#t2e1m').val( a.substr(4,2) );
-        $('#t2e1d').val( a.substr(6,2) );
-        $('#t2e1h').val( a.substr(8,2) );
-        
-*/
-
-//          $('.clPinf').css({display:'none'});
+          a= ''+ $('#t2e1y')[0].value + ('00'+ $('#t2e1m')[0].value).slice(-2)
+            + ('00'+ $('#t2e1d')[0].value).slice(-2) + ('00'+ $('#t2e1h')[0].value).slice(-2);
+          dtm= +a;
+      
+          x[0]= dtm;
+          alert('= '+dtm);
           $('.clPinf2').css({'border-color':'black', background:'white'});
           break;
         }
@@ -1595,7 +1633,7 @@ $(document).ready(function()
       id2formatAllDates(cid);
 
 //      eefmod[2]= 0;
-      eefmod[0]= hiTab[rn][0];
+      eefmod[0]= dtm;
 
       sortem(curTab= 2, 1);
       reFresh();
