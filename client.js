@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.s03b ::Zele, Aug\'18. \n';
+  var versionCode= 'v0.s03c ::Zele, Aug\'18. \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
   
@@ -1002,17 +1002,29 @@ $(document).ready(function()
 
   function importDBnew(d)
   {
-    var loP, loH, x= d.split('$');
+    var tt, loP, loH, x= d.split('$');
     
     plTab.length= 0;
     loP= x[0].split('|');
     loP.forEach(function(row) {
-      plTab.push( row.split('^') ); });
+      tt= row.split('^');
+      tt[0]= +tt[0];
+      plTab.push( tt );
+    });
 
     hiTab.length= 0;
     loH= x[1].split('|');
     loH.forEach(function(row) {
-      hiTab.push( row.split('^') ); });
+      tt= row.split('^');
+      tt[0]= +tt[0];
+      tt[1]= +tt[1];
+
+      hiTab.push( tt );
+    });
+
+    
+    hiTab.forEach(function(row) {
+       });
 
     sortem(curTab= 2, 1);
     reFresh();
