@@ -1,8 +1,8 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.s03e ::Zele, Aug\'18. \n';
-  var appPath= 'https://sns.glitch.me';
-  $.ajaxSetup({async:true, cache:false, timeout:9999});
+  var versionCode= 'v0.12d ::Zele, Aug\'18. \n';
+  var appPath= 'https://snn.glitch.me';
+  $.ajaxSetup({async:true, cache:false, timeout:99999});
   
   var nBar= document.getElementById('notif');
   var adminInfo= document.getElementById('dbFrame');
@@ -284,12 +284,12 @@ $(document).ready(function()
       if(x[1] === rx)
       {
         tn++;
-        trs.push([ +x[0], chunkStr(63, x[2]), chunkStr(63, x[3]) ]);
+        trs.push([ x[0], chunkStr(63, x[2]), chunkStr(63, x[3]), x[5] ]);
       }
     }
 
     trs.sort(function(a, b) {
-      return +a[0] - (+b[0]); });
+      return a[3] - b[3]; });
 
     trs.forEach(function(tr, i)
     {
@@ -316,7 +316,7 @@ $(document).ready(function()
   // *** tabs# redraw... ************************************************
   function freshTab1()
   {
-    nextID= plTab.length +2000;
+    nextID= plTab.length +4000;
 
     $("#ptb").empty();
     if(tbAll[1] === 0)
@@ -338,8 +338,9 @@ $(document).ready(function()
                         +'</td><td>'+ x[2]
                         +'</td><td>'+ x[3]
                         +'</td><td>'+ x[4] //+col[5]
-                        +'</td><td style="display:none">'+ (rn++)
+                        +'</td><td style="display:none">'+ rn
                         +'</td></tr>' );
+        rn++;
       }
     }
 
@@ -399,9 +400,10 @@ $(document).ready(function()
                          +'<td style="text-align:center">'+ ndt2sdt(x[0])
                          +'</td><td style="text-align:right">'+ x[1]
                          +'</td><td >'+ ' TR: '+ x[2] +'\n CR: '+ x[3]
-                         +'</td><td style="display:none">'+ (rn++)
+//                         +'</td><td style="display:none">'+ (rn++)
                          +'</td><td style="display:none">'+ x[5]
                          +'</td></tr>');
+        rn++;
       }
     }
 
@@ -573,8 +575,6 @@ $(document).ready(function()
         et.innerText= id2trs(cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(cid)) +'\n\n';
         et.scrollTop= et.scrollHeight;
         $(epp).remove();
-        
-//        saveDB();
       }
       else
       if(et.value[0] === 'N')
@@ -614,6 +614,7 @@ $(document).ready(function()
 
 //        id2formatAllDates(cid);
         
+        
         et= et.previousSibling.previousSibling;
         et.innerText= id2trs(cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(cid)) +'\n\n';
         
@@ -623,9 +624,8 @@ $(document).ready(function()
           sortem(curTab= 2, 1);
           reFresh(); $('#mtb1').click();
   //      }, 99);
+//  saveDB();
       }
-      saveDB();
-
       return;
     }
 
@@ -638,15 +638,14 @@ $(document).ready(function()
     }
     
 
-    var row, tx, ti;
-    if(!$(et).is('tr')) ti= $(et).closest('tr')[0];
-    tx= ti.rowIndex; if($(ti).hasClass('xtrR')) tx--;
+    var row, tx;//, ti;
+    if(!$(et).is('tr')) row= $(et).closest('tr')[0];
+    tx= row.rowIndex; if($(row).hasClass('xtrR')) tx--;
 
     if(tx > 0)
     {
       row= $('#ptb>tr')[tx-1];
-      ti= +row.cells[5].innerText;
-      cid= row.cells[0].innerText;
+      cid= +row.cells[0].innerText;
     }
     else tx= 0;
 
@@ -666,16 +665,15 @@ $(document).ready(function()
 
     noRst= false;
     resetEdit(1, noRst);
-    tx= ti; tx++;
-//    editRow= tx;
-    edtRow[1]= tx;
-    curSpid= +cid;
+    
+    edtRow[1]= tx= row.rowIndex;
+    curSpid= cid;
 
     // *** subRow-content - CREATE
     if(editMode)
     {
       $('#ta1sub').val('Edit Client');
-      $('#t1e0').val( +cid );
+      $('#t1e0').val( cid );
       $('#t1e1').val( row.cells[1].innerText );
       $('#t1e2').val( row.cells[2].innerText );
       $('#t1e3').val( row.cells[3].innerText );
@@ -686,10 +684,10 @@ $(document).ready(function()
       $('#ta1sub')[0].disabled= false;
     }
     
-    var xTxt= id2trs(+cid) +'\n**** MEMO:  '
+    var xTxt= id2trs(cid) +'\n**** MEMO:  '
                 + chunkStr(63, id2mmo(+cid)) +'\n\n';
 
-    var cn= 31, plInf= 'id@ '+ cid +':'+ id2nme(+cid);
+    var cn= 31, plInf= 'id@ '+ cid +':'+ id2nme(cid);
     if(plInf.length > cn) plInf= plInf.substr(0,cn-2) +'..';
     else plInf= plInf.substr(0,cn);
 
@@ -730,13 +728,13 @@ $(document).ready(function()
     tmp= $(row.nextSibling);
     if(tmp[0].getBoundingClientRect().bottom > window.innerHeight)
       tmp[0].scrollIntoView(false); // document.documentElement.scrollTop+= h;
-  });
 
+  });
 
   $('#historyTable').on('click', function (e)
   {
     
-    var a, tmp, row, cid, hid, tx, tn= 2; //, et= e.target;
+    var a, tmp, row, hid, tx, tn= 2; //, et= e.target;
     
     row= e.target.parentNode;
     if(row.rowIndex === undefined) row= e.target;
@@ -759,11 +757,11 @@ $(document).ready(function()
     {
       resetEdit(tn, noRst);
       edtRow[tn]= tx;
-      cid= +$(row)[0].cells[1].innerText;
+//      cid= +$(row)[0].cells[1].innerText;
       
 //alert(8);
-      hid= +$(row)[0].cells[4].innerText;
-      curSpid= cid
+      hid= +$(row)[0].cells[3].innerText;
+      curSpid= hid
 
       if(editMode)
       {
@@ -771,9 +769,8 @@ $(document).ready(function()
             trt= 'trtInit', crmr= 'crmInit';
 
         $('#ta2sub').val('Edit Session');
-        $('#t2e0').val( cid );
         
-        $('#t2e0h').val( hid );
+        $('#t2e0').val( hid );
 
         dtm= +sdt2ndt(row.cells[0].innerText);
         a= ''+ dtm;
@@ -796,7 +793,7 @@ $(document).ready(function()
         for(i= 0; i < hiTab.length; i++)
         {
           x= hiTab[i];
-          if(x[0] === dtm && x[1] === cid)
+          if(x[5] === hid)
           {
             $('#t2e2').val( x[2] );
             $('#t2e3').val( x[3] );
@@ -814,235 +811,45 @@ $(document).ready(function()
   });
   
   // *** import... **************************************************
-  function importDB(d)
-  { // *** UNPACK & IMPORT
-    var dl= d.split('\n');
+  function removeEmpty()
+  {
+    var dd, i, j, p;
+    dd= plTab.slice(0);
     plTab.length= 0;
-    dl.forEach(function(x)
+    for(i= 0; i < dd.length; i++)
     {
-      var k= x.split('\t');
-
-      k[1]= k[1].toUpperCase();
-      k[2]= k[2].toUpperCase();
-
-      if(k[3][3] === '-') k[3]= k[3].replace('-', '');
-      if(k[4][3] === '-') k[4]= k[4].replace('-', '');
-        
-      k[3]= k[3].replace('ili', ';');
-      k[4]= k[4].replace('ili', ';');
-      k[3]= k[3].replace(/[^\d,:/\\.;-]/g, '');
-      k[4]= k[4].replace(/[^\d,:/\\.;-]/g, '');
-      k[3]= k[3].replace(/[,:/\\.;]/g, '#');
-      k[4]= k[4].replace(/[,:/\\.;]/g, '#');
-
-      if(k[3][3] === '#') k[3]= k[3].replace('#', '');
-      if(k[4][3] === '#') k[4]= k[4].replace('#', '');
-      
-      if((k[3].substr(0,5)).indexOf('#') >= 0) k[3]= k[3].replace('#', '');
-      if((k[4].substr(0,5)).indexOf('#') >= 0) k[4]= k[4].replace('#', '');
-
-      if((k[3].substr(0,5)).indexOf('-') >= 0) k[3]= k[3].replace('-', '');
-      if((k[4].substr(0,5)).indexOf('-') >= 0) k[4]= k[4].replace('-', '');
-
-      if((k[3].substr(0,8)).indexOf('-') >= 0) k[3]= k[3].replace('-', '');
-      if((k[4].substr(0,8)).indexOf('-') >= 0) k[4]= k[4].replace('-', '');
-
-
-      if(k[3].length > 5 && k[3].length < 8) k[3]= '011'+ k[3];
-      if(k[4].length > 5 && k[4].length < 8) k[4]= '011'+ k[4];
-
-      if(k[3].length < 10 &&  k[3][0] !== '0') k[3]= '0'+ k[3];
-      if(k[4].length < 10 &&  k[4][0] !== '0') k[4]= '0'+ k[4];
-
-      k[3]= k[3].replace(/[#]/g, ' #');
-      k[4]= k[4].replace(/[#]/g, ' #');
-// ***
-
-      if(k[1].length < 2) k[1]= '~first';
-      if(k[2].length < 2) k[2]= '~last';
-      if(k[3].length < 5) k[3]= '~pho.';
-      if(k[4].length < 5) k[4]= '~mob.';
-
-      k[3]= k[3].toLowerCase();
-      k[4]= k[4].toLowerCase();
-
-      k[1]= k[1].replace(/\n|\r|\t/gi, ' #');
-      k[2]= k[2].replace(/\n|\r|\t/gi, ' #');
-      k[3]= k[3].replace(/\n|\r|\t/gi, ' #');
-      k[4]= k[4].replace(/\n|\r|\t/gi, ' #');
-      
-      k[1]= k[1].replace(/\s+/gi,' ').trim();
-      k[2]= k[2].replace(/\s+/gi,' ').trim();
-      k[3]= k[3].replace(/\s+/gi,' ').trim();
-      k[4]= k[4].replace(/\s+/gi,' ').trim();
-
-//      var ts= id2trs(+k[0]);
-  //    if(ts.length > 3)
+      p= +dd[i][0];
+      for(j= 0; j < hiTab.length; j++)
       {
-        plTab.push([ +k[0],k[1],k[2],k[3],k[4], '', 0 ]);
-      }
-    });
-
-    sortem(curTab= 1, 2);
-    reFresh(); $('#mtb1').click();
-  }
-
-  function id2formatAllDates(cid)
-  {
-    var i, j, x, q, w, z, y, s, c= 0, eis= [];
-    
-    for(i= 0; i < hiTab.length; i++)
-    {
-      x= hiTab[i];
-      if(x[1] === +cid) eis.push([ +x[0], i ]);
-    }
-//alert('i= '+i+'  ..eis.len= '+eis.length);
-    if(eis.length < 1) return;
-
-    eis.sort(function(a, b) {
-      return b[0] - a[0]; });
-
-    for(j= 1; j < eis.length; j++)
-    {
-      q= eis[j];
-      w= eis[j-1]
-      if(q[0] === w[0])
-      {
-        z= hiTab[ q[1] ];
-        y= hiTab[ w[1] ];
-        s= (''+y[0]).slice(-2); s= +s; s++;
-        s= (''+z[0]).substr(0,8) + ('0'+s).slice(-2);
-        z[0]= +s; 
-      }
-      else c= 0;
-    }
-  }
-
-  function formatAllDates()
-  {
-    hiTab.sort(function(a, b) {
-      return a[1] - b[1]; });
-    
-
-    var i, j, x, y, z, y, q, w,
-        t, s, c= 0, eis= [];
-    for(i= 1; i < hiTab.length; i++)
-    {
-      x= hiTab[i];
-      y= hiTab[i-1];
-
-      if(x[1] === y[1]) eis.push([ y[0], i-1 ]);
-      else
-      {
-        eis.push([ x[0], i ]);
-
-        if(eis.length < 1) continue;
-
-        eis.sort(function(a, b) {
-          return b[0] - a[0]; });
-
-        for(j= 1; j < eis.length; j++)
-        {
-          q= eis[j];
-          w= eis[j-1]
-          if(q[0] === w[0])
-          {
-            z= hiTab[ q[1] ];
-            y= hiTab[ w[1] ];
-            s= (''+y[0]).slice(-2); s= +s; s++;
-            s= (''+z[0]).substr(0,8) + ('0'+s).slice(-2);
-            z[0]= +s; 
-          }
-          else c= 0;
-        }
-
-        eis= [];
+        if(hiTab[j][1] === p) {
+          plTab.push( dd[i] ); break; }
       }
     }
-  }
-
-  function formatDate(a)
-  {
-    a= a.replace(/[-]/gi, '');
-    a= a.replace(/\s+/g,' ').trim();
-    a+= '07';
-    return a;
-  }
-
-  function formatSession(a)
-  {
-    a= a.toLowerCase();
-    a= a.replace(/[@]/gi, ':');
-    a= a.replace(/\n|\r|\t/gi, ' #');
-    a= a.replace(/\s+/g,' ').trim();
-    return a;
-  }
-
-  function importDB2(d)
-  {
-    var i, k, dl= d.split('\n');
-    hiTab.length= 0;
-    
-//alert('0 ='+ dl.length);
-    for(i= 0; i < dl.length; i++)
-    {
-      k= dl[i].split('\t');
-      
-
-      k[1]= formatDate(k[1]);
-      k[2]= formatSession(k[2])
-
-      if(k[1].length < 8 || k[2].length < 2
-         || isNaN(k[1]) || isNaN(k[0])) k[0]= '#';
-
-      if(k[2] !== '#') { 
-        hiTab.push([ +k[1], +k[0], k[2], '', 0 ]);
-      }
-    }
-
-//alert('1 ='+ hiTab.length);
-    formatAllDates();
-    sortem(curTab= 2, 1);
-    reFresh();
-
-    loadServer();
-//    alert(9);
   }
 
   function importDBnew(d)
   {
-    var tt, tp, th, loP, loH, x= d.split('$');
+    var tt,loP, loH,
+        x= d.split('$');
     
-    plTab.length= 0; tp= [];
+    plTab= []; //.length= 0;
     loP= x[0].split('|');
-    loP.forEach(function(row) {
-      tt= row.split('^');
-      tt[0]= +tt[0];
-      tt[1]= ''+tt[1];
-      tt[2]= ''+tt[2];
-      tt[3]= ''+tt[3];
-      tt[4]= ''+tt[4];
-      tt[5]= ''+tt[5];
-      tt[6]= 0;
-      tp.push( tt );
+    loP.forEach(function(r) {
+      tt= r.split('^');
+      tt[0]= +tt[0]; tt[6]= 0;
+      plTab.push( tt );
     });
-    plTab= tp.splice(0);
 
-    hiTab.length= 0; th= []
+    hiTab= []; //.length= 0;
     loH= x[1].split('|');
-    loH.forEach(function(row, cnt) {
-      tt= row.split('^');
-      tt[0]= +tt[0];
-      tt[1]= +tt[1];
-      tt[2]= ''+tt[2];
-      tt[3]= ''+tt[3];
-      tt[4]= 0;
-      tt[5]= cnt+1;
-
-      th.push( tt );
+    loH.forEach(function(r, c) {
+      tt= r.split('^');
+      tt[0]= +tt[0]; tt[1]= +tt[1];
+      tt[4]= 0; tt[5]= +tt[5];
+      hiTab.push( tt );
     });
-    hiTab= th.splice(0);
-
+//removeEmpty();
+    
     sortem(curTab= 2, 1);
     reFresh();
     
@@ -1070,28 +877,6 @@ $(document).ready(function()
     else
       adminInfo.innerText+=  'info@loadCache-RAW: in progresd.. \n';
   }
-
-  function loadServer2()
-  {
-    adminInfo.innerText+= '\nSERVER:load & import2\n';
-    $.ajax(
-    {
-      url:appPath +'/ld2', type:'GET',
-      error:function(e, f)
-      {
-        adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
-        $("#mtb3").click();
-      },
-      success:function(d, s, x)
-      {
-        adminInfo.innerText+= x.getAllResponseHeaders()
-          + 'PASS:server load2 '+ (d.length/1024).toFixed(2) +'KB \n';
-
-        importDB2(d);
-      }
-    });
-  }
-
   function loadServerNew()
   {
     adminInfo.innerText+= '\nSERVER:load & import3\n';
@@ -1101,6 +886,7 @@ $(document).ready(function()
       error:function(e, f)
       {
         adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
+        ttxt= 'CACHE'; loadCache(true);
         $("#mtb3").click();
       },
       success:function(d, s, x)
@@ -1108,30 +894,8 @@ $(document).ready(function()
         adminInfo.innerText+= x.getAllResponseHeaders()
           + 'PASS:server load3 '+ (d.length/1024).toFixed(2) +'KB \n';
 
-        importDBnew(d);
-      }
-    });
-  }
-  
-  function loadServer()
-  {
-    adminInfo.innerText+= '\nSERVER:load & import \n';
-    $.ajax(
-    {
-      url:appPath +'/ld1', type:'GET',
-      error:function(e, f)
-      {
-        adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
-//        ttxt= 'CACHE'; loadCache(true);
-        $("#mtb3").click();
-      },
-      success:function(d, s, x)
-      {
-       // var d= r.replace(/\n|\r/g, '');
-        adminInfo.innerText+= x.getAllResponseHeaders()
-          + 'PASS:server load '+ (d.length/1024).toFixed(2) +'KB \n';
         ttxt= ' Clients ';
-        importDB(d);
+        importDBnew(d);
       }
     });
   }
@@ -1176,25 +940,7 @@ $(document).ready(function()
       }
     });
   }
-/*
-    tGm.length= 0;
-    loDat= loDat.split('|');
-    loDat.forEach(function(row) {
-      tGm.push( row.split(':') ); });
 
-    nBar.innerText= ' #local state imported';
-    adminInfo.innerText+= 'Local state imported, rows#: '+ tGm.length +'\n';
-    
-    prtGm(); // *** need this now to init NaNs
-  }
-  
-  function tgm2str()
-  {
-    var x= [];
-    tGm.forEach(function(r) {
-      if(r[0] !== 'F') r[0]= 'A'; x.push( r.join(':') ); });
-    return x.join('|');
-*/  
   function saveDB(cchOnly)
   {
     // *** CACHE SAVE
@@ -1253,7 +999,6 @@ $(document).ready(function()
       }
     });
     
-//    alert('= '+rawdb.length);
   }
 
   function loadDB()
@@ -1261,11 +1006,10 @@ $(document).ready(function()
     if(!navigator.onLine)
     {
       adminInfo.innerText+= 'FAIL@navigator.offline \n';
-//      ttxt= 'OFFLINE'; loadCache(true);
+      ttxt= 'OFFLINE'; loadCache(true);
       $("#mtb3").click();
       return;
     }
-//    loadServer2();
     loadServerNew();
   }
 
@@ -1281,9 +1025,10 @@ $(document).ready(function()
   }
   clrAdmin();
 //  loadDB();
+  /*
   dbPass= 'justWakingUpServer';
   logMe();
-
+*/
 
   // *** tab buttons listener ********************************
   var initOnceA= false;
@@ -1609,7 +1354,7 @@ $(document).ready(function()
   function()
   {
   //  alert(0);
-        if(!confirm('Are you surd?')) return;
+        if(!confirm('Are you sure?')) return;
 
     var i, x, fnd= -1, cid= $('#t1e0')[0].value;
 
@@ -1630,7 +1375,6 @@ $(document).ready(function()
       $('#mtb1').click();
       nBar.innerText= ' [!]Deleted';
       
-//saveDB();
     }
     else
       nBar.innerText= ' [!]Not found';
@@ -1640,11 +1384,9 @@ $(document).ready(function()
   function()
   {
     
-        if(!confirm('Are you surd?')) return;
+        if(!confirm('Are you sure?')) return;
 
-//    alert(0);
-  //  alert(0);
-    var i, x, fnd= -1, hid= +$('#t2e0h')[0].value;
+    var i, x, fnd= -1, hid= +$('#t2e0')[0].value;
 
     for(i= 0; i < hiTab.length; i++)
     {
@@ -1663,8 +1405,6 @@ $(document).ready(function()
       
       $('#mtb2').click();
       nBar.innerText= ' [!]Deleted';
-      
-//saveDB();
     }
     else
       nBar.innerText= ' [!]Not found';
@@ -1694,14 +1434,12 @@ $(document).ready(function()
       sortem(curTab= 1, tbSrt[1])
       reFresh();
 
-//      editRow= 1;
+
       edtRow[1]= 1;
       eefmod[1]= 0;
       $('#t1fil')[0].disabled= true;
 
       $('#mtb1').click();
-      
-//saveDB();
     }
     else
     if(this.value[0] === 'E')
@@ -1736,13 +1474,12 @@ $(document).ready(function()
       $('#t1fil')[0].disabled= true;
 
       $('#mtb1').click();
-//saveDB();
     }
   });
 
   $("#ta2sub").click(function()
   {
-    var a, i, cid, hid, dtm, tn= 2;
+    var a, i, hid, dtm, tn= 2;
     fltNum[tn]= 0; fltStr[tn]= 'No Filters..';
 
     if(this.value[0] === 'E')
@@ -1771,9 +1508,8 @@ $(document).ready(function()
       a= ''+ $('#t2e1y')[0].value + $('#t2e1m')[0].value
         +$('#t2e1d')[0].value + $('#t2e1h')[0].value;
       dtm= +a;
-      cid= eefmod[curTab]= +$('#t2e0')[0].value;
       
-      hid= +$('#t2e0h')[0].value;
+      hid= +$('#t2e0')[0].value;
 //      alert('= '+a);
 
       var rn, x; //, ss= $('#t2e2')[0].value;
@@ -1781,8 +1517,6 @@ $(document).ready(function()
       for(i= 0; i < hiTab.length; i++)
       {
         x= hiTab[i];
-//        if(x[0] === dtm && x[1] === cid)
-  
         if(x[5] === hid)
         { //nBar.innerText= 'Apply @'+ x[0] +':'+ x[1] +' '+ x[2];
 
@@ -1801,22 +1535,14 @@ $(document).ready(function()
         }
       }
 
-//      id2formatAllDates(cid);
-
-//      eefmod[2]= 0;
+      edtRow[2]= 1;
       eefmod[0]= hid;
 
       sortem(curTab= 2, 1);
       reFresh();
 
-      edtRow[2]= 1;
       $('#t2fil')[0].disabled= true;
-
-  //    alert(0);
       $('#mtb2').click();
-//      alert(9);
-      
-//      saveDB();
     }
   });
 
@@ -1840,21 +1566,18 @@ $(document).ready(function()
     if(isLogged) return;
     dbPass= $('#pasIn').val();
     
-    $("#log4But").val('Serving humans, please wait...');
+    $("#log4But").val('Please wait...');
     logMe();
   });
   
   // *** class="ord2" : DARK BOTTOM BUTTON
   $("#cad4But").click( function() { // >Cache Data<
-    adminInfo.innerText+= '~inProgress...';
     loadCache(false);
   });
   $("#imc4But").click( function() { // >Import Cache<
-    adminInfo.innerText+= '~inProgress...';
     ttxt= 'IMPORT'; loadCache(true);
   });
   $("#stc4But").click( function() { // >Store Cache<
-    adminInfo.innerText+= '~inProgress...';
    saveDB(true);
   });
 
