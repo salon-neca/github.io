@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.s02h ::Zele, Aug\'18. \n';
+  var versionCode= 'v0.s03b ::Zele, Aug\'18. \n';
   var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
   
@@ -570,6 +570,8 @@ $(document).ready(function()
         et.innerText= id2trs(cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(cid)) +'\n\n';
         et.scrollTop= et.scrollHeight;
         $(epp).remove();
+        
+        saveDB();
       }
       else
       if(et.value[0] === 'N')
@@ -614,11 +616,12 @@ $(document).ready(function()
         
         et.scrollTop= et.scrollHeight;
 
-//        setTimeout(function() {
+    //    setTimeout(function() {
           sortem(curTab= 2, 1);
           reFresh(); $('#mtb1').click();
   //      }, 99);
       }
+      saveDB();
 
       return;
     }
@@ -888,7 +891,7 @@ $(document).ready(function()
     if(eis.length < 1) return;
 
     eis.sort(function(a, b) {
-      return a[0] - b[0]; });
+      return b[0] - a[0]; });
 
     for(j= 1; j < eis.length; j++)
     {
@@ -898,7 +901,7 @@ $(document).ready(function()
       {
         z= hiTab[ q[1] ];
         y= hiTab[ w[1] ];
-        s= (''+y[0]).slice(-2); s= +s; s++
+        s= (''+y[0]).slice(-2); s= +s; s++;
         s= (''+z[0]).substr(0,8) + ('0'+s).slice(-2);
         z[0]= +s; 
       }
@@ -927,7 +930,7 @@ $(document).ready(function()
         if(eis.length < 1) continue;
 
         eis.sort(function(a, b) {
-          return a[0] - b[0]; });
+          return b[0] - a[0]; });
 
         for(j= 1; j < eis.length; j++)
         {
@@ -997,6 +1000,48 @@ $(document).ready(function()
 //    alert(9);
   }
 
+  function importDBnew(d)
+  {
+    var loP, loH, x= d.split('$');
+    
+    plTab.length= 0;
+    loP= x[0].split('|');
+    loP.forEach(function(row) {
+      plTab.push( row.split('^') ); });
+
+    hiTab.length= 0;
+    loH= x[1].split('|');
+    loH.forEach(function(row) {
+      hiTab.push( row.split('^') ); });
+
+    sortem(curTab= 2, 1);
+    reFresh();
+    
+    
+    sortem(curTab= 1, 2);
+    reFresh(); $('#mtb1').click();
+  }
+
+  function loadCache(isImport)
+  {
+    adminInfo.innerText+= 'CACHE:info & import \n';
+    
+   // cchInfo();
+    if(!window.localStorage) {
+      adminInfo.innerText+= 'FAIL:window.localStorage \n'; return; }
+    else
+      adminInfo.innerText+= 'USING:window.localStorage \n';
+   
+    var t, d= localStorage.getItem('dataBase');
+    if(!d) { nBar.innerText= ' #no cache data '; return; }
+
+    if(isImport) {
+      importDBnew(d); 
+      adminInfo.innerText+=  'import@loadCache-RAW: Pass!\n'; }
+    else
+      adminInfo.innerText+=  'info@loadCache-RAW: in progresd.. \n';
+  }
+
   function loadServer2()
   {
     adminInfo.innerText+= '\nSERVER:load & import2\n';
@@ -1014,6 +1059,27 @@ $(document).ready(function()
           + 'PASS:server load2 '+ (d.length/1024).toFixed(2) +'KB \n';
 
         importDB2(d);
+      }
+    });
+  }
+
+  function loadServerNew()
+  {
+    adminInfo.innerText+= '\nSERVER:load & import3\n';
+    $.ajax(
+    {
+      url:appPath +'/ldnew', type:'GET',
+      error:function(e, f)
+      {
+        adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
+        $("#mtb3").click();
+      },
+      success:function(d, s, x)
+      {
+        adminInfo.innerText+= x.getAllResponseHeaders()
+          + 'PASS:server load3 '+ (d.length/1024).toFixed(2) +'KB \n';
+
+        importDBnew(d);
       }
     });
   }
@@ -1081,7 +1147,25 @@ $(document).ready(function()
       }
     });
   }
+/*
+    tGm.length= 0;
+    loDat= loDat.split('|');
+    loDat.forEach(function(row) {
+      tGm.push( row.split(':') ); });
+
+    nBar.innerText= ' #local state imported';
+    adminInfo.innerText+= 'Local state imported, rows#: '+ tGm.length +'\n';
+    
+    prtGm(); // *** need this now to init NaNs
+  }
   
+  function tgm2str()
+  {
+    var x= [];
+    tGm.forEach(function(r) {
+      if(r[0] !== 'F') r[0]= 'A'; x.push( r.join(':') ); });
+    return x.join('|');
+*/  
   function saveDB(cchOnly)
   {
     // *** CACHE SAVE
@@ -1091,33 +1175,27 @@ $(document).ready(function()
       adminInfo.innerText+= 'FAIL:window.localStorage \n'; return; }
     else
       adminInfo.innerText+= 'USING:window.localStorage \n';
+ 
+    var xx, yy, rawdb, rwp, rwh;
     
-    var rawdb= hiTab.join('|');
+    xx= [];
+    plTab.forEach(function(r) { 
+      xx.push( r.join('^') ); });
+    rwp= xx.join('|');
 
-   
-    var hiSave= '';
-    hiTab.forEach(function(x)
-    {
-      var mg= x[8].split('#');
-//      hiSave+= '|'+zipN(x[0])+':'+x[3]+':'+x[5]+':';
-
-      mg.forEach(function(y)
-      {
-        var a= y.split('&');
-        var pid= +a[0];
-        var buy= +a[1];
-        hiSave+= '#'+pid+'&'+buy;
-      });
-    });
-
-    rawdb+= '@'+ hiSave.substr(1);
+    yy= [];
+    hiTab.forEach(function(r) { 
+      yy.push( r.join('^') ); });
+    rwh= yy.join('|');
+    
+    rawdb= rwp +'$'+ rwh;
+    
     localStorage.setItem('dataBase', rawdb);
 
     nBar.innerText+= ' [!]Cache save OK.';
     adminInfo.innerText+= 'PASS:cache save '+ (rawdb.length/1024).toFixed(2) +'KB \n';
-
     if(cchOnly) return;
-
+    
     // *** SERVER SAVE
     adminInfo.innerText+= 'SERVER:export & save \n';
 
@@ -1145,6 +1223,8 @@ $(document).ready(function()
           + 'PASS:server save '+ (rawdb.length/1024).toFixed(2) +'KB \n';
       }
     });
+    
+//    alert('= '+rawdb.length);
   }
 
   function loadDB()
@@ -1156,7 +1236,8 @@ $(document).ready(function()
       $("#mtb3").click();
       return;
     }
-    loadServer2();
+//    loadServer2();
+    loadServerNew();
   }
 
 
@@ -1449,29 +1530,30 @@ $(document).ready(function()
   {
     var ii= +this.id[3], tn= curTab;
     
-    if(tn !== 2)
-    { // *** tab1
+    if(ii !== 0) ii= 1;
+     // *** tab1
       if(ii === 0)
         this.value= this.value.replace(/[^0-9]/g, '');
       else
-        this.value= this.value.toUpperCase().replace(/[^A-Z 0-9]\-\+/gi, '');
+        this.value= this.value.toLowerCase().replace(/[^A-Z 0-9]\-,\+,/gi, '');
 
       //    $('#ta1mrg')[0].disabled= true;
       $('#ta1rmv')[0].disabled= true;
       $('#ta1sub')[0].disabled= false;
       return;
-    }
+    
   });
 
   $('.clPinf2').on('keyup', function()
   {
     var ii= +this.id[3], tn= curTab;
 
+    if(ii !== 1) ii= 0;
     // *** tab2
       if(ii === 1)
         this.value= this.value.replace(/[^0-9]/g, '');
       else
-        this.value= this.value.toLowerCase().replace(/[^A-Z 0-9\+.\-,\\n]/gi, '');
+        this.value= this.value.toLowerCase().replace(/[^A-Z 0-9\+.\-,]/gi, '');
 
     $('#ta2rmv')[0].disabled= true;
     $('#ta2sub')[0].disabled= false;
@@ -1535,6 +1617,8 @@ $(document).ready(function()
       $('#t1fil')[0].disabled= true;
 
       $('#mtb1').click();
+      
+saveDB();
     }
     else
     if(this.value[0] === 'E')
@@ -1569,8 +1653,8 @@ $(document).ready(function()
       $('#t1fil')[0].disabled= true;
 
       $('#mtb1').click();
+saveDB();
     }
-
   });
 
   $("#ta2sub").click(function()
@@ -1618,19 +1702,19 @@ $(document).ready(function()
           rn= i;
           x[2]= $('#t2e2')[0].value;
           x[3]= $('#t2e3')[0].value;
-
+/*
           a= ''+ $('#t2e1y')[0].value + ('00'+ $('#t2e1m')[0].value).slice(-2)
             + ('00'+ $('#t2e1d')[0].value).slice(-2) + ('00'+ $('#t2e1h')[0].value).slice(-2);
           dtm= +a;
-      
-          x[0]= dtm;
-          alert('= '+dtm);
+  */    
+//          x[0]= dtm;
+ //         alert('= '+dtm);
           $('.clPinf2').css({'border-color':'black', background:'white'});
           break;
         }
       }
 
-      id2formatAllDates(cid);
+//      id2formatAllDates(cid);
 
 //      eefmod[2]= 0;
       eefmod[0]= dtm;
@@ -1644,6 +1728,8 @@ $(document).ready(function()
   //    alert(0);
       $('#mtb2').click();
 //      alert(9);
+      
+      saveDB();
     }
   });
 
@@ -1674,15 +1760,15 @@ $(document).ready(function()
   // *** class="ord2" : DARK BOTTOM BUTTON
   $("#cad4But").click( function() { // >Cache Data<
     adminInfo.innerText+= '~inProgress...';
-//    loadCache(false);
+    loadCache(false);
   });
   $("#imc4But").click( function() { // >Import Cache<
     adminInfo.innerText+= '~inProgress...';
-//    ttxt= 'IMPORT'; loadCache(true);
+    ttxt= 'IMPORT'; loadCache(true);
   });
   $("#stc4But").click( function() { // >Store Cache<
     adminInfo.innerText+= '~inProgress...';
-//    saveDB(true);
+   saveDB(true);
   });
 
 
@@ -1742,8 +1828,7 @@ $(document).ready(function()
 
   $("#sld4But").click( function() { loadDB(); }); //>Server Load<
   $("#ssv4But").click( function() {
-    adminInfo.innerText+= '~inProgress...';
-//    saveDB();
+    saveDB();
   }); //>Server Save<
 
 }); // THE END
