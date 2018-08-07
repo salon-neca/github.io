@@ -1,7 +1,7 @@
 $(document).ready(function()
 {
-  var versionCode= 'vS.15c Aug\'18. \n';
-  var appPath= 'https://sns.glitch.me';
+  var versionCode= 'vN.17b Aug\'18. \n';
+  var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:99999});
   
   var nBar= document.getElementById('notif');
@@ -691,9 +691,9 @@ $(document).ready(function()
           sortem(curTab= 2, 6);
           sortem(curTab= 2, 1);
           reFresh(); $('#mtb1').click();
+          saveDB();
         }, 999);
         
-        //  saveDB();
       }
       return;
     }
