@@ -1,4 +1,4 @@
-// *** s12 abcd
+// *** s15 abc
 self.addEventListener('install', e => {
   caches.delete('saloncch').then(cache => {
       caches.open('saloncch').then(cache => {
