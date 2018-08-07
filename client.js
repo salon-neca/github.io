@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'vN.17b Aug\'18. \n';
+  var versionCode= 'vN.17d Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:99999});
   
@@ -777,8 +777,8 @@ $(document).ready(function()
     {
       $(row).after(
           '<tr class="xtrR"><td align="center" colspan='+ (editMode? 5:4) +'>'
-        + '<pre class="popo" style="padding:9px 9px; margin:5px 0 7px; text-align:left; height:auto; '
-        + 'font-size:14px; border:1px dashed grey; user-select:text; overflow:scroll">' //; pointer-events:none 
+        + '<pre class="popo" style="padding:9px 9px; margin:5px 0 7px; text-align:left; height:auto; overflow:hidden; '
+        + 'font-size:14px; border:1px dashed grey; user-select:text; pointer-events:none ">' //; pointer-events:none 
         + ''+ xTxt +'</pre>' 
         + '<input class="ord3" type="button" style="float:right" value="New Session" >'
         + '<input class="ord3" type="button" style="float:right" value="Edit Memo" >'
@@ -799,7 +799,7 @@ $(document).ready(function()
     setRowCol();
 
     tmp= row.nextSibling.firstChild.firstChild;
-    if($(tmp).height() > 100) $(tmp).css({height:'200px'});
+    if($(tmp).height() > 200) $(tmp).css({height:'200px'});
     tmp.scrollTop= tmp.scrollHeight;
 
     tmp= $(row.nextSibling);
@@ -1464,8 +1464,7 @@ $(document).ready(function()
       plTab.splice(fnd, 1);
 
       $('#mtb1').click();
-      edtRow[1]= -1;
-      eefmod[1]= 0;
+//      edtRow[1]= -1;      eefmod[1]= 0;
       reFresh();
       
       nBar.innerText= ' [!]Deleted';
@@ -1488,7 +1487,6 @@ $(document).ready(function()
       x= hiTab[i];
       if(x[5] === hid) { fnd= i; break; }
     }
-//alert('= '+fnd);
 
     if(fnd >= 0)
     {
@@ -1497,8 +1495,7 @@ $(document).ready(function()
       hiTab.splice(fnd, 1);
 
       $('#mtb2').click();
-      edtRow[2]= -1;
-      eefmod[2]= eefmod[0]= 0;
+//      edtRow[2]= -1;      eefmod[2]= eefmod[0]= 0;
       reFresh();
       
       nBar.innerText= ' [!]Deleted';
