@@ -32,7 +32,7 @@
 
 <div id="hmPage" style="background:orange; text-align:center; font-size:17px" >
 
-  <img src="/aux/c.png" style="width:100%; margin-bottom:-9px" />
+  <img src="/aux/c.png" style="margin-bottom:-9px" />
   <img src="/aux/a.jpg" style="width:100%; margin-bottom:-9px" />
   <div style="background:darkorange; padding:19px 9px 9px; color:white; text-align:right">
     <p style="text-align:left; margin:0"><b>Enquire, or Book/Cancel Appointment Online... </b></p>
@@ -62,10 +62,10 @@
       <svg width="40px" height="29px" viewbox="0 0 24 30" fill="white" stroke="grey" stroke-width="1.5px">
         <path d="M24 6h-24v-4h24v4zm0 4h-24v4h24v-4zm0 8h-24v4h24v-4z" /></svg>
     </button>
-    <button class="mnu" id="mnu2" style="padding:7px 0 0 0">
+    <!--button class="mnu" id="mnu2" style="padding:7px 0 0 0">
       <svg width="40px" height="28px" viewbox="0 0 256 450" fill="white" stroke="grey" stroke-width="30px">
         <path d="M256 272c0 4.25-1.75 8.25-4.75 11.25l-112 112c-3 3-7 4.75-11.25 4.75s-8.25-1.75-11.25-4.75l-112-112c-3-3-4.75-7-4.75-11.25 0-8.75 7.25-16 16-16h224c8.75 0 16 7.25 16 16zM256 176c0 8.75-7.25 16-16 16h-224c-8.75 0-16-7.25-16-16 0-4.25 1.75-8.25 4.75-11.25l112-112c3-3 7-4.75 11.25-4.75s8.25 1.75 11.25 4.75l112 112c3 3 4.75 7 4.75 11.25z" /></svg>   
-    </button>
+    </button-->
     <button class="mnu" id="mnu1">
       <svg width="40px" height="29px" viewbox="0 0 512 652" fill="white" stroke="grey" stroke-width="40px">
         <path d="M512 198.525l-176.89-25.704-79.11-160.291-79.108 160.291-176.892 25.704 128 124.769-30.216 176.176 158.216-83.179 158.216 83.179-30.217-176.176 128.001-124.769z" /></svg>
@@ -124,7 +124,9 @@
       <button class="ord" id="ta2rmv" disabled>Remove</button>
       <input class="ord" id="ta2sub" type="button" value="Edit Session" disabled >
 
-      <div style="margin:0; padding:0; text-align:left; border:0">
+    </div>
+
+      <div style="margin:0 0 9px; padding:0; text-align:left; border:0">
         <pre style="margin-left:3px; font-size:14px">DD-MM-YYYY                        :HH</pre>
         <input id="t2e1d" class="clPinf2" autocomplete="off" type="tel" placeholder="~dd" style="width:10%; margin-left:3px" >
         <input id="t2e1m" class="clPinf2" autocomplete="off" type="tel" placeholder="~mm" style="width:10%" >
@@ -132,17 +134,15 @@
         <b> :</b>
         <input id="t2e1h" class="clPinf2" autocomplete="off" type="tel" placeholder="~hh" style="width:10%; margin-left:-3px" >
           <textarea class="clPinf2" id="t2e2" rows="5" placeholder="~treatment"
-                 style="width:100%; margin:3px; padding:9px; text-align:left" ></textarea>
+                 style="width:100%; margin:0 3px; padding:9px; text-align:left" ></textarea>
           <textarea class="clPinf2" id="t2e3" rows="3" placeholder="~creams"
                     style="width:100%; margin:3px; text-align:left" ></textarea>
       </div>
-    </div>
-
     <table id="historyTable">
       <thead id="hth"><!--/thead-->
         <tr>
           <th tabindex="1" style="width:149px">DATE</th>
-          <th tabindex="1" style="width:59px">#cid</th>
+          <th tabindex="1" class="admin" style="width:59px">#cid</th>
           <th tabindex="1">SESSION</th>
         </tr></thead>
       <tbody id="htb"></tbody> 

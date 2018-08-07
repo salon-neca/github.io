@@ -78,7 +78,7 @@
 
 .ord3 {
   border:1px solid lightgrey;
-  /*width:auto; height:auto;*/
+  /*width:auto;*/ height:40px;
   padding:7px 25px;
   color:white; background:#5f5f5f;
   margin:0 3px 15px 5px; font-size:15px;
@@ -96,7 +96,7 @@
   width:50px; height:40px;
 
   color:white; background:black;
-  margin-left:-2px;
+  margin-left:1px;
   padding:9px 0 0 0;
 }
 .mnu:hover {
