@@ -1,13 +1,15 @@
 {
   "name":"Salon Neca",
-  "short_name":"Neca",
+  "short_name":"SaloN",
   "icons":[{
       "src":"/aux/icon-144.png",
       "sizes":"144x144",
       "type":"image/png"
   }],
-  "start_url":"/index.html",
-  "display":"standalone",
+  "start_url":".",
+  "display":"fullscreen",
+  "orientation":"portrait",
   "background_color":"#333333",
-  "theme_color":"#777777"
+  "theme_color":"#777777",
+  "description": "Simply the best! "
 }
