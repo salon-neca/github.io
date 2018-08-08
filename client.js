@@ -1,8 +1,9 @@
 $(document).ready(function()
 {
-  var versionCode= 'vN.17d Aug\'18. \n';
+  
+  var versionCode= 'v0.19a Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
-  $.ajaxSetup({async:true, cache:false, timeout:99999});
+  $.ajaxSetup({async:true, cache:false, timeout:9999});
   
   var nBar= document.getElementById('notif');
   var adminInfo= document.getElementById('dbFrame');
@@ -332,11 +333,11 @@ $(document).ready(function()
       if(tth)
       {
         $('#ptb').append( '<tr tabindex="1">'
-                        +'<td class="admin">'+ x[0]
-                        +'</td><td>'+ x[1]
-                        +'</td><td>'+ x[2]
-                        +'</td><td>'+ x[3]
-                        +'</td><td>'+ x[4] //+col[5]
+                        +'<td class="admin" style="width:10%" >'+ x[0]
+                        +'</td><td style="width:20%"> '+ x[1]
+                        +'</td><td style="width:25%" >'+ x[2]
+                        +'</td><td style="width:20%" >'+ x[3]
+                        +'</td><td style="width:20%" >'+ x[4] //+col[5]
                         +'</td><td style="display:none">'+ rn
                         +'</td></tr>' );
         rn++;
@@ -441,7 +442,7 @@ $(document).ready(function()
     fltInf[tn]= ''+ (fltNum[tn]+1) +'.'+ fc + fm +'"..';
     jq.text(fltStr[tn] + fltInf[tn]);
   }
-
+  
   function reFresh()
   {
     var i= curTab, j1, j2, a, b, c;
@@ -539,47 +540,23 @@ $(document).ready(function()
       
       if($(et).hasClass('vertSz'))
       {
-        et= et.previousSibling.previousSibling.previousSibling;
+        tmp= $(et).closest('td')[0].firstChild;
         
-        if($(et).height() > 200)
-          $(et).css({height:'200px'});
+//      alert('h1= '+$(tmp).css('height')+'  ..h2= '+ tmp.offsetHeight);
+//        $(tmp).css({height:'auto'});
+        if(+tmp.offsetHeight > 200)
+          $(tmp).css({height:'200px'})
         else
-          $(et).css({height:'auto'});
+          $(tmp).css({height:'auto'});
         
-        et.scrollTop= et.scrollHeight;
-        
-        
-        tmp= $(et).closest('tr');
-        if(tmp[0].getBoundingClientRect().bottom > window.innerHeight)
-          tmp[0].scrollIntoView(false);
-
-        return;
-      }
-      
-      if(editMode && et.value[0] === 'C')
-      {
-        fltNum[2]= 2;
-        for(i= 0; i < hiTab.length; i++)
-        {
-          if(hiTab[i][1] === cid) hiTab[i][4]= fltNum[2];
-          else hiTab[i][4]= 0;
-        }
-
-        $("#mnu1").click();
-        
-        eefmod[2]= cid;
-        sortem(curTab= 2, 1);
-        reFresh();
-
-        edtRow[2]= 1;
-        $('#mtb2').click();
-
-        $("#mnu1").click();
-        $('#t2fil')[0].disabled= true;
+        tmp.scrollTop= tmp.scrollHeight;
       }
       else
       if(et.value[0] === 'E')
       {
+        var svgBtn= $(et.parentNode).find('.vertSz')[0];
+        svgBtn.disabled= true; $(svgBtn.firstChild).css({fill:'black'});
+
         epp= et.previousSibling;
         $(epp).before(
            '<textarea class="clPinf" placeholder="MEMO" rows="5" onkeyup="mmm()" '
@@ -590,10 +567,6 @@ $(document).ready(function()
         epp= epp.previousSibling;
         epp.innerText= id2mmo(cid);
 
-        tmp= $(et).closest('tr');
-        if(tmp[0].getBoundingClientRect().bottom > window.innerHeight)
-          tmp[0].scrollIntoView(false); // document.documentElement.scrollTop+= h;
-        
         epp.focus();
       }
       else
@@ -615,8 +588,21 @@ $(document).ready(function()
         
         et= epp.previousSibling;
         et.innerText= id2trs(cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(cid)) +'\n\n';
+
+        $(et).css({height:'auto'});
+        if(+et.offsetHeight > 170)
+        {
+          $(et).css({height:'200px'});
+          var svgBtn= $(et.parentNode).find('.vertSz')[0];
+          svgBtn.disabled= false; $(svgBtn.firstChild).css({fill:'white'});
+        }
+
         et.scrollTop= et.scrollHeight;
         $(epp).remove();
+
+        setTimeout(function() {
+          saveDB();
+        }, 99);
       }
       else
       if(et.value[0] === 'N')
@@ -633,14 +619,15 @@ $(document).ready(function()
         $(et).before(
            '<textarea class="clPinf" placeholder="CREAMS" rows="3" '
           +'style="width:100%; margin:9px 0; padding:9px; text-align:left; display:block" ></textarea>');
+      
+        var svgBtn= $(et.parentNode).find('.vertSz')[0];
+        svgBtn.disabled= true; $(svgBtn.firstChild).css({fill:'black'});
 
         et.value= 'Finish and Save';
         et.nextSibling.disabled= true;
         tmp= et.previousSibling; //creams
         epp= tmp.previousSibling; //treatment
         tmp= $(et).closest('tr');
-        if(tmp[0].getBoundingClientRect().bottom > window.innerHeight)
-          tmp[0].scrollIntoView(false); // document.documentElement.scrollTop+= h;
         
         tmp= $(et).closest('td')[0].firstChild.nextSibling;
 
@@ -649,6 +636,7 @@ $(document).ready(function()
         tmp.value= et.substr(4,2); tmp= tmp.nextSibling.nextSibling;
         tmp.value= et.substr(0,4); tmp= tmp.nextSibling.nextSibling.nextSibling;
         tmp.value= et.substr(8,2);
+
 
         epp.focus();
       }
@@ -682,9 +670,18 @@ $(document).ready(function()
         hiTab.push([ dtm, cid,
                     formatSession(tre), formatSession(cre), 0, hiTab.length+1 ]);
 
+
         et= $(et).closest('td')[0].firstChild;
         et.innerText= id2trs(cid) +'\n**** MEMO:  '+ chunkStr(63, id2mmo(cid)) +'\n\n';
-        
+
+        $(et).css({height:'auto'});
+        if(+et.offsetHeight > 170)
+        {
+          $(et).css({height:'200px'});
+          var svgBtn= $(et.parentNode).find('.vertSz')[0];
+          svgBtn.disabled= false; $(svgBtn.firstChild).css({fill:'white'});
+        }
+
         et.scrollTop= et.scrollHeight;
 
         setTimeout(function() {
@@ -692,19 +689,30 @@ $(document).ready(function()
           sortem(curTab= 2, 1);
           reFresh(); $('#mtb1').click();
           saveDB();
-        }, 999);
-        
+        }, 99);
+
+//        setTimeout(function() {        }, 9999);
       }
+window.scrollTo(0,0);
+//alert(8);
+      et= e.target;
+      tmp= $(et).closest('tr')[0];
+      if(tmp.getBoundingClientRect().bottom > 500) {
+        tmp.scrollIntoView(false); scrollBy(100); }
+      else
+      if(tmp.getBoundingClientRect().top < 0) {
+        tmp.scrollIntoView(true); tmp.scrollBy(-100); }
+
+//alert('9..= '+tmp.getBoundingClientRect().top);
       return;
     }
 
+    // *** normal tr stuff...
+    if( $(et).hasClass('clPinf') ||
+      ($(et).is('td') &&$(et.parentNode).hasClass('xtrR')) ) return;
 
-    if($(et).is('pre, textarea') || $(et).hasClass('clPinf'))
-    {
-      e.stopPropagation();
-      return;
-    }
-    
+    e.stopPropagation();
+
 
     var row, tx;//, ti;
     if(!$(et).is('tr')) row= $(et).closest('tr')[0];
@@ -760,25 +768,11 @@ $(document).ready(function()
   //  else plInf= plInf.substr(0,cn);
 
      
-    /*
-    if(editMode)
     {
       $(row).after(
-          '<tr class="xtrR"><td align="center" colspan='+ (editMode? 5:4) +'>'
-        + '<pre class="popo" style="padding:9px 9px; margin:5px 0 7px; text-align:left; height:auto; ' 
-        + 'font-size:14px; border:1px dashed grey; user-select:text; overflow:scroll">' //; pointer-events:none
-        + ''+ xTxt +'</pre>' 
-        + '<pre style="font-size:17px; width:auto; ' //border-right:1px solid red; '
-        + 'pointer-events:none; padding:3px 5px; float:left">'+ plInf +'</pre>'
-        + '<input class="ord3" type="button" style="float:right" value="Client Records in Sessions Tab" >'
-        + '</td></tr>');
-    }
-    else*/
-    {
-      $(row).after(
-          '<tr class="xtrR"><td align="center" colspan='+ (editMode? 5:4) +'>'
-        + '<pre class="popo" style="padding:9px 9px; margin:5px 0 7px; text-align:left; height:auto; overflow:hidden; '
-        + 'font-size:14px; border:1px dashed grey; user-select:text; pointer-events:none ">' //; pointer-events:none 
+          '<tr class="xtrR" style="width:95%"><td align="center" colspan='+ (editMode? 5:4) +'>'
+        + '<pre class="popo" style="padding:9px 9px; margin:5px 0 7px; text-align:left; height:auto; '//pointer-events:none 
+        + 'font-size:14px; border:1px dashed grey; user-select:text; text-align:left; overflow:hidden ">' 
         + ''+ xTxt +'</pre>' 
         + '<input class="ord3" type="button" style="float:right" value="New Session" >'
         + '<input class="ord3" type="button" style="float:right" value="Edit Memo" >'
@@ -799,13 +793,24 @@ $(document).ready(function()
     setRowCol();
 
     tmp= row.nextSibling.firstChild.firstChild;
-    if($(tmp).height() > 200) $(tmp).css({height:'200px'});
+    if(+tmp.offsetHeight > 170)
+      $(tmp).css({height:'200px'});
+    else
+    {
+      var svgBtn= $(row.nextSibling.firstChild).find('.vertSz')[0];
+      svgBtn.disabled= true; $(svgBtn.firstChild).css({fill:'black'});
+    }
+
     tmp.scrollTop= tmp.scrollHeight;
 
-    tmp= $(row.nextSibling);
-    if(tmp[0].getBoundingClientRect().bottom > window.innerHeight)
-      tmp[0].scrollIntoView(false);
+    window.scrollTo(0,0);
 
+      tmp= $(row.nextSibling)[0];
+      if(tmp.getBoundingClientRect().bottom > 500) {
+        tmp.scrollIntoView(false); scrollBy(100); }
+      else
+      if(tmp.getBoundingClientRect().top < 0) {
+        tmp.scrollIntoView(true); tmp.scrollBy(-100); }
   });
 
   $('#historyTable').on('click', function (e)
@@ -1099,6 +1104,7 @@ $(document).ready(function()
   logMe();
 */
 
+
   // *** tab buttons listener ********************************
   var initOnceA= false;
   $(".mtb").click(function(e)
@@ -1144,7 +1150,7 @@ $(document).ready(function()
   $('.ord2').click( function() { clrAdmin(); });
   $('#headbar').click(function() {
     var t= nBar.innerText; nBar.innerText= lastNotif; lastNotif= t;  });
-  $('.mnu, .mtb, .ord, .ord2, .ord3').click(function(e) { e.stopPropagation(); });
+  $('.mnu, .mtb, .ord, .ord2, .ord3, input, textarea').click(function(e) { e.stopPropagation(); });
 
   $("#mnu1").click(function()
   { // star A.
@@ -1654,9 +1660,9 @@ $(document).ready(function()
 
   // *** TAB 3 : ADMIN BUTTONS ***************************************
   $('#showPass').click(function() { //img>Show Password});
+
     $('#hmLog').css({display:'block'});
     window.scrollTo(0, 999);
-
     $('#pasIn').focus();
   });
 
@@ -1666,6 +1672,8 @@ $(document).ready(function()
     
     $("#log4But").val('Please wait...');
     logMe();
+    
+    document.body.webkitRequestFullScreen();
   });
   
   // *** class="ord2" : DARK BOTTOM BUTTON

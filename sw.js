@@ -1,4 +1,4 @@
-// *** N17 abnd
+// *** n19 a
 self.addEventListener('install', e => {
   caches.delete('saloncch').then(cache => {
       caches.open('saloncch').then(cache => {
