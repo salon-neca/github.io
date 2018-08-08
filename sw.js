@@ -1,4 +1,4 @@
-// *** 17 abnd
+// *** 17 abcd - rollBack from 19b - e
 self.addEventListener('install', e => {
   caches.delete('saloncch').then(cache => {
       caches.open('saloncch').then(cache => {
