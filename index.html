@@ -5,8 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <meta name=".mobile-web-app-capable" content="yes">     
   <link rel="manifest" href="manifest.json">
-  <meta name="mobile-web-app-capable" content="yes">
 
   <!-- Add to home screen for Safari on iOS, and WinMobile -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -24,15 +24,15 @@
   <script type="text/javascript" src="client.js"></script>
 </head>
 
-<!-- onselectstart="return false"
+<!-- onselectstart="return false" oncontextmenu="return false"
+
 -->
-<body oncontextmenu="return false" ondragstart="return false"
-      style="background-color:#777777; width:700px; margin:auto; ">
+<body oncontextmenu="return false" ondragstart="return false" style="background-color:#777777; width:700px; height:100%; margin:auto">
   
 
 <div id="hmPage" style="background:orange; text-align:center; font-size:17px" >
 
-  <!--img src="/aux/c.png" style="margin-bottom:-9px" /-->
+  <img src="/aux/c.png" style="margin-bottom:-9px" />
   <img src="/aux/a.jpg" style="width:100%; margin-bottom:-9px" />
   <div style="background:darkorange; padding:19px 9px 9px; color:white; text-align:right">
     <p style="text-align:left; margin:0"><b>Enquire, or Book/Cancel Appointment Online... </b></p>
@@ -73,7 +73,8 @@
   </div>
 
 <!-- *** tabs stsrt here 
-    <div id="arnd1" style="height:700px; overflow-x:hidden; overflow-y:scroll" >
+        <p style="margin-left:-9px; font-size:12px">:HH </p>
+        <p style="margin-left:-9px; font-size:12px">:DD-MM-YYYY </p>
 ******************************************************************************************
 -->
   <div id="tab1" class="ptab pac" style="padding:20px 14px">
@@ -96,17 +97,16 @@
         <input class="clPinf" id="t1e4" type="text" placeholder="~mobile" autocomplete="off" >
     </div>
 
-      <table id="playerTable" >
-        <thead id="pth"><!--/thead 670px-->
-          <tr> <th tabindex="1" class="admin" style="width:10%" >#id</th>
-            <th tabindex="1" style="width:20%" >FIRST</th>
-            <th tabindex="1" style="width:25%" >LAST</th>
-            <th tabindex="1" style="width:20%" >PHONE</th>
-            <th tabindex="1" style="width:20%" >MOBILE</th> </tr>
-        </thead>
-        <tbody id="ptb" ></tbody>
-      </table>
-
+    <table id="playerTable">
+      <thead id="pth"><!--/thead-->
+        <tr> <th tabindex="1" class="admin" style="width:59px">#id</th>
+          <th tabindex="1">FIRST</th>
+          <th tabindex="1">LAST</th>
+          <th tabindex="1">PHONE</th>
+          <th tabindex="1">MOBILE</th> </tr>
+      </thead> <tbody id="ptb"></tbody> 
+    </table>
+    <br>
     <button class="ord2 dminEdit" id="t1all" style="display:none" disabled> Show All </button>
   </div>
 
@@ -133,9 +133,9 @@
         <input id="t2e1y" class="clPinf2" autocomplete="off" type="tel" placeholder="~yyyy" style="width:15%" >
         <b> :</b>
         <input id="t2e1h" class="clPinf2" autocomplete="off" type="tel" placeholder="~hh" style="width:10%; margin-left:-3px" >
-          <textarea class="clPinf2" id="t2e2" rows="3" placeholder="~treatment"
+          <textarea class="clPinf2" id="t2e2" rows="5" placeholder="~treatment"
                  style="width:100%; margin:0 3px; padding:9px; text-align:left" ></textarea>
-          <textarea class="clPinf2" id="t2e3" rows="2" placeholder="~creams"
+          <textarea class="clPinf2" id="t2e3" rows="3" placeholder="~creams"
                     style="width:100%; margin:3px; text-align:left" ></textarea>
       </div>
     <table id="historyTable">
@@ -171,9 +171,8 @@
 
 </div> <!-- appFrame -->
 
-  <!--div style="background:teal;
-              user-select:none; height:900px; pointer-events:none" ></div>
-  <!-- audio id="audQuack" type="audio/wav" src="/aux/quack.wav"></audio-->
+  <div style="background:none; user-select:none; height:300px; pointer-events:none"></div>
+  <!--audio id="audQuack" type="audio/wav" src="/aux/quack.wav"></audio-->
   <script>
         window.onbeforeunload= function() { return "Reload database?"; }
 

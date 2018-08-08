@@ -6,53 +6,24 @@
 * {
   font-size:19px; font-weight:normal;
   font-family:'IBM Plex Mono', monospace;
-  
-  border:none; outline:none;
-  margin:0 0 0 0; padding:0 0 0 0;
-  cursor:default; user-select:none;
+
+  margin:0; padding:0;
+  cursor:default; border:0;
 
   box-sizing:border-box;
-/*
   -moz-box-sizing:border-box;
   -webkit-box-sizing:border-box;
 
   appearance:none;
   -moz-appearance:none;
   -webkit-appearance:none;
-*/
+
+  user-select:none;
+  /*pointer-events:none;*/
 }
 
-/*
-:focus { border:none; outline:none; }
-::-moz-focus { border:none; outline:none; }
-::-webkit-focus { border:none; outline:none; }
-
-:focus-inner { border:none; outline:none; }
-::-moz-focus-inner { border:none; outline:none; }
-::-webkit-focus-inner { border:none; outline:none; }
-*/
-
-/*
-
-::-webkit-scrollbar {
-    -webkit-appearance:none;
-}
-::-webkit-scrollbar:vertical {
-    width: 12px;
-}
-::-webkit-scrollbar:horizontal {
-    height: 12px;
-}
-::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, .5);
-    border-radius: 10px;
-    border: 2px solid #ffffff;
-}
-::-webkit-scrollbar-track {
-    border-radius: 10px;
-    background-color: #ffffff;
-}
-*/
+:focus {outline:none;}
+::-moz-focus-inner {border:0;}
 
 
 .finf {  
@@ -152,38 +123,19 @@
 .ptab.pde {
   display:none; pointer-events:none;
 }
-/*
-  position:relative;
-  table-layout:fixed;
-*/
 
 table {
-  width:100%;
+  width:100%; 
+  position:relative;
   table-layout:fixed;
   border-collapse:collapse;
 }
-tbody
-{
-  width:670px;
-  display:block;
-  overflow-y:scroll;
-  overflow-x:hidden;
-}
-
-#ptb {
-  height:500px;
-}
-#htb {
-  height:300px;
-}
-
 th {
   padding:9px 5px;
   text-align:center;
   font-size:15px; font-weight:bold;
 }
 td {
-  width:100%;
   font-size:17px; padding:5px 9px;
 }
 #htb td {
