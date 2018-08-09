@@ -6,9 +6,10 @@
 * {
   font-size:19px; font-weight:normal;
   font-family:'IBM Plex Mono', monospace;
-
-  margin:0; padding:0;
-  cursor:default; border:0;
+  
+  border:none; outline:none;
+  margin:0 0 0 0; padding:0 0 0 0;
+  cursor:default; user-select:none;
 
   box-sizing:border-box;
   -moz-box-sizing:border-box;
@@ -18,15 +19,39 @@
   -moz-appearance:none;
   -webkit-appearance:none;
 
-  user-select:none;
-  /*pointer-events:none;*/
 }
 
-:focus {outline:none;}
-::-moz-focus-inner {border:0;}
+/*
+:focus { border:none; outline:none; }
+::-moz-focus { border:none; outline:none; }
+::-webkit-focus { border:none; outline:none; }
+
+:focus-inner { border:none; outline:none; }
+::-moz-focus-inner { border:none; outline:none; }
+::-webkit-focus-inner { border:none; outline:none; }
+*/
+
+::-webkit-scrollbar {
+    -webkit-appearance:none;
+}
+::-webkit-scrollbar:vertical {
+    width:20px;
+}
+::-webkit-scrollbar:horizontal {
+    height:0;
+}
+::-webkit-scrollbar-thumb {
+  background:lightgrey;
+  border:1px solid black;
+}
+::-webkit-scrollbar-track {
+  background:none;
+  border:5px solid white;
+}
 
 
-.finf {  
+.finf {
+  
   border:1px solid grey;
   margin:5px 0 9px 0; padding:3px 5px;
   font-size:17px; text-align:center;
@@ -125,10 +150,10 @@
 }
 
 table {
-  width:100%; 
-  position:relative;
+  width:650px;
   table-layout:fixed;
   border-collapse:collapse;
+  background:white;
 }
 th {
   padding:9px 5px;
@@ -137,11 +162,11 @@ th {
 }
 td {
   font-size:17px; padding:5px 9px;
+  overflow:hidden;
+  text-overflow:ellipsis; line-height:17px;
 }
 #htb td {
   font-size:15px; font-weight:500;
-  white-space:pre; overflow:hidden;
-  text-overflow:ellipsis; line-height:17px;
 }
 #htb tr.selR, #ptb tr.selR {
   color:white; background:#7f7f7f;
