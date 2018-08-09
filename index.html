@@ -25,20 +25,26 @@
 </head>
 
 <!-- onselectstart="return false" oncontextmenu="return false"
+      ondragstart="return false" 
 
+      draggable="true" ondragstart="alert('drag');" 
+
+ min-height: 480px;
 -->
-<body oncontextmenu="return false" ondragstart="return false" style="background-color:#777777; width:700px; height:100%; margin:auto">
+<body oncontextmenu="return false"
+      style="background-color:#777777; width:700px; margin:auto">
   
 
 <div id="hmPage" style="background:orange; text-align:center; font-size:17px" >
 
-  <img src="/aux/c.png" style="margin-bottom:-9px" />
-  <img src="/aux/a.jpg" style="width:100%; margin-bottom:-9px" />
-  <div style="background:darkorange; padding:19px 9px 9px; color:white; text-align:right">
-    <p style="text-align:left; margin:0"><b>Enquire, or Book/Cancel Appointment Online... </b></p>
-    <textarea class="clPinf" placeholder="MESSAGE TEXT" rows="4"
-              style="font-size:14px; width:100%; text-align:left; margin:5px 0 -3px; display:block" ></textarea>
-      <button class="ord2" id="hmMsg" style="background:purple; border-color:blue; margin-right:5px">Submit</button>
+  <img src="/aux/c.png" width="100%" style="margin-bottom:-9px" />
+  <img src="/aux/a.jpg" width="100%" />
+  <div style="background:darkorange; width:100%; color:white;
+              margin:auto; padding:9px; text-align:right">
+    <p style="text-align:left"><b>Enquire, or Book/Cancel Appointment Online... </b></p>
+    <textarea class="clPinf" placeholder="MESSAGE TEXT" rows="3"
+              style="font-size:14px; width:100%; text-align:left; display:block" ></textarea>
+      <button class="ord2" id="hmMsg" style="background:purple; border-color:blue; margin:0 5px">Submit</button>
   </div>
   <img src="/aux/b.png" id="showPass" style="width:30%; margin:19px" />
 
@@ -49,7 +55,7 @@
     </div>
 </div>
   
-<div id="appFrame" style="display:none; background:white; width:100%">
+<div id="appFrame" style="display:none; background:white; ">
 
   <pre id="notif" style="font-size:15px; padding:5px 9px 1px 9px; margin:0 0 -1px 0; height:auto; 
     border:none; white-space:nowrap; overflow:auto; color:lightgrey; background:#505050" >~ntfBar</pre>
@@ -75,9 +81,10 @@
 <!-- *** tabs stsrt here 
         <p style="margin-left:-9px; font-size:12px">:HH </p>
         <p style="margin-left:-9px; font-size:12px">:DD-MM-YYYY </p>
+  border:1px solid red;
 ******************************************************************************************
 -->
-  <div id="tab1" class="ptab pac" style="padding:20px 14px">
+  <div id="tab1" class="ptab pac" style="padding:20px 14px 9px">
     <div class="filt" style="padding:0; margin:9px 0 9px; text-align:right">
       <pre id="t1FinfBar" style="font-size:17px; text-align:left; font-style:normal;
         border-bottom:0px solid black; padding:0 5px; margin:-9px 0 9px; width:100%">[Filters]</pre>
@@ -97,20 +104,27 @@
         <input class="clPinf" id="t1e4" type="text" placeholder="~mobile" autocomplete="off" >
     </div>
 
-    <table id="playerTable">
-      <thead id="pth"><!--/thead-->
-        <tr> <th tabindex="1" class="admin" style="width:59px">#id</th>
-          <th tabindex="1">FIRST</th>
-          <th tabindex="1">LAST</th>
-          <th tabindex="1">PHONE</th>
-          <th tabindex="1">MOBILE</th> </tr>
-      </thead> <tbody id="ptb"></tbody> 
-    </table>
-    <br>
-    <button class="ord2 dminEdit" id="t1all" style="display:none" disabled> Show All </button>
+    <div id="t1arnd" style="height:500px; background:OldLace;
+        border-bottom:5px double grey; overflow-y:scroll; overflow-x:hidden" >
+      <table id="playerTable">
+        <thead id="pth">
+          <tr> <th tabindex="1" class="admin" style="width:59px">#id</th>
+            <th tabindex="1">FIRST</th>
+            <th tabindex="1">LAST</th>
+            <th tabindex="1">PHONE</th>
+            <th tabindex="1">MOBILE</th> </tr>
+        </thead>
+        <tbody id="ptb"></tbody>
+      </table>
+      <p style="background:white; margin:99px 9px 19px 9px;
+                padding:5px 9px; border:1px solid red;"> ~endOfRecords </p>
+    </div>
+
+    <!--br>
+    <button class="ord2 dminEdit" id="t1all" style="display:none" disabled> Show All </button-->
   </div>
 
-  <div id="tab2" class="ptab pde" style="background:white; font-size:24px; padding:20px 14px">
+  <div id="tab2" class="ptab pde" style="background:white; font-size:24px; padding:20px 14px 9px">
     <div class="filt" style="padding:0; margin:9px 0 9px; text-align:right">
       <pre id="t2FinfBar" style="font-size:17px; text-align:left; font-style:normal;
         border-bottom:0px solid black; padding:0 5px; margin:-9px 0 9px; width:100%">[Filters]</pre>
@@ -128,30 +142,42 @@
 
       <div style="margin:0 0 9px; padding:0; text-align:left; border:0">
         <pre style="margin-left:3px; font-size:14px">DD-MM-YYYY                        :HH</pre>
-        <input id="t2e1d" class="clPinf2" autocomplete="off" type="tel" placeholder="~dd" style="width:10%; margin-left:3px" >
-        <input id="t2e1m" class="clPinf2" autocomplete="off" type="tel" placeholder="~mm" style="width:10%" >
-        <input id="t2e1y" class="clPinf2" autocomplete="off" type="tel" placeholder="~yyyy" style="width:15%" >
+        <input id="t2e1d" class="clPinf2" autocomplete="off" type="tel"
+               placeholder="~dd" style="width:10%; height:25px; margin-left:3px" >
+        <input id="t2e1m" class="clPinf2" autocomplete="off" type="tel"
+               placeholder="~mm" style="width:10%; height:25px" >
+        <input id="t2e1y" class="clPinf2" autocomplete="off" type="tel"
+               placeholder="~yyyy" style="width:15%; height:25px" >
         <b> :</b>
-        <input id="t2e1h" class="clPinf2" autocomplete="off" type="tel" placeholder="~hh" style="width:10%; margin-left:-3px" >
-          <textarea class="clPinf2" id="t2e2" rows="5" placeholder="~treatment"
+        <input id="t2e1h" class="clPinf2" autocomplete="off" type="tel"
+               placeholder="~hh" style="width:10%; height:25px; margin-left:-3px" >
+          <textarea class="clPinf2" id="t2e2" rows="3" placeholder="~treatment"
                  style="width:100%; margin:0 3px; padding:9px; text-align:left" ></textarea>
-          <textarea class="clPinf2" id="t2e3" rows="3" placeholder="~creams"
+          <textarea class="clPinf2" id="t2e3" rows="2" placeholder="~creams"
                     style="width:100%; margin:3px; text-align:left" ></textarea>
       </div>
-    <table id="historyTable">
-      <thead id="hth"><!--/thead-->
-        <tr>
-          <th tabindex="1" style="width:149px">DATE</th>
-          <th tabindex="1" class="admin" style="width:59px">#cid</th>
-          <th tabindex="1">SESSION</th>
-        </tr></thead>
-      <tbody id="htb"></tbody> 
-    </table>
-    <br>
-    <button class="ord2 dminEdit" id="t2all" style="display:none" disabled> Show All </button>
+
+    <div id="t2arnd" draggable="true" style="height:300px; background:OldLace;
+        border-bottom:5px double grey; overflow-y:scroll; overflow-x:hidden" >
+
+      <table id="historyTable">
+        <thead id="hth"><!--/thead-->
+          <tr>
+            <th tabindex="1" style="width:149px">DATE</th>
+            <th tabindex="1" class="admin" style="width:59px">#cid</th>
+            <th tabindex="1">SESSION</th>
+          </tr></thead>
+        <tbody id="htb"></tbody> 
+      </table>
+      <p style="background:white; margin:99px 9px 19px 9px;
+                padding:5px 9px; border:1px solid red;"> ~endOfRecords </p>
+    </div>
+
+    <!---br>
+    <button class="ord2 dminEdit" id="t2all" style="display:none" disabled> Show All </button-->
   </div>
 
-  <div id="tab3" class="ptab pde" style="padding:20px 14px">
+  <div id="tab3" class="ptab pde" style="padding:20px 14px 9px">
 
     <pre id="dbFrame" style="width:100%; height:400px; padding:5px;
       border:1px solid grey;overflow:auto; margin:0; font-size:15px;
@@ -171,7 +197,7 @@
 
 </div> <!-- appFrame -->
 
-  <div style="background:none; user-select:none; height:300px; pointer-events:none"></div>
+  <!--div style="background:none; user-select:none; height:300px; pointer-events:none"></div>
   <!--audio id="audQuack" type="audio/wav" src="/aux/quack.wav"></audio-->
   <script>
         window.onbeforeunload= function() { return "Reload database?"; }
