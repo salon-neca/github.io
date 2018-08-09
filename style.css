@@ -120,10 +120,9 @@
 .mnu { 
   float:right;  
   width:50px; height:40px;
-
   color:white; background:black;
-  margin-left:1px;
-  padding:9px 0 0 0;
+  margin-left:9px;
+  padding:5px;
 }
 .mnu:hover {
   background:grey;
