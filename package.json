@@ -6,7 +6,7 @@
   "scripts":{ "start":"node server.js" },
   "dependencies":{ "express":"^4.16.3" },
   "engines":{ "node":"8.x" },
-  "repository":{ "url":"salon-neca.github.io" },
+  "repository":{ "url":"salonN.github.io" },
   "license":"MIT",
   "keywords":[ "node", "glitch", "salon" ]
 }

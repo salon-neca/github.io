@@ -1,3 +1,4 @@
+/* s24s*/
 @font-face {
   font-family: 'IBM Plex Mono';
   src: url('/aux/ibm.ttf') format('truetype');
@@ -7,8 +8,8 @@
   font-size:19px; font-weight:normal;
   font-family:'IBM Plex Mono', monospace;
   
-  border:none; outline:none;
-  margin:0 0 0 0; padding:0 0 0 0;
+  border:0; outline:0;
+  margin:0; padding:0;
   cursor:default; user-select:none;
 
   box-sizing:border-box;
@@ -18,18 +19,7 @@
   appearance:none;
   -moz-appearance:none;
   -webkit-appearance:none;
-
 }
-
-/*
-:focus { border:none; outline:none; }
-::-moz-focus { border:none; outline:none; }
-::-webkit-focus { border:none; outline:none; }
-
-:focus-inner { border:none; outline:none; }
-::-moz-focus-inner { border:none; outline:none; }
-::-webkit-focus-inner { border:none; outline:none; }
-*/
 
 ::-webkit-scrollbar {
     -webkit-appearance:none;
@@ -48,7 +38,6 @@
   background:none;
   border:5px solid white;
 }
-
 
 .finf {
   
@@ -120,7 +109,7 @@
 .mnu { 
   float:right;  
   width:50px; height:40px;
-  color:white; background:black;
+  color:white; background:none;
   margin-left:9px;
   padding:5px;
 }
@@ -160,11 +149,12 @@ th {
   font-size:15px; font-weight:bold;
 }
 td {
-  font-size:17px; padding:5px 9px;
   overflow:hidden;
+  font-size:17px; padding:5px 9px;
   text-overflow:ellipsis; line-height:17px;
 }
 #htb td {
+  white-space:pre;
   font-size:15px; font-weight:500;
 }
 #htb tr.selR, #ptb tr.selR {

@@ -1,12 +1,12 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.18j Aug\'18. \n';
+  var versionCode= 'v0.24f Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
-  $.ajaxSetup({async:true, cache:false, timeout:9999});
+  $.ajaxSetup({async:true, cache:false, timeout:99999});
 
 
-  var dggON= false, dggY1, dggY2, recT;
-
+  var dggON= false,
+      dggY1, dggY2, recT;
   var dragging= function(x)
   {
     var dm, jq= (curTab !== 2)? $('#t1arnd')[0] : $('#t2arnd')[0];
@@ -17,41 +17,47 @@ $(document).ready(function()
     dggY2= dggY1;
   }
 
+  $('#t1arnd, #t2arnd').bind('mousemove', function(e) {
+    if(dggON) {
+      dggY1= e.pageY;
+      dragging(this);
+    }
+    e.preventDefault(); e.stopPropagation();
+  });
+
+  $('#t1arnd, #t2arnd').bind('mousedown', function(e) {
+    dggON= true; dggY1= dggY2= e.pageY;
+  //  e.preventDefault(); e.stopPropagation();
+  });
+
+  //#t1arnd
+  $('html').bind('mouseup', function(e) {
+    dggON= false; dggY1= dggY2= e.pageY;
+    e.preventDefault(); e.stopPropagation();
+  });
+
+
+/*
 $('#t1arnd, #t2arnd').bind('touchmove', function(e) {
   if(dggON) {
     dggY1= e.originalEvent.touches[0].clientY;
     dragging(this);
   }
-  e.preventDefault(); e.stopPropagation();
-});
-$('#t1arnd, #t2arnd').bind('mousemove', function(e) {
-  if(dggON) {
-    dggY1= e.pageY;
-    dragging(this);
-  }
-  e.preventDefault(); e.stopPropagation();
+  //e.preventDefault();
+  e.stopPropagation();
 });
 
 $('#t1arnd, #t2arnd').bind('touchstart', function(e) {
   dggON= true; dggY1= dggY2= e.originalEvent.touches[0].clientY;
 //  e.preventDefault(); e.stopPropagation();
 });
-$('#t1arnd, #t2arnd').bind('mousedown', function(e) {
-  dggON= true; dggY1= dggY2= e.pageY;
-//  e.preventDefault(); e.stopPropagation();
-});
 
-//#t1arnd
-$('html').bind('mouseup', function(e) {
-  dggON= false; dggY1= dggY2= e.pageY;
-  e.preventDefault(); e.stopPropagation();
-});
 $('html').bind('touchend', function(e) {
   dggON= false; dggY1= dggY2= e.originalEvent.touches[0].clientY;
   e.preventDefault(); e.stopPropagation();
 });
-  
-  
+*/
+
   var nBar= document.getElementById('notif');
   var adminInfo= document.getElementById('dbFrame');
 
@@ -65,40 +71,45 @@ $('html').bind('touchend', function(e) {
   var curTab= 1;
   var lastTab= 0;
 
-  var curSpid= -1;
   var edtRow= [-1, -1,-1];
   var editMode= false;
-  var eefmod= [0, 0,0];
 
   var tbSpc= [0, '40px','40px','300px'];
   var tbLst= [0, 1,1];
-  var tbSrt= [0, 2,-1];
+  var tbSrt= [0, 2,1];
   var tbAll= [99, 99,99];
 
-  var tbFmod= [0, 1,1];
-  var tbFcol= [0, '',''];
+  var fi1Hdr= [0, '',''];
+  var fi2Hdr= [0, '',''];
+  
+  var fi1Mod= [0, 1,1];
+  var fi2Mod= [0, 1,1];
+  var fi1Inp= [0, '',''];
+  var fi2Inp= [0, '',''];
+
   var tblInf= [0, '~tI1','~tI2'];
   var fltInf= [0, '~fI1','~fI2'];
 
   var recNum= [0, 0,0];
   var recFil= [0, 0,0];
   var fltNum= [0, 0,0];
-  var fltMax= [0, 0,0];
-  var fltMax= [0, 0,0];
-  var fltInp= [0, '',''];
-  var fltStr= [0, '~fS1','~fS2'];
 
 // *** PLAYER TAB
-  var plTab= [0, 'first', 'last', 'tel', 'mob', '[memo]', 0];
+  var plTab= []; //[0, 'first', 'last', 'tel', 'mob', '[memo]', 0];
 // *** HISYORY TAB TABLE
-  var hiTab= [0, 0, '~tr','~cr', 0, 0];
-  
+  var hiTab= []; //[0, 0, '~tr','~cr', 0, 0];
+
+  // ***         0   1   2   3   4   5  
+  // *** plTab: cid frs lst pho mob mmo
+  // *** hiTab: dtm cid trt crm hid
+
+
   var lastNotif= '';
   function clrAdmin(a)
   {
     if(!a) adminInfo.innerText= versionCode;
-    if(nBar.innerText !== '...') {
-      lastNotif= nBar.innerText; nBar.innerText= '...'; }
+    if(nBar.innerText !== '..') {
+      lastNotif= nBar.innerText; nBar.innerText= '..'; }
   }
 
   function setRowCol(ct)
@@ -180,15 +191,10 @@ $('html').bind('touchend', function(e) {
   function resetEdit(tab, jin)
   {
     if(tab !== 2) tab= 1;
-    eefmod[tab]= 0;
-        edtRow[tab]= curSpid= -1
+
+    edtRow[tab]= -1
     if(tab === 2)
     {
-      $('#htb>tr.xtrR').remove();
-      $('#htb>tr').removeClass();
-      if(tbLst[2] !== 1) $('#htb>tr').addClass('clnR');
-
-
       $('#ta2rmv')[0].disabled= true;
       $('#ta2sub')[0].disabled= true;
 
@@ -230,60 +236,79 @@ $('html').bind('touchend', function(e) {
     if(tbLst[1] !== 1) $('#ptb>tr').addClass('clnR');
   }
 
-  function sortem(tab, col)
+  function sortem(tab, hc)
   {
-    tbSrt[tab]= col;
-    var rev= (col < 0);
-    col= Math.abs(col)-1;
+    tbSrt[tab]= hc;
+    var hdr, rev= (hc < 0);
+    hc= Math.abs(hc)-1;
 
     var t= plTab;
     if(tab !== 1) t= hiTab;
     if(t.length < 2) return;
 
-    var ist= !(col === 0 || col === 6)
-    if(tab === 2) ist= (col === 2 || col === 3);
-    if(ist)
+    var tht= !(hc === 0)
+    if(tab === 2) tht= (hc === 2 || hc === 3);
+    if(tht)
     { // alpha
       t.sort(function(a, b)
       {
-        if(b[col] > a[col]) return -1;
-        else if(b[col] < a[col]) return 1;
+        if(b[hc] > a[hc]) return -1;
+        else if(b[hc] < a[hc]) return 1;
         else return 0;
       });
     }
-    else // numeric
-      t.sort(function(a, b) { return b[col] - a[col]; });
-
+    else
+    { // numeric
+      if(tab === 2 && hc === 0)
+      {// sort two columns
+        t.sort(function(a, b)
+        {
+          if(b[0] === a[0])
+            return b[4] - a[4];
+          else
+            return b[0] - a[0];
+        });
+      }
+      else
+        t.sort(function(a, b) { return b[hc] - a[hc]; });
+    }
+    
     if(rev) t.reverse();
+    
     if(tab === 1)
     { // *** header
       $('#pth>tr').children().css({border:'none'});
-      $("#pth>tr").children().eq(col).css({border:'2px solid grey'});
+      $("#pth>tr").children().eq(hc).css({border:'2px solid grey'});
       
       $('#t1F').val('');
-      if(col === 0) {
-        $('#t1F').attr({placeholder:'#id'}); tbFcol[1]= '#id'; }
+      if(hc === 0) {
+        $('#t1F').attr({placeholder:'#id'}); hdr= '0#id'; }
       else
-      if(col < 3) {
-        $('#t1F').attr({placeholder:'NAME'}); tbFcol[1]= 'NAME'; }
+      if(hc < 3) {
+        $('#t1F').attr({placeholder:'NAME'}); hdr= '2NAME'; }
       else {
-        $('#t1F').attr({placeholder:'PHONE'}); tbFcol[1]= 'PHONE'; }
+        $('#t1F').attr({placeholder:'PHONE'}); hdr= '4PHONE'; }
     }
     else
     if(tab === 2)
     { // *** header
       $('#hth>tr').children().css({border:'none'});
-      $('#hth>tr').children().eq(col).css({'border':'2px solid grey'});
+      $('#hth>tr').children().eq(hc).css({'border':'2px solid grey'});
 
       $('#t2F').val('');
-      if(col === 0) {
-        $('#t2F').attr({placeholder:'DATE'}); tbFcol[2]= 'DATE'; }
+      if(hc === 0) {
+        $('#t2F').attr({placeholder:'DATE'}); hdr= '0DATE'; }
       else
-      if(col === 1) {
-        $('#t2F').attr({placeholder:'#cid'}); tbFcol[2]= '#cid'; }
+      if(hc === 1) {
+        $('#t2F').attr({placeholder:'#cid'}); hdr= '1#cid'; }
       else {
-        $('#t2F').attr({placeholder:'SESSION'}); tbFcol[2]= 'SESSION'; }
+        $('#t2F').attr({placeholder:'SESSION'}); hdr= '2SESSION'; }
     }
+
+    if(fltNum[tab] === 0)
+      fi1Hdr[tab]= fi2Hdr[tab]= hdr;
+    else
+      fi2Hdr[tab]= hdr;
   }
   
   function curDTM()
@@ -296,15 +321,15 @@ $('html').bind('touchend', function(e) {
     return r; //.substr(2);
   }
 
-  function chunkStr(nc, s)
-  { //alert(1);
-    var ret='', ch= [];
-    s= s.replace(/\n|\r|\t/gi, ' ');
-    for(var i= 0; i < s.length; i+= nc)
+  function chunkStr(n, s)
+  {
+    var i, r, ch= [];
+    for(i= 0; i < s.length; i+= n)
     {
-      ret= s.substring(i, i+nc);
-      if(ret[0] === ' ') ret= '-'+ret.substr(1);
-      ch.push( ret );
+      r= s.substr(i, n);
+      if(r[0] === ' ')
+        r= r.substr(1) + s[n + i++];
+      ch.push( r );
     }
     return ch.join('\n            ');
   }
@@ -320,7 +345,6 @@ $('html').bind('touchend', function(e) {
     return '~notFound@'+ c;
   }
 
-
   function id2trs(rx)
   {
     var i, rFrm, rCln, ful, q, x, ch2, ppp, ns, tn= 0;
@@ -332,7 +356,7 @@ $('html').bind('touchend', function(e) {
       if(x[1] === rx)
       {
         tn++;
-        trs.push([ x[0], chunkStr(59, x[2]), chunkStr(59, x[3]), x[5] ]);
+        trs.push([ x[0], chunkStr(59, x[2]), chunkStr(59, x[3]), x[4] ]);
       }
     }
 
@@ -360,41 +384,93 @@ $('html').bind('touchend', function(e) {
   }
 
 
+  // *** FILTERS
+  function fiTab1(i, hdr, mod, inp)
+  {
+    var x, a, b, n, t= 1;
+    x= plTab[i];
+    hdr= +hdr[0];
+    if(hdr === 0)
+    {
+      a= ''+x[0];
+      n= a.indexOf(inp);
+      if(mod === 2) { if(n >= 0) return true; }
+      if(mod === 1) { if(n === 0) return true; }
+      if(mod === 9) { if(+a === +inp) return true; }
+    }
+    else
+    {
+      a= x[1].indexOf(inp);
+      b= x[2].indexOf(inp);
+      if(hdr > 2) {
+        a= x[3].indexOf(inp);
+        b= x[4].indexOf(inp);
+      }
+      if(mod === 2) { if(a >= 0 || b >= 0) return true; }
+      if(a === 0 || b === 0) return true;
+    }
+    return false;
+  }
+
+  function fiTab2(i, hdr, mod, inp)
+  {
+    var x, a, b, n, t= 1;
+    x= hiTab[i];
+    hdr= +hdr[0];
+    a= ''+x[hdr];
+    n= a.indexOf(inp);
+    
+    if(mod === 2) {
+      if(n >= 0) return true; }
+    else
+    if(mod === 1) {
+      if(n === 0) return true; }
+    else
+    if(mod === 9) {
+      if(+a === +inp) return true; }
+
+    return false;
+  }
+
   // ____________________________________________________________________
   // *** tabs# redraw... ************************************************
   function freshTab1()
   {
-
+    recFil[1]= 0;
     $("#ptb").empty();
-    if(tbAll[1] === 0)
-      tbAll[1]= plTab.length;
-
     var i, x, tth, rn= 0;
-    var ml= Math.min(tbAll[1], plTab.length);
-    for(i= 0; rn < ml && i < plTab.length; i++)
+    if(tbAll[1] === 0) tbAll[1]= plTab.length;
+    var stop= Math.min(tbAll[1], plTab.length);
+    for(i= 0; i < plTab.length; i++)
     {
-      x= plTab[i];
-      tth= (eefmod[1] === 0)?
-        (x[6] >= fltNum[1]) : (x[0] === eefmod[1]);
+      tth= true;
+      if(fltNum[1] > 0)
+        tth= tth && fiTab1(i, fi1Hdr[1], fi1Mod[1], fi1Inp[1]);
 
-      if(tth)
+      if(fltNum[1] > 1)
+        tth= tth && fiTab1(i, fi2Hdr[1], fi2Mod[1], fi2Inp[1]);
+
+      if(rn < stop && tth)
       {
+        x= plTab[i];
         $('#ptb').append( '<tr tabindex="1">'
                         +'<td class="admin">'+ x[0]
                         +'</td><td>'+ x[1]
                         +'</td><td>'+ x[2]
                         +'</td><td>'+ x[3]
-                        +'</td><td>'+ x[4] //+col[5]
+                        +'</td><td>'+ x[4] 
+                         // x[5] is memo
                         +'</td><td style="display:none">'+ rn
                         +'</td></tr>' );
         rn++;
       }
+      if(tth) recFil[1]++;
     }
 
     recNum[1]= rn;
     tbAll[1]= tbAll[0];
 
-    if(fltNum[1] === 0) recFil[1]= plTab.length;
+//    if(fltNum[1] === 0) recFil[1]= plTab.length;
 //    if(i === plTab.length) $('#t1all')[0].disabled= true;
   //  else $('#t1all')[0].disabled= false;
   }
@@ -421,121 +497,132 @@ $('html').bind('touchend', function(e) {
     return +(y + ('0'+m).slice(-2) + d + h);
   }
 
-
   function freshTab2()
   {
+    recFil[2]= 0;
     $('#htb').empty();
-    if(tbAll[2] === 0)
-      tbAll[2]= hiTab.length;
-
-    var i, x, tth, rn= 0;;
-    var ml= Math.min(tbAll[2], hiTab.length);
-    for(i= 0; rn < ml && i < hiTab.length; i++)
+    var i, x, tth, rn= 0;
+    if(tbAll[2] === 0) tbAll[2]= hiTab.length;
+    var stop= Math.min(tbAll[2], hiTab.length);
+    for(i= 0; i < hiTab.length; i++)
     {
-      x= hiTab[i];
-      
-      tth= (x[4] >= fltNum[2]);
-      if(eefmod[0] === 0 && eefmod[2] > 0)
-        tth= (x[1] === eefmod[2]);
-      else
-      if(eefmod[0] > 0)
-        tth= (x[5] === eefmod[0]);
+      tth= true;
+      if(fltNum[2] > 0)
+        tth= tth && fiTab2(i, fi1Hdr[2], fi1Mod[2], fi1Inp[2]);
 
-      if(tth)
+      if(fltNum[2] > 1)
+        tth= tth && fiTab2(i, fi2Hdr[2], fi2Mod[2], fi2Inp[2]);
+
+      if(rn < stop && tth)
       {
+        x= hiTab[i];
         $('#htb').append( '<tr tabindex="1">'
                          +'<td style="text-align:center">'+ ndt2sdt(x[0])
                          +'</td><td class="admin" style="text-align:right">'+ x[1]
                          +'</td><td >'+ ' TR: '+ x[2] +'\n CR: '+ x[3]
-//                         +'</td><td style="display:none">'+ (rn++)
-                         +'</td><td style="display:none">'+ x[5]
+                         +'</td><td style="display:none">'+ x[4]
                          +'</td></tr>');
         rn++;
       }
+      if(tth) recFil[2]++;
     }
 
     recNum[2]= rn;
     tbAll[2]= tbAll[0];
     
-    if(fltNum[2] === 0) recFil[2]= hiTab.length;
+//    if(fltNum[2] === 0) recFil[2]= hiTab.length;
 //    if(i === hiTab.length) $('#t2all')[0].disabled= true;
   //  else $('#t2all')[0].disabled= false;
   }
 
-  function tiFresh(tn)
+  function tiFresh(w)
   {
-    var cln= false, jq= $('#t2FinfBar');
-    if(tn < 0) { tn*= -1; cln= true; }
+    var s, tn= curTab, jq= $('#t2FinfBar');
     if(tn !== 2) { tn= 1; jq= $('#t1FinfBar'); }
 
-    if(cln)
-    {
-      if(eefmod[tn] > 0)
-      {
-        var cid= eefmod[tn];
-        jq.text('1.ID<equals>"'+ cid +'"  '
-                +'2.NAME<equals>"'+ id2nme(+cid) +'"');
-                return;
-      }
+    if(!w && fltNum[tn] === 0) {
+      jq.text('No Filters..'); return; }
 
-      if(fltNum[tn] === 0) fltStr[tn]= 'No Filters..';
-      jq.text(fltStr[tn]);
-      return;
+
+    var fn= fltNum[tn];
+    var m1= fi1Mod[tn], m2= fi2Mod[tn];
+    var e1= '<equals>', e2= '<equals>';
+    var i1= fi1Inp[tn] +'"', i2= fi2Inp[tn] +'"';
+    var h1= fi1Hdr[tn].substr(1), h2= fi2Hdr[tn].substr(1);
+    
+    if(w === 1) {
+      fn++;
+      if(fn !== 2) i1= '..';
+      else i2= '..';
     }
 
-    if(fltNum[tn] === 0) fltStr[tn]= '';
-    var fc= tbFcol[tn]; //(tbFcol[t] === 1)? 'NAME' : 'PHONE';
-    var fm= (tbFmod[tn] === 1)? '<begins with>' : '<contains>';
-    fltInf[tn]= ''+ (fltNum[tn]+1) +'.'+ fc + fm +'"..';
-    jq.text(fltStr[tn] + fltInf[tn]);
+    if(m1 < 9) {
+      e1= (m1 === 1)?
+        '<begins with>' : '<contains>';
+    }
+    s= '1.'+ h1 + e1 +'"'+ i1;
+    
+    if(fn > 1)
+    {
+      if(m2 < 9) {
+        e2= (m2 === 1)?
+          '<begins with>' : '<contains>';
+      }
+      s+= '  2.'+ h2 + e2 +'"'+ i2;
+    }
+    jq.text(s);
   }
 
   function reFresh()
   {
-    var i= curTab, j1, j2, a, b, c;
+    window.scrollTo(0,0);
+
+    var i= curTab,
+        j1, j2, a, b, c;
+
     $('#mtb1').val(ttxt);
     switch(curTab)
     {
       case 1: freshTab1();
         j1= $('#t1fil'), j2= $('#t1F');
         a= recNum[i]; b= recFil[i]; c= plTab.length;
+        $('#t1end')[0].innerText=
+          ' SHOWING:'+a+'  FILTER:'+b+'  TOTAL:'+c+'  ';
       break;
       case 2: freshTab2();
         j1= $('#t2fil'), j2= $('#t2F');
         a= recNum[i]; b= recFil[i]; c= hiTab.length;
+        $('#t2end')[0].innerText=
+          ' SHOWING:'+a+'  FILTER:'+b+'  TOTAL:'+c+'  ';
       break;
     }
     
     setRowSpc(); setRowCol();
     nBar.innerText= tblInf[i]= ' [#]'+ a +'/'+ b +'('+ c +')';
     
-        if(fltNum[i] === 0)
-        {
-          j1[0].disabled= false;
-          j2[0].disabled= false;
-          fltMax[i]= c;
-        }
+    if(fltNum[i] === 0)
+    {
+      j1[0].disabled= false;
+      j2[0].disabled= false;
+    }
 
-        if(b < fltMax[i] && fltNum[i] < 3)
-        {
-          fltMax[i]= b;
-          if(fltNum[i] === 2)
-          {
-            j1[0].disabled= true;
-            j2[0].disabled= true;
-          }
-          fltStr[i]+= fltInf[i].slice(0,-2) + fltInp[i] +'"  ';
-        }
+    if(fltNum[i] < 3)//b < fltMax[i] && 
+    {
+      if(fltNum[i] === 2)
+      {
+        j1[0].disabled= true;
+        j2[0].disabled= true;
+      }
+    }
 
-        j2.val('');
-        tiFresh(-i);
-
+    j2.val('');
+    tiFresh();
 
 // emmm...
     if(editMode) $(".admin").css("display", "table-cell");
     else $(".admin").css("display", "none");
-    
-    c= (curTab !== 2)? $('#t1arnd')[0] : $('#t2arnd')[0];
+
+    c= (i !== 2)? $('#t1arnd')[0] : $('#t2arnd')[0];
     b= c.getBoundingClientRect();
     a= (window.innerHeight - b.top) -9;
     $(c).css({height:a});
@@ -559,7 +646,6 @@ $('html').bind('touchend', function(e) {
     resetEdit(curTab);
   }
 
-
   $('#ptb').on('keyup', function(e)
   {
     var et= e.target;
@@ -577,10 +663,25 @@ $('html').bind('touchend', function(e) {
     }
   });
 
+  function setScroll(x)
+  {
+    var y= $('#t1arnd')[0];
+    var ri= x.getBoundingClientRect();
+    var ro= y.getBoundingClientRect();
+
+    if(ri.top < ro.top)
+      y.scrollTop-= ro.top- ri.top+60; //2top
+
+    ri= x.getBoundingClientRect();
+    ro= y.getBoundingClientRect();
+    if(ri.bottom > ro.bottom)
+      y.scrollTop-= ro.bottom- ri.bottom-30; //2btt
+  }
+  
   var noRst= false;
   $('#playerTable').click(function(e)
   {
-    var tmp, cid, et= e.target;
+    var i, tmp, cid, et= e.target;
     if($(et).hasClass('ord3'))
     {
       cid= $(et).closest('tr')[0]
@@ -589,16 +690,13 @@ $('html').bind('touchend', function(e) {
 
       nBar.innerText= ' @'+ cid +':'+ id2nme(cid);
 
-      var tre, cre, epp;
-      
+      var epp;
       if($(et).hasClass('vertSz'))
       {
         tmp= $(et).closest('td')[0].firstChild;
         
-//      alert('h1= '+$(tmp).css('height')+'  ..h2= '+ tmp.offsetHeight);
-//        $(tmp).css({height:'auto'});
-        if(+tmp.offsetHeight > 200)
-          $(tmp).css({height:'200px'})
+        if(+tmp.offsetHeight > 175)
+          $(tmp).css({height:'175px'})
         else
           $(tmp).css({height:'auto'});
         
@@ -631,31 +729,32 @@ $('html').bind('touchend', function(e) {
 
         epp= epp.previousSibling;
         // *** save plTab
-        for(var i=0; i < plTab.length; i++)
+        for(i=0; i < plTab.length; i++)
         {
           if(plTab[i][0] === cid)
           { //nBar.innerText= 'Apply @'+ x[0] +':'+ x[1] +' '+ x[2];
-            plTab[i][5]= formatSession(epp.value);
+            plTab[i][5]= formatSession(epp.value); break;
           }
         }
         
-        et= epp.previousSibling;
-        et.innerText= id2trs(cid) +'\n**** MEMO:  '+ chunkStr(59, id2mmo(cid)) +'\n\n';
+        tmp= $(et).closest('td')[0].firstChild;
+        tmp.innerText= id2trs(cid) +'\n**** MEMO:  '+ chunkStr(59, id2mmo(cid)) +'\n\n';
 
-        $(et).css({height:'auto'});
-        if(+et.offsetHeight > 170)
+        $(tmp).css({height:'auto'});
+        if(+tmp.offsetHeight > 175)
         {
-          $(et).css({height:'200px'});
-          var svgBtn= $(et.parentNode).find('.vertSz')[0];
+          $(tmp).css({height:'175px'});
+          var svgBtn= $(tmp.parentNode).find('.vertSz')[0];
           svgBtn.disabled= false; $(svgBtn.firstChild).css({fill:'white'});
         }
 
-        et.scrollTop= et.scrollHeight;
+        tmp.scrollTop= tmp.scrollHeight;
         $(epp).remove();
 
-        setTimeout(function() {
-          saveDB();
-        }, 99);
+// *** S A V E -------------------------------------------------
+        setTimeout(function() { saveDB(true); }, 999);
+        setTimeout(function() { saveDB(); }, 99999);//1.7sec
+// *** S A V E -------------------------------------------------
       }
       else
       if(et.value[0] === 'N')
@@ -666,30 +765,26 @@ $('html').bind('touchend', function(e) {
           +'<input class="clPinf qwer" type="tel" style="margin:0 9px 7px 0; height:25px; width:15%; float:left" placeholder="YYYY" autocomplete="off" > '
           +'<b class="qwer" style="color:lightgrey; float:left">  :</b>'
           +'<input class="clPinf qwer" type="tel" style="margin:0 7px 7px 3px; height:25px; width:10%; float:left" placeholder="HH" autocomplete="off" > '
-          +'<textarea class="clPinf" placeholder="TREATMENT" rows="5" '
+          +'<textarea class="clPinf" placeholder="TREATMENT" rows="3" '
           +'style="width:100%; margin:0; padding:9px; text-align:left; display:block" ></textarea>');
 
         $(et).before(
-           '<textarea class="clPinf" placeholder="CREAMS" rows="3" '
+           '<textarea class="clPinf" placeholder="CREAMS" rows="2" '
           +'style="width:100%; margin:9px 0; padding:9px; text-align:left; display:block" ></textarea>');
       
         var svgBtn= $(et.parentNode).find('.vertSz')[0];
         svgBtn.disabled= true; $(svgBtn.firstChild).css({fill:'black'});
 
-        et.value= 'Finish and Save';
+        et.value= 'Finish & Save';
         et.nextSibling.disabled= true;
         tmp= et.previousSibling; //creams
         epp= tmp.previousSibling; //treatment
-        tmp= $(et).closest('tr');
-        
-        tmp= $(et).closest('td')[0].firstChild.nextSibling;
 
-        et= curDTM();
-        tmp.value= et.substr(6,2); tmp= tmp.nextSibling.nextSibling;
-        tmp.value= et.substr(4,2); tmp= tmp.nextSibling.nextSibling;
-        tmp.value= et.substr(0,4); tmp= tmp.nextSibling.nextSibling.nextSibling;
-        tmp.value= et.substr(8,2);
-
+        i= curDTM();
+        $('.qwer')[0].value= i.substr(6,2);
+        $('.qwer')[1].value= i.substr(4,2);
+        $('.qwer')[2].value= i.substr(0,4);
+        $('.qwer')[4].value= i.substr(8,2);
 
         epp.focus();
       }
@@ -697,11 +792,12 @@ $('html').bind('touchend', function(e) {
       if(et.value[0] === 'F')
       {
         tmp= $(et).closest('td')[0].firstChild.nextSibling;
-        var dtm, dd, mm,yy, hh;
-            dd= tmp.value; tmp= tmp.nextSibling.nextSibling;
-            mm= tmp.value; tmp= tmp.nextSibling.nextSibling;
-            yy= tmp.value; tmp= tmp.nextSibling.nextSibling.nextSibling;
-            hh= tmp.value;
+        var tre, cre,
+            dtm, dd, mm,yy, hh;
+            dd= $('.qwer')[0].value;
+            mm= $('.qwer')[1].value;
+            yy= $('.qwer')[2].value;
+            hh= $('.qwer')[4].value;
 
         tmp= ('2018'+ yy).slice(-4) + ('00'+ mm).slice(-2)
           + ('00'+ dd).slice(-2) + ('00'+ hh).slice(-2);
@@ -714,47 +810,40 @@ $('html').bind('touchend', function(e) {
         tmp= et.previousSibling; //creams
         epp= tmp.previousSibling; //treatment
         
-        et= epp.previousSibling;
         
         tre= ''+epp.value, cre= ''+tmp.value;
         $(epp).remove(); $(tmp).remove();
 
         // *** save hiTab
         hiTab.push([ dtm, cid,
-                    formatSession(tre), formatSession(cre), 0, nextHD++ ]);
+                    formatSession(tre), formatSession(cre), nextHD++ ]);
 
+        tmp= $(et).closest('td')[0].firstChild;
+        tmp.innerText= id2trs(cid) +'\n**** MEMO:  '+ chunkStr(59, id2mmo(cid)) +'\n\n';
 
-        et= $(et).closest('td')[0].firstChild;
-        et.innerText= id2trs(cid) +'\n**** MEMO:  '+ chunkStr(59, id2mmo(cid)) +'\n\n';
-
-        $(et).css({height:'auto'});
-        if(+et.offsetHeight > 170)
+        $(tmp).css({height:'auto'});
+        if(+tmp.offsetHeight > 175)
         {
-          $(et).css({height:'200px'});
-          var svgBtn= $(et.parentNode).find('.vertSz')[0];
+          $(tmp).css({height:'175px'});
+          var svgBtn= $(tmp.parentNode).find('.vertSz')[0];
           svgBtn.disabled= false; $(svgBtn.firstChild).css({fill:'white'});
         }
+        tmp.scrollTop= tmp.scrollHeight;
 
-        et.scrollTop= et.scrollHeight;
+        setTimeout(function()
+        {
+          $('#mtb1').click();
+          sortem(2, 1);
+        }, 99); //1.7sec
 
-        setTimeout(function() {
-          sortem(curTab= 2, 6);
-          sortem(curTab= 2, 1);
-          reFresh(); $('#mtb1').click();
-          saveDB();
-        }, 99);
-
-//        setTimeout(function() {        }, 9999);
+// *** S A V E -------------------------------------------------
+        setTimeout(function() { saveDB(true); }, 999);
+        setTimeout(function() { saveDB(); }, 99999);//1.7sec
+// *** S A V E -------------------------------------------------
       }
-
-      window.scrollTo(0,0);
-      et= e.target;
-      tmp= $(et).closest('tr')[0];
-      recT= tmp.getBoundingClientRect();
-      et= (curTab !== 2)? $('#t1arnd')[0] : $('#t2arnd')[0];
-      et= et.getBoundingClientRect();
-      if(recT.bottom > et.bottom-9 || recT.top < et.top+9) {
-        tmp.scrollIntoView(false); $('#t1arnd')[0].scrollTop+= 20; }
+      
+      tmp= $(e.target).closest('tr')[0];
+      setScroll(tmp);
 
       return;
     }
@@ -763,7 +852,7 @@ $('html').bind('touchend', function(e) {
     if( $(et).hasClass('clPinf') ||
       ($(et).is('td') &&$(et.parentNode).hasClass('xtrR')) ) return;
 
-    e.stopPropagation();
+//    e.stopPropagation(); e.preventDefault();
 
 
     var row, tx;//, ti;
@@ -788,14 +877,11 @@ $('html').bind('touchend', function(e) {
     }
 //    else      alert('Ooops! This was not supposed to happen: #playerTable.click()');
     
-//    if($(et).hasClass('xtrR')) { subrowDelete( et ); return; }
     if($(row).hasClass('selR')) { subrowDelete(row.nextSibling); return; }
 
-    noRst= false;
-    resetEdit(1, noRst);
+    resetEdit(1, false);
     
     edtRow[1]= tx= row.rowIndex;
-    curSpid= cid;
 
     // *** subRow-content - CREATE
     if(editMode)
@@ -815,10 +901,10 @@ $('html').bind('touchend', function(e) {
     var xTxt= id2trs(cid) +'\n**** MEMO:  '
                 + chunkStr(59, id2mmo(+cid)) +'\n\n';
 
-    var cn= 31, plInf= 'id: '+ cid; // +':'+ id2nme(cid);
-//    if(plInf.length > cn) plInf= plInf.substr(0,cn-2) +'..';
-  //  else plInf= plInf.substr(0,cn);
-
+    var cn= 22, plInf= ''+ cid +':'+ id2nme(cid);
+//    plInf= '12345678901234567890123456789012345#';
+    if(plInf.length > cn) plInf= plInf.substr(0,cn-2) +'..';
+    else plInf= plInf.substr(0,cn);
      
     {
       $(row).after(
@@ -829,15 +915,13 @@ $('html').bind('touchend', function(e) {
         + '<input class="ord3" type="button" style="float:right" value="New Session" >'
         + '<input class="ord3" type="button" style="float:right" value="Edit Memo" >'
 
-+'<button class="ord3 vertSz" style="padding:7px 0; margin:0 9px; float:right">'
-+'<svg style="pointer-events:none" width="43px" height="25px" viewbox="0 0 256 450" fill="white" stroke="grey" stroke-width="30px"> '
-+'<path d="M256 272c0 4.25-1.75 8.25-4.75 11.25l-112 112c-3 3-7 4.75-11.25 4.75s-8.25-1.75-11.25-4.75l-112-112c-3-3-4.75-7-4.75-11.25 0-8.75 7.25-16 16-16h224c8.75 0 16 7.25 16 16zM256 176c0 8.75-7.25 16-16 16h-224c-8.75 0-16-7.25-16-16 0-4.25 1.75-8.25 4.75-11.25l112-112c3-3 7-4.75 11.25-4.75s8.25 1.75 11.25 4.75l112 112c3 3 4.75 7 4.75 11.25z" /></svg> '
-+'</button>'
-        
-        + '<pre style="font-size:17px; float:left; width:auto; ' //border-right:1px solid red; '
-        + 'pointer-events:none; padding:3px 5px">'+ plInf +'</pre>'
+        +'<button class="ord3 vertSz" style="padding:7px 0; margin:0 9px; float:right">'
+        +'<svg style="pointer-events:none" width="43px" height="25px" viewbox="0 0 256 450" fill="white" stroke="grey" stroke-width="30px"> '
+        +'<path d="M256 272c0 4.25-1.75 8.25-4.75 11.25l-112 112c-3 3-7 4.75-11.25 4.75s-8.25-1.75-11.25-4.75l-112-112c-3-3-4.75-7-4.75-11.25 0-8.75 7.25-16 16-16h224c8.75 0 16 7.25 16 16zM256 176c0 8.75-7.25 16-16 16h-224c-8.75 0-16-7.25-16-16 0-4.25 1.75-8.25 4.75-11.25l112-112c3-3 7-4.75 11.25-4.75s8.25 1.75 11.25 4.75l112 112c3 3 4.75 7 4.75 11.25z" /></svg> '
+        +'</button>'
 
-        
+        + '<pre style="font-size:17px; float:left;margin:0; width:240px; '//border-right:1px solid red; '
+        + 'pointer-events:none; text-align:left; padding:9px 5px">'+ plInf +'</pre>'
         + '</td></tr>');
     }
       
@@ -845,8 +929,8 @@ $('html').bind('touchend', function(e) {
     setRowCol();
 
     tmp= row.nextSibling.firstChild.firstChild;
-    if(+tmp.offsetHeight > 170)
-      $(tmp).css({height:'200px'});
+    if(+tmp.offsetHeight > 175)
+      $(tmp).css({height:'175px'});
     else
     {
       var svgBtn= $(row.nextSibling.firstChild).find('.vertSz')[0];
@@ -854,13 +938,8 @@ $('html').bind('touchend', function(e) {
     }
     tmp.scrollTop= tmp.scrollHeight;
 
-    window.scrollTo(0,0);
     tmp= $(row.nextSibling)[0];
-    recT= tmp.getBoundingClientRect();
-    et= (curTab !== 2)? $('#t1arnd')[0] : $('#t2arnd')[0];
-    et= et.getBoundingClientRect();
-    if(recT.bottom > et.bottom-9 || recT.top < et.top+9) {
-      tmp.scrollIntoView(false); $('#t1arnd')[0].scrollTop+= 20; }
+    setScroll(tmp);
   });
 
 
@@ -881,18 +960,15 @@ $('html').bind('touchend', function(e) {
       reFresh();
       return;
     }
-
-//alert(0);
-    noRst= false;
-    if($(row).hasClass('selR')) {
-      resetEdit(2, noRst); e.stopPropagation(); return; }
     
-//alert(9);
-      resetEdit(tn, noRst);
-      edtRow[tn]= tx;
-      
-      hid= +$(row)[0].cells[3].innerText;
-      curSpid= hid
+    
+    if($(row).hasClass('selR')) {
+      resetEdit(2, false); e.stopPropagation(); return; }
+
+    resetEdit(2, false); 
+    edtRow[tn]= tx;
+
+    hid= +$(row)[0].cells[3].innerText;
 
 //      if(editMode)
       {
@@ -910,13 +986,11 @@ $('html').bind('touchend', function(e) {
         $('#t2e1m').val( a.substr(4,2) );
         $('#t2e1d').val( a.substr(6,2) );
         $('#t2e1h').val( a.substr(8,2) );
-  
-
 
         for(i= 0; i < hiTab.length; i++)
         {
           x= hiTab[i];
-          if(x[5] === hid)
+          if(x[4] === hid)
           {
             $('#t2e2').val( x[2] );
             $('#t2e3').val( x[3] );
@@ -929,62 +1003,58 @@ $('html').bind('touchend', function(e) {
       }
     
       rowAnim(tx, true);
-  
   });
   
   
   // *** import... **************************************************
-  function removeEmpty()
-  {
-    var dd, i, j, p;
-    dd= plTab.slice(0);
-    plTab.length= 0;
-    for(i= 0; i < dd.length; i++)
-    {
-      p= +dd[i][0];
-      for(j= 0; j < hiTab.length; j++)
-      {
-        if(hiTab[j][1] === p) {
-          plTab.push( dd[i] ); break; }
-      }
-    }
-  }
-
   function importDBnew(d)
   {
     nextID= 0;
     nextHD= 0;
-    var tt,loP, loH,
+    var i, r, tt,loP, loH,
         x= d.split('$');
     
-    plTab= []; //.length= 0;
+    plTab.length= 0;
     loP= x[0].split('|');
-    loP.forEach(function(r) {
+    for(i= 0; i < loP.length; i++)
+    {
+      r= loP[i];
       tt= r.split('^');
-      tt[0]= +tt[0]; tt[6]= 0;
+      tt[0]= +tt[0]; 
       if(tt[0] >= nextID) nextID= tt[0]+1;
-      plTab.push( tt );
-    });
+      plTab.push([ tt[0], tt[1], tt[2], tt[3], tt[4], tt[5] ]);
+    }
 
-    hiTab= []; //.length= 0;
+    var nanCnt= 0;
+    hiTab.length= 0;
     loH= x[1].split('|');
-    loH.forEach(function(r, c) {
+    for(i= 0; i < loH.length; i++)
+    {
+      r= loH[i];
       tt= r.split('^');
-      tt[0]= +tt[0]; tt[1]= +tt[1];
-      tt[4]= 0; tt[5]= 0; //+tt[5];
-      hiTab.push( tt );
-    });
-//removeEmpty();
+
+      if(isNaN(tt[1])) {
+        nanCnt++; continue; }
+      
+      tt[0]= +tt[0]; tt[1]= +tt[1]; 
+      hiTab.push([ tt[0], tt[1], tt[2], tt[3], 0 ]);
+    }
     
     sortem(curTab= 2, 1);
+    for(i= 0; i < hiTab.length; i++)
+    {
+      r= hiTab[i];
+      r[4]= hiTab.length -i;
+    }
+    
+    nextHD= hiTab.length+1;
     reFresh();
     
-
-    hiTab.forEach(function(r, c) { r[5]= hiTab.length -c; });
-    nextHD= hiTab.length+1;
-    
     sortem(curTab= 1, 2);
-    reFresh(); $('#mtb1').click();
+    reFresh();
+
+    $('#mtb1').click();
+    adminInfo.innerText+= 'NaNs count:'+ nanCnt+'\n';
   }
 
   function loadCache(isImport)
@@ -1006,12 +1076,13 @@ $('html').bind('touchend', function(e) {
     else
       adminInfo.innerText+=  'info@loadCache-RAW: in progresd.. \n';
   }
+
   function loadServerNew()
   {
     adminInfo.innerText+= '\nSERVER:load & import3\n';
     $.ajax(
     {
-      url:appPath +'/ldnew', type:'GET',
+      url:appPath +'/ld:'+dbPass, type:'GET',
       error:function(e, f)
       {
         adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
@@ -1039,7 +1110,7 @@ $('html').bind('touchend', function(e) {
       {
         adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
         
-            $("#log4But").val('Error: '+ f +', try again!');
+            $("#log4But").val('Server Awakening:'+ f +', try again!');
       },
       success:function(r, s, x)
       {
@@ -1082,16 +1153,16 @@ $('html').bind('touchend', function(e) {
     else
       adminInfo.innerText+= 'USING:window.localStorage \n';
  
-    var xx, yy, rawdb, rwp, rwh;
+    var rawdb, rwp, rwh,
+        qq= [], xx= [], yy= [];
     
-    xx= [];
     plTab.forEach(function(r) { 
       xx.push( r.join('^') ); });
     rwp= xx.join('|');
 
-    yy= [];
     hiTab.forEach(function(r) { 
-      yy.push( r.join('^') ); });
+      qq= [ r[0], r[1], r[2], r[3] ];
+      yy.push( qq.join('^') ); });
     rwh= yy.join('|');
     
     rawdb= rwp +'$'+ rwh;
@@ -1155,14 +1226,8 @@ $('html').bind('touchend', function(e) {
     });
   }
   clrAdmin();
-//  loadDB();
-  /*
-  dbPass= 'justWakingUpServer';
-  logMe();
-*/
 
   // *** tab buttons listener ********************************
-  var initOnceA= false;
   $(".mtb").click(function(e)
   {
     $(".mtb").removeClass("act dea").addClass("dea");
@@ -1172,34 +1237,48 @@ $('html').bind('touchend', function(e) {
     var tid= "#tab"+ (this.id).substring(3,4);
     $(tid).removeClass("pde").addClass("pac");
 
-    if(editMode) $("#mnu1").click();
+    lastTab= curTab;
     switch(tid)
     {
       case '#tab1':
-        if(curTab === 2 && edtRow[2] >= 0) {
-          eefmod[1]= +$('#htb>tr')[edtRow[2]-1].cells[1].innerText;
-          curTab= 1;
-          reFresh();
-          resetEdit(1);
-          $('#ptb>tr>td').eq(0).click();
-        }
-        curTab= 1; nBar.innerText= tblInf[1];
-        break;
-      case '#tab2':
-        if(curTab === 1 && edtRow[1] >= 0) {
-          eefmod[2]= +$('#ptb>tr')[edtRow[1]-1].cells[0].innerText;
-          curTab= 2; //edtRow[2]= 0;
-          reFresh();
-          resetEdit(2);
-          $('#htb>tr>td').eq(0).click();
-        }
 
-        curTab= 2; nBar.innerText= tblInf[2];
+        curTab= 1;
+/*
+        if(lastTab === 2 && edtRow[2] >= 0) {
+          fltNum[1]= 1; fi1Hdr[1]= '0#id'; fi1Mod[1]= 9;
+          fi1Inp[1]= +$('#htb>tr')[edtRow[2]-1].cells[1].innerText;
+
+          reFresh();
+          edtRow[1]= 1;
+        }
+//        else resetEdit(1);
+*/        
+        nBar.innerText= tblInf[1];
         break;
+
+      case '#tab2':
+
+        curTab= 2;
+        
+        if(lastTab === 1 && edtRow[1] >= 0)
+        {
+          fltNum[2]= 1; fi1Hdr[2]= fi2Hdr[2]= '1#cid'; fi1Mod[2]= 9;
+          fi1Inp[2]= +$('#ptb>tr')[edtRow[1]-1].cells[0].innerText;
+
+          resetEdit(2);
+          reFresh();
+        }
+//        else if(edtRow[2] === -1) fltNum[2]= 0;
+        
+        nBar.innerText= tblInf[2];
+        break;
+
       case '#tab3':
         curTab= 3; nBar.innerText=' [~]System';
         break;
     }
+
+    if(editMode) $("#mnu1").click();
   });
 
   // *** BUTTONS #################################################
@@ -1211,7 +1290,7 @@ $('html').bind('touchend', function(e) {
   $("#mnu1").click(function()
   { // star A.
     if(curTab === 3) {
-      adminInfo.innerText+= ' [?]Unused slot, haa... \n'; return; }
+      adminInfo.innerText+= ' [?]Haa... \n'; return; }
 //    sRs= $('#ptb')[0].getElementsByClassName('selR');
 
     var js= '#htb>tr', tl= hiTab.length;
@@ -1222,7 +1301,7 @@ $('html').bind('touchend', function(e) {
     if(editMode= !editMode)
     {
       $(".admin").css("display", "table-cell");
-      $('.adminEdit').css('display', 'block');
+      $('.adminEdit').css('display', 'inline-block');
       $('.filt').css('display', 'none');
     }
     else
@@ -1262,189 +1341,119 @@ $('html').bind('touchend', function(e) {
   function hntShow() {
     nBar.innerText= tblInf[curTab] +' [?]Press SPACE to toggle filter modes.'; }
 
-  function ft1f()
-  {
-    var i, x, c1, c2, tn= 1, rf= 0, qs= '#t1F';
-    var inp= $(qs).val(), ts= Math.abs(tbSrt[tn])-1;
-
-    fltNum[tn]++;
-    fltInp[tn]= inp;
-    var fn= fltNum[tn];
-    for(i= 0; i < plTab.length; i++)
-    {
-      x= plTab[i];
-      if(ts === 0)
-      {
-        c1= ''+x[0];
-        c1= c1.indexOf(inp);
-        if(tbFmod[tn] === 2) {
-          if(c1 >= 0 && x[6]+1 >= fn) {
-            rf++;
-            x[6]= fn;
-          }
-        }
-        else {
-          if(c1 === 0 && x[6]+1 >= fn) {
-            rf++;
-            x[6]= fn;
-          }
-        }
-      }
-      else
-      {
-        c1= x[1].indexOf(inp);
-        c2= x[2].indexOf(inp);
-        if(ts > 2) {
-          c1= x[3].indexOf(inp);
-          c2= x[4].indexOf(inp);
-        }
-        if(tbFmod[tn] === 2) {
-          if((c1 >= 0 || c2 >= 0) && x[6]+1 >= fn) {
-            rf++;
-            x[6]= fn;
-          }
-        }
-        else {
-          if((c1 === 0 || c2 === 0) && x[6]+1 >= fn) {
-            rf++;
-            x[6]= fn;
-          }
-        }
-      }
-    }
-    recFil[tn]= rf;
-  }
-
-  function ft2f()
-  {
-    var i, x, c1, tn= 2, rf= 0, qs= '#t2F';
-    var inp= $(qs).val(), ts= Math.abs(tbSrt[tn])-1;
-
-    fltNum[tn]++;
-    fltInp[tn]= inp.toLowerCase();
-
-    var fn= fltNum[tn];
-    for(i= 0; i < hiTab.length; i++)
-    {
-      x= hiTab[i];
-      c1= ''+x[ts];
-      c1= c1.indexOf(inp);
-
-      if(tbFmod[tn] === 2) {
-        if(c1 >= 0 && x[4]+1 >= fn) {
-          rf++;
-          x[4]= fn;
-        }
-      }
-      else {
-        if(c1 === 0 && x[4]+1 >= fn) {
-          rf++;
-          x[4]= fn;
-        }
-      }
-    }
-    recFil[tn]= rf;
-  }
 
   $('#t1fil, #t2fil').click(function(e)
   {//e.stopImmediatePropagation(); e.preventDefault();
-    var tn= +this.id[1];
+    var fn, i, tn= curTab;
+
+    fn= ++fltNum[tn];
+    i= Math.abs(tbSrt[tn])-1;
+
     if(tn !== 2)
     {
-      tn= 1; eefmod[tn]= 0; ft1f();
-      $('#t1arnd')[0].scrollTop= 0;
+      tn= 1;
+      i= $('#t1F').val();
     }
     else
-    {
-      eefmod[0]= eefmod[tn]= 0; ft2f();
-      $('#t2arnd')[0].scrollTop= 0;
-    }
+      i= $('#t2F').val();
 
-    
+      if(fn === 2) fi2Inp[tn]= i
+      else fi1Inp[tn]= i;
+
     reFresh();
-
-    if(tn !== 2) $('#t1F')[0].focus();
-    else { $("#mtb2").click(); $('#t2F')[0].focus(); }
   });
 
   $('#t1clr, #t2clr').click(function(e)
   { //e.stopImmediatePropagation(); e.preventDefault();
+
     var js= '#t2F', tn= +this.id[1];
     if(tn !== 2) { tn= 1; js= '#t1F'; }
 
-    fltNum[tn]= 0; fltStr[tn]= 'No Filters..';
+    fltNum[tn]= 0;
+    resetEdit(tn);
+    reFresh();
 
     if(tn !== 2)
     {
-      plTab.forEach(function(x) { x[6]= 0; });
+      $('#mtb1').click();
 
-      eefmod[1]= 0;
-      resetEdit(curTab);
-      reFresh(); $(js)[0].focus();
-      
-      return;
       $('#t1arnd')[0].scrollTop= 0;
+      sortem(1, 2);
     }
-
-    hiTab.forEach(function(x) {
-      x[4]= 0;
-    });
-
-    eefmod[0]= eefmod[2]= 0;
-
-    resetEdit(curTab);
-    reFresh();
-    $("#mtb2").click();
-    $(js)[0].focus();
+    else
+    {
+      $('#mtb2').click();
 
       $('#t2arnd')[0].scrollTop= 0;
-     
+      sortem(2, 1);
+    }
+
+    $(js).focus();
   });
+
 
   $('#t1F, #t2F').on('focus', function(e)
   {
     var i= +this.id[1]; if(i !== 2) i= 1;
-    this.select(); //tbFmod[i]= 1;
-    tiFresh(i); hntShow();
+    this.select();
+    
+      if(fltNum[i] === 0)
+        fi1Mod[i]= 1;
+      else
+        fi2Mod[i]= 1;
+
+    tiFresh(1);
+    hntShow();
   });
 
   $('#t1F, #t2F').on('blur', function(e)
   { //e.stopImmediatePropagation(); e.preventDefault();
-    var jq= $('#t2FinfBar');
-    var i= +this.id[1]; 
-    if(i !== 2) { i= 1; jq= $('#t1FinfBar'); }
 
-    if(fltNum[i] > 0) jq.text(fltStr[i]);
-    else jq.text('No Filters..');
+    tiFresh();
   });
 
 
   // *** INPUT TEXT FIELD ...............................
   $('#t1F, #t2F').on('keyup', function(e)
   {
-    var a, tn= +this.id[1];
-    if(tn !== 2) tn= 1;
+    var a,
+        t= this.value,
+        tn= +this.id[1];
 
-    var t= this.value;
+    if(tn !== 2) tn= 1;
     if(t === ' ')
     {
-      if(tbFmod[tn] !== 1) tbFmod[tn]= 1;
-      else tbFmod[tn]= 2;
+      if(fltNum[tn] === 0)
+        fi1Mod[tn]= (fi1Mod[tn] !== 1)? 1:2;
+      else
+        fi2Mod[tn]= (fi2Mod[tn] !== 1)? 1:2;
 
-      tiFresh(tn); hntShow();
+      tiFresh(1);
+      hntShow();
       this.value= '';
+      nBar.innerrTexy= 'fi1Mod='+fi1Mod[tn];
       return;
     }
+
+    if(t === '')
+    {
+      if(fltNum[tn] === 0)
+        fi1Mod[tn]= 1;
+      else
+        fi2Mod[tn]= 1;
+
+      tiFresh(1);
+      hntShow();
+    }
     else
-    if(t === '') { tbFmod[tn]= 1; tiFresh(tn); hntShow(); }
-    else
-    if(t.length === 1) nBar.innerText= tblInf[tn];
+    if(t.length === 1)
+      nBar.innerText= tblInf[tn];
 
     a= Math.abs(tbSrt[tn]) -1;
     if(tn !== 2)
     { // *** tab1
       if(a === 0)
-        this.value= t.replace(/[^0-9]/g, '');
+        this.value= t.replace(/[^0-9 a]/g, '');
       else
       if(a < 3)
         this.value= t.toUpperCase().replace(/[^A-Z \-]/gi, '');
@@ -1457,7 +1466,7 @@ $('html').bind('touchend', function(e) {
     if(a > 1)
       this.value= t.toUpperCase().replace(/[^A-Z 0-9\+]/gi, '');
     else
-      this.value= t.replace(/[^0-9]/g, '');
+      this.value= t.replace(/[^0-9 a]/g, '');
   });
 
   $('.finf').on('keydown', function(e)
@@ -1494,7 +1503,6 @@ $('html').bind('touchend', function(e) {
     $('#ta1rmv')[0].disabled= true;
     $('#ta1sub')[0].disabled= false;
     return;
-    
   });
 
   $('.clPinf2').on('keyup', function()
@@ -1519,11 +1527,10 @@ $('html').bind('touchend', function(e) {
   $('#ta1rmv').click( //>Remove<
   function()
   {
-  //  alert(0);
-        if(!confirm('Are you sure?')) return;
+    if(!confirm('Are you sure?')) return;
 
-    var i, x, fnd= -1, cid= $('#t1e0')[0].value;
-
+    var i, x, fnd= -1,
+        cid= $('#t1e0')[0].value;
     for(i= 0; i < plTab.length; i++)
     {
       x= plTab[i];
@@ -1532,16 +1539,13 @@ $('html').bind('touchend', function(e) {
 
     if(fnd >= 0)
     {
-      fltNum[1]= 0; fltStr[1]= 'No Filters..';
-
       plTab.splice(fnd, 1);
 
-      $('#mtb1').click();
-//      edtRow[1]= -1;      eefmod[1]= 0;
+//      resetEdit(1);
       reFresh();
+      $('#mtb1').click();
       
       nBar.innerText= ' [!]Deleted';
-      
     }
     else
       nBar.innerText= ' [!]Not found';
@@ -1550,26 +1554,24 @@ $('html').bind('touchend', function(e) {
   $('#ta2rmv').click( //>Remove<
   function()
   {
-    
-        if(!confirm('Are you sure?')) return;
+    if(!confirm('Are you sure?')) return;
 
-    var i, x, fnd= -1, hid= +$('#t2e0')[0].value;
+    var i, x, fnd= 0,
+        hid= +$('#t2e0')[0].value;
 
     for(i= 0; i < hiTab.length; i++)
     {
       x= hiTab[i];
-      if(x[5] === hid) { fnd= i; break; }
+      if(x[4] === hid) { fnd= i; break; }
     }
 
     if(fnd >= 0)
     {
-      fltNum[2]= 0; fltStr[2]= 'No Filters..';
-
-      hiTab.splice(fnd, 1);
-
-      $('#mtb2').click();
-//      edtRow[2]= -1;      eefmod[2]= eefmod[0]= 0;
+      hiTab.splice(i, 1);
+      
+//      resetEdit(2);
       reFresh();
+      $('#mtb2').click();
       
       nBar.innerText= ' [!]Deleted';
     }
@@ -1581,7 +1583,6 @@ $('html').bind('touchend', function(e) {
   $("#ta1sub").click(function()
   {
     var i, cid;
-    fltNum[1]= 0; fltStr[1]= 'No Filters..';
     if(this.value[0] === 'N')
     { // *** NEW CLIENT
       $('#ta1sub').val('Confirm New');
@@ -1594,22 +1595,26 @@ $('html').bind('touchend', function(e) {
     else
     if(this.value[0] === 'C')
     { // *** CONFIRM NEW
-      cid= eefmod[curTab]= nextID++;
+      cid= nextID++;
       plTab.push([ cid,
                   formatSession($('#t1e1')[0].value),
                   formatSession($('#t1e2')[0].value),
                   formatSession($('#t1e3')[0].value),
                   formatSession($('#t1e4')[0].value),
-                  '', 0 ]);
+                  '' ]);
 
-      sortem(curTab= 1, tbSrt[1])
+      fltNum[1]= 1;
+      fi1Hdr[1]= fi2Hdr[1]= '0#id';
+      fi1Mod[1]= 9; fi1Inp[1]= cid;
+
       reFresh();
-
+      fltNum[1]= 0;
+      
       edtRow[1]= 1;
-      eefmod[1]= 0;
+      $('#mtb1').click();
       $('#t1fil')[0].disabled= true;
 
-      $('#mtb1').click();
+      sortem(1, 2);
     }
     else
     if(this.value[0] === 'E')
@@ -1624,7 +1629,7 @@ $('html').bind('touchend', function(e) {
     else
     if(this.value[0] === 'A')
     { // *** APPLY EDIT
-      cid= eefmod[curTab]= +$('#t1e0')[0].value;
+      cid= +$('#t1e0')[0].value;
       for(i=0; i < plTab.length; i++)
       {
         if(plTab[i][0] === cid)
@@ -1636,91 +1641,77 @@ $('html').bind('touchend', function(e) {
         }
       }
 
-      curTab= 1;
-      reFresh();
+      fltNum[1]= 1;
+      fi1Hdr[1]= fi2Hdr[1]= '0#id';
+      fi1Mod[1]= 9; fi1Inp[1]= cid;
 
+      reFresh();
       edtRow[1]= 1;
-      eefmod[1]= 0;
-      $('#t1fil')[0].disabled= true;
 
       $('#mtb1').click();
+      $('#t1fil')[0].disabled= true;
+      
+      sortem(1, 2);
     }
   });
 
   $("#ta2sub").click(function()
   {
-    var a, i, hid, dtm, tn= 2;
-    fltNum[tn]= 0; fltStr[tn]= 'No Filters..';
+    var i, x, cid, hid, dtm;
 
     if(this.value[0] === 'E')
     { // *** EDIT SESSION
       $(this).val('Apply Edit');
       $('#ta2rmv')[0].disabled= true;
-      $('.clPinf2').css({'border-color':'red', background:'FloralWhite'});
-      $('#t2e2').focus();
-  
- 
-        $('#t2e1y')[0].disabled= false;
-        $('#t2e1m')[0].disabled= false;
-        $('#t2e1d')[0].disabled= false;
-        $('#t2e1h')[0].disabled= false;
-  
-        
-        $('#t2e2')[0].disabled= false;
-        $('#t2e3')[0].disabled= false;
-            
-        $('#t2e2').focus();
       $('#ta2sub')[0].disabled= true;
+
+      $('.clPinf2').css({'border-color':'red',
+                         background:'FloralWhite'});
+
+      $('#t2e1y')[0].disabled= false;
+      $('#t2e1m')[0].disabled= false;
+      $('#t2e1d')[0].disabled= false;
+      $('#t2e1h')[0].disabled= false;
+
+      $('#t2e2')[0].disabled= false;
+      $('#t2e3')[0].disabled= false;
+
+      $('#t2e2').focus();
     }
     else
     if(this.value[0] === 'A')
     { // *** APPLY EDIT
       $(this).val('Edit Session');
-      a= ''+ $('#t2e1y')[0].value + $('#t2e1m')[0].value
-        +$('#t2e1d')[0].value + $('#t2e1h')[0].value;
-      dtm= +a;
-      
-      hid= +$('#t2e0')[0].value;
-//      alert('= '+a);
 
-      var rn, x; //, ss= $('#t2e2')[0].value;
-      
+      hid= +$('#t2e0')[0].value;
       for(i= 0; i < hiTab.length; i++)
       {
         x= hiTab[i];
-        if(x[5] === hid)
+        if(x[4] === hid)
         { //nBar.innerText= 'Apply @'+ x[0] +':'+ x[1] +' '+ x[2];
-
-          rn= i;
+          cid= +x[1];
           x[2]= formatSession($('#t2e2')[0].value);
           x[3]= formatSession($('#t2e3')[0].value);
 
-          a= ('2018'+ $('#t2e1y')[0].value).slice(-4) + ('00'+ $('#t2e1m')[0].value).slice(-2)
+          dtm= ('2018'+ $('#t2e1y')[0].value).slice(-4) + ('00'+ $('#t2e1m')[0].value).slice(-2)
             + ('00'+ $('#t2e1d')[0].value).slice(-2) + ('00'+ $('#t2e1h')[0].value).slice(-2);
-          dtm= +a;
 
-          x[0]= dtm;
- //         alert('= '+dtm);
+          x[0]= +dtm;
           $('.clPinf2').css({'border-color':'black', background:'white'});
           break;
         }
       }
 
-      edtRow[2]= 1;
-      eefmod[0]= hid;
-
-//      sortem(curTab= 2, 1);
       reFresh();
+      $('#mtb2').click();
 
       $('#t2fil')[0].disabled= true;
-      $('#mtb2').click();
+      sortem(2, 1);
     }
   });
 
-
   $('#t1all, #t2all').click(function(e)
-  {
-//    nBar.innerText= ' [!]Please wait...'; nBar.focus();
+  {//    nBar.innerText= ' [!]Please wait...'; nBar.focus();
     alert('This may take more than a few seconds!');
     tbAll[curTab]= 0; reFresh();
   });
@@ -1751,7 +1742,6 @@ $('html').bind('touchend', function(e) {
   $("#stc4But").click( function() { // >Store Cache<
    saveDB(true);
   });
-
 
   $("#gpc4But").click(function()
   { //>Grant Persistence<
@@ -1787,29 +1777,7 @@ $('html').bind('touchend', function(e) {
     });
   });
 
-  $("#med4But").click(function()
-  { //>Memory Data<
-    var as= '~inProgress...';
-/*
-    adminInfo.innerText+= '\n'+'[plTab: '+ plTab.length+']\n'
-      + 'pid\t name\t $buy\t $won\t $bal\t #ngm\t %buy\t %won \n';
-    plTab.forEach(function(r) {
-      as+= ''+ r[0]+'\t '+r[1]+'\t '+r[2]+'\t '+r[3]
-        +'\t '+r[4]+'\t '+r[5]+'\t '+r[6]+'\t '+r[7]+'\n'; });
-    adminInfo.innerText+= as;
-    as= '';
-    adminInfo.innerText+= '\n'+'[hiTab: '+ hiTab.length+']\n'
-      + 'dtm   #   $bank    $1st\t :name\t $2nd\t :name\t rid\t #<pid:buy..> \n';
-    hiTab.forEach(function(r, c) {
-      as+= ''+ (r[0])+'  '+r[1]+'\t '+r[2]+'\t '+r[3]
-        +'\t '+r[4]+'\t '+r[5]+'\t '+r[6]+'\t '+r[7]+'\t '+r[8]+'\n'; });
-*/
-    adminInfo.innerText+= as;
-  });
-
   $("#sld4But").click( function() { loadDB(); }); //>Server Load<
-  $("#ssv4But").click( function() {
-    saveDB();
-  }); //>Server Save<
+  $("#ssv4But").click( function() { saveDB(); }); //>Server Save<
 
 }); // THE END
