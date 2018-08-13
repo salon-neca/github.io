@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.24f Aug\'18. \n';
+  var versionCode= 'v0.24g Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:99999});
 
@@ -17,7 +17,7 @@ $(document).ready(function()
     dggY2= dggY1;
   }
 
-  $('#t1arnd, #t2arnd').bind('mousemove', function(e) {
+$('#t1arnd, #t2arnd').bind('mousemove', function(e) {
     if(dggON) {
       dggY1= e.pageY;
       dragging(this);
@@ -33,7 +33,7 @@ $(document).ready(function()
   //#t1arnd
   $('html').bind('mouseup', function(e) {
     dggON= false; dggY1= dggY2= e.pageY;
-    e.preventDefault(); e.stopPropagation();
+    //e.preventDefault(); e.stopPropagation();
   });
 
 
