@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.27b Aug\'18. \n';
+  var versionCode= 'v0.27c Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
 
@@ -1268,9 +1268,7 @@ $(document).ready(function()
     lastTab= curTab;
     switch(tid)
     {
-      case '#tab1':
-
-        curTab= 1;
+      case '#tab1': curTab= 1;
 /*
         if(lastTab === 2 && edtRow[2] >= 0) {
           fltNum[1]= 1; fi1Hdr[1]= '0#id'; fi1Mod[1]= 9;
@@ -1281,12 +1279,10 @@ $(document).ready(function()
         }
 //        else resetEdit(1);
 */
+        nBar.innerText= tblInf[curTab];
         break;
 
-      case '#tab2':
-
-        curTab= 2;
-        
+      case '#tab2': curTab= 2;
         if(lastTab === 1 && edtRow[1] >= 0)
         {
           fltNum[2]= 1; fi1Hdr[2]= fi2Hdr[2]= '1#cid'; fi1Mod[2]= 9;
@@ -1296,14 +1292,14 @@ $(document).ready(function()
           resetEdit(2);
           reFresh();
         }
-        break;
+        nBar.innerText= tblInf[curTab];
+      break;
 
-      case '#tab3':
-        curTab= 3; nBar.innerText=' [~]System';
-        break;
+      case '#tab3': curTab= 3;
+        nBar.innerText=' [~]System';
+      break;
     }
 
-    nBar.innerText= tblInf[curTab];
     if(editMode) $("#mnu1").click();
   });
 
