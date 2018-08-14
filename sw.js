@@ -1,4 +1,4 @@
-// *** [18j].[24g]25hijklmnopquvwxy[25z]2
+// *** [18j].[24g]25hijklmnopquvwxy[25z]23
 self.addEventListener('install', e => {
   caches.delete('saloncch').then(cache => {
       caches.open('saloncch').then(cache => {
