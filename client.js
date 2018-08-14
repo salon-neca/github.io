@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.25q Aug\'18. \n';
+  var versionCode= 'v0.25u Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
 
@@ -233,7 +233,7 @@ $(document).ready(function()
       })
       mapped.sort(function(a, b)
       {
-        return (b > a)? -1: ((b < a)? 1:0);
+        return (b.val > a.val)? -1:((b.val < a.val)? 1:0);
       });
 
       var result= mapped.map(function(r)
