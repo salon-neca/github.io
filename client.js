@@ -1,10 +1,10 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.25z2 Aug\'18. \n';
+  var versionCode= 'v0.25z3 Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
 
-
+/*
   var dggON= false, dggY1, dggY2, recT;
   var dragging= function(x)
   {
@@ -34,7 +34,7 @@ $(document).ready(function()
 //    if(dggON) e.preventDefault();
     dggON= false; dggY1= dggY2= e.pageY;
   });
-
+*/
 
   var nBar= document.getElementById('notif');
   var adminInfo= document.getElementById('dbFrame');
@@ -708,7 +708,7 @@ $(document).ready(function()
   $('#playerTable').click(function(e)
   {
     var i, tmp, cid, et= e.target;
-    if($(et).hasClass('ord3') || $(et).is('svg') || $(et).hasClass('vertSz'))
+    if($(et).hasClass('ord3') || $(et).hasClass('vertSz'))
     {
       cid= $(et).closest('tr')[0]
         .previousSibling.firstChild.innerText;
@@ -717,7 +717,7 @@ $(document).ready(function()
       nBar.innerText= ' @'+ cid +':'+ id2nme(cid);
 
       var epp;
-      if($(et).is('svg') || $(et).hasClass('vertSz'))
+      if($(et).hasClass('vertSz'))
       {
         
         tmp= $(et).closest('td')[0].firstChild;
@@ -944,10 +944,10 @@ $(document).ready(function()
         + '<input class="ord3" type="button" style="float:right" value="New Session" >'
         + '<input class="ord3" type="button" style="float:right" value="Edit Memo" >'
 
-        +'<button class="vertSz" style="padding:7px 0; margin:0 9px; float:right">'
-        +'<svg width="43px" height="25px" viewbox="0 0 256 450" fill="white" stroke="grey" stroke-width="30px"> '
-        +'<path d="M256 272c0 4.25-1.75 8.25-4.75 11.25l-112 112c-3 3-7 4.75-11.25 4.75s-8.25-1.75-11.25-4.75l-112-112c-3-3-4.75-7-4.75-11.25 0-8.75 7.25-16 16-16h224c8.75 0 16 7.25 16 16zM256 176c0 8.75-7.25 16-16 16h-224c-8.75 0-16-7.25-16-16 0-4.25 1.75-8.25 4.75-11.25l112-112c3-3 7-4.75 11.25-4.75s8.25 1.75 11.25 4.75l112 112c3 3 4.75 7 4.75 11.25z" /></svg> '
-        +'</button>'
+        +'<button class="vertSz" style="padding:7px 0; width:50px; margin:0 9px; float:right">'
+//        +'<svg width="43px" height="25px" viewbox="0 0 256 450" fill="white" stroke="grey" stroke-width="30px"> '
+  //      +'<path d="M256 272c0 4.25-1.75 8.25-4.75 11.25l-112 112c-3 3-7 4.75-11.25 4.75s-8.25-1.75-11.25-4.75l-112-112c-3-3-4.75-7-4.75-11.25 0-8.75 7.25-16 16-16h224c8.75 0 16 7.25 16 16zM256 176c0 8.75-7.25 16-16 16h-224c-8.75 0-16-7.25-16-16 0-4.25 1.75-8.25 4.75-11.25l112-112c3-3 7-4.75 11.25-4.75s8.25 1.75 11.25 4.75l112 112c3 3 4.75 7 4.75 11.25z" /></svg> '
+        +'v</button>'
 
         + '<pre style="font-size:15px; float:left;margin:0; width:240px; '//border-right:1px solid red; '
         + 'pointer-events:none; text-align:left; padding:5px 5px">'+ plInf +'</pre>'
