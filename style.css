@@ -1,4 +1,4 @@
-/* s24s*/
+/* s27b*/
 @font-face {
   font-family: 'IBM Plex Mono';
   src: url('/aux/ibm.ttf') format('truetype');
@@ -112,26 +112,13 @@
   color:#aaaaaa; background:#2f2f2f;
 }
 
-.vertSz {
-  border:1px solid lightgrey;
-  /*width:auto;*/ height:40px;
-  padding:7px 25px;
-  color:white; background:#5f5f5f;
-  margin:0 3px 15px 5px; font-size:15px;
-}
-.vertSz:hover {
-  background:#909090;
-}
-.vertSz:disabled {
-  border-color:grey;
-  color:#aaaaaa; background:#2f2f2f;
-}
 .mnu { 
   float:right;  
-  width:50px; height:40px;
+  width:auto; height:40px;
   color:white; background:none;
   margin-left:9px;
-  padding:5px;
+  padding:3px 19px 0;
+  font-weight:bold;
   border:1px solid grey;
 }
 .mnu:hover {
