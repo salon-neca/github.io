@@ -1,10 +1,10 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.25z7 Aug\'18. \n';
+  var versionCode= 'v0.25z9 Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
 
-/*
+
   var dggON= false, dggY1, dggY2, recT;
   var dragging= function(x)
   {
@@ -34,7 +34,7 @@ $(document).ready(function()
 //    if(dggON) e.preventDefault();
     dggON= false; dggY1= dggY2= e.pageY;
   });
-*/
+
 
   var nBar= document.getElementById('notif');
   var adminInfo= document.getElementById('dbFrame');
