@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.25m Aug\'18. \n';
+  var versionCode= 'v0.25o Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
 
@@ -238,8 +238,9 @@ $(document).ready(function()
     { // numeric
       if(tab === 2 && hc === 0)
       {// sort two columns
+/*
 // temporary array holds objects with position and sort-value
-var mapped =t.map(function(el, i) {
+var mapped= t.map(function(el, i) {
   return { index: i, value: +el[0] };
 })
 
@@ -252,9 +253,14 @@ mapped.sort(function(a, b) {
 var result = mapped.map(function(el){
   return t[el.index];
 });
-        t= result.slice(0);;
+        t.length= 0;
+        result.forEach(function(r)
+        {
+          t.push( r );
+        });
+//        t= result.slice(0);;
+*/
 
-/*
         t.sort(function(a, b)
         {
           if(a[0] === b[0])
@@ -262,7 +268,7 @@ var result = mapped.map(function(el){
           else
             return b[0] - a[0];
         });
-*/
+
       }
       else
       {
