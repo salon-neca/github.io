@@ -132,6 +132,7 @@
   color:white; background:none;
   margin-left:9px;
   padding:5px;
+  border:1px solid grey;
 }
 .mnu:hover {
   background:grey;
