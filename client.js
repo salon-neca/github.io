@@ -1,7 +1,7 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.25u Aug\'18. \n';
-  var appPath= 'https://snn.glitch.me';
+  var versionCode= 'v0.25w Aug\'18. \n';
+  var appPath= 'https://sns.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
 
 
@@ -11,7 +11,7 @@ $(document).ready(function()
     var dm, jq= (curTab !== 2)? $('#t1arnd')[0] : $('#t2arnd')[0];
 
     recT= jq.getBoundingClientRect();
-    dm= (dggY2 - dggY1) *2;
+    dm= (dggY2 - dggY1) *3;
     jq.scrollTop+= dm;
     dggY2= dggY1;
   }
@@ -24,14 +24,14 @@ $(document).ready(function()
   {
     if(dggON)
     {
-      e.preventDefault();
+//      e.preventDefault();
       dggY1= e.pageY;
       dragging(this);
     }
   });
   $('html').bind('mouseup', function(e)
   {
-    if(dggON) e.preventDefault();
+//    if(dggON) e.preventDefault();
     dggON= false; dggY1= dggY2= e.pageY;
   });
 
