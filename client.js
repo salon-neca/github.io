@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.25k Aug\'18. \n';
+  var versionCode= 'v0.25m Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
 
@@ -177,8 +177,9 @@ $(document).ready(function()
       $('#ta2sub')[0].disabled= true;
 
       $('#ta2sub').val('Edit Session');
-      $('#t1e0').val( 'Next #No.. '+ nextHD );
       $('#t2e0, #t2e1y, #t2e1m, #t2e1d, #t2e1h, #t2e2, #t2e3').val( '' );
+
+      $('#t2e0').val( 'Next #No. '+ nextHD );
 
       $('#t2e1y')[0].disabled= true;
       $('#t2e1m')[0].disabled= true;
@@ -237,6 +238,23 @@ $(document).ready(function()
     { // numeric
       if(tab === 2 && hc === 0)
       {// sort two columns
+// temporary array holds objects with position and sort-value
+var mapped =t.map(function(el, i) {
+  return { index: i, value: +el[0] };
+})
+
+// sorting the mapped array containing the reduced values
+mapped.sort(function(a, b) {
+  return (b.value - a.value);
+});
+
+// container for the resulting order
+var result = mapped.map(function(el){
+  return t[el.index];
+});
+        t= result.slice(0);;
+
+/*
         t.sort(function(a, b)
         {
           if(a[0] === b[0])
@@ -244,6 +262,7 @@ $(document).ready(function()
           else
             return b[0] - a[0];
         });
+*/
       }
       else
       {
