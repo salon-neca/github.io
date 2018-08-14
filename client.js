@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.25o Aug\'18. \n';
+  var versionCode= 'v0.25q Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
 
@@ -227,56 +227,73 @@ $(document).ready(function()
     if(tab === 2) tht= (hc === 2);
     if(tht)
     { // alpha
-      t.sort(function(a, b)
+      var mapped= t.map(function(r, i)
       {
-        if(b[hc] > a[hc]) return -1;
-        else if(b[hc] < a[hc]) return 1;
-        else return 0;
+        return { ind:i, val:r[hc] };
+      })
+      mapped.sort(function(a, b)
+      {
+        return (b > a)? -1: ((b < a)? 1:0);
+      });
+
+      var result= mapped.map(function(r)
+      {
+        return t[r.ind];
+      });
+
+      result.forEach(function(r, i)
+      {
+        t[i]= r;
       });
     }
     else
     { // numeric
+
       if(tab === 2 && hc === 0)
       {// sort two columns
-/*
-// temporary array holds objects with position and sort-value
-var mapped= t.map(function(el, i) {
-  return { index: i, value: +el[0] };
-})
-
-// sorting the mapped array containing the reduced values
-mapped.sort(function(a, b) {
-  return (b.value - a.value);
-});
-
-// container for the resulting order
-var result = mapped.map(function(el){
-  return t[el.index];
-});
-        t.length= 0;
-        result.forEach(function(r)
+        var mapped= t.map(function(r, i)
         {
-          t.push( r );
-        });
-//        t= result.slice(0);;
-*/
-
-        t.sort(function(a, b)
+          return { ind:i, dtm:r[0], hid:r[4] };
+        })
+        mapped.sort(function(a, b)
         {
-          if(a[0] === b[0])
-            return b[4] - a[4];
+          if(a.dtm === b.dtm)
+            return b.hid - a.hid;
           else
-            return b[0] - a[0];
+            return b.dtm - a.dtm;
         });
 
+        var result= mapped.map(function(r)
+        {
+          return t[r.ind];
+        });
+
+        result.forEach(function(r, i)
+        {
+          t[i]= r;
+        });
       }
       else
       {
         var qq= hc;
         if(tab === 2 && hc > 2) qq= 4;
-        t.sort(function(x, y, a= x[qq], b= y[qq])
+        var mapped= t.map(function(r, i)
         {
-          return b - a;
+          return { ind:i, val:r[qq] };
+        })
+        mapped.sort(function(a, b)
+        {
+          return (b.val - a.val);
+        });
+
+        var result= mapped.map(function(r)
+        {
+          return t[r.ind];
+        });
+
+        result.forEach(function(r, i)
+        {
+          t[i]= r;
         });
       }
     }
