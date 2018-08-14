@@ -40,26 +40,32 @@
 }
 
 .finf {
-  
   border:1px solid grey;
   margin:5px 0 9px 0; padding:3px 5px;
   font-size:17px; text-align:center;
 }
 
 .clPinf {
-  width:23%; background:FloralWhite;
+  color:black;
+  width:23%; background:ivory;
   user-select:text; resize:none;
   font-size:17px; text-align:center;
   margin:5px 0 9px 0; padding:3px 5px;
   border:1px solid red;
 }
-
 .clPinf2 {
-  width:23%; background:white;
+  color:black;
+  width:23%; background:ivory;
   user-select:text; resize:none;
   font-size:17px; text-align:center;
   margin:5px 0 9px 0; padding:3px 5px;
-  border:1px solid black;
+  border:1px solid red;
+}
+.clPinf:disabled,
+.clPinf2:disabled {
+  color:black !important;
+  background:white !important;
+  border:1px solid darkblue !important;
 }
 
 .ord {
@@ -138,7 +144,7 @@
 }
 
 table {
-  width:650px;
+  width:652px;
   table-layout:fixed;
   border-collapse:collapse;
   background:white;
