@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.25z Aug\'18. \n';
+  var versionCode= 'v0.25z2 Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
 
@@ -708,7 +708,7 @@ $(document).ready(function()
   $('#playerTable').click(function(e)
   {
     var i, tmp, cid, et= e.target;
-    if($(et).hasClass('ord3'))
+    if($(et).hasClass('ord3') || $(et).is('svg') || $(et).hasClass('vertSz'))
     {
       cid= $(et).closest('tr')[0]
         .previousSibling.firstChild.innerText;
@@ -717,8 +717,9 @@ $(document).ready(function()
       nBar.innerText= ' @'+ cid +':'+ id2nme(cid);
 
       var epp;
-      if($(et).hasClass('vertSz'))
+      if($(et).is('svg') || $(et).hasClass('vertSz'))
       {
+        
         tmp= $(et).closest('td')[0].firstChild;
         
         if(+tmp.offsetHeight > 175)
@@ -874,8 +875,12 @@ $(document).ready(function()
     }
 
 
-    if( $(et).hasClass('clPinf') ||
-      ($(et).is('td') &&$(et.parentNode).hasClass('xtrR')) ) return;
+
+    if( $(et).hasClass('clPinf') 
+       || ($(et).is('td') && $(et.parentNode).hasClass('xtrR')) )
+    {
+      return;
+    }
 //    e.stopPropagation(); e.preventDefault();
 
 
@@ -939,8 +944,8 @@ $(document).ready(function()
         + '<input class="ord3" type="button" style="float:right" value="New Session" >'
         + '<input class="ord3" type="button" style="float:right" value="Edit Memo" >'
 
-        +'<button class="ord3 vertSz" style="padding:7px 0; margin:0 9px; float:right">'
-        +'<svg style="pointer-events:none" width="43px" height="25px" viewbox="0 0 256 450" fill="white" stroke="grey" stroke-width="30px"> '
+        +'<button class="vertSz" style="padding:7px 0; margin:0 9px; float:right">'
+        +'<svg width="43px" height="25px" viewbox="0 0 256 450" fill="white" stroke="grey" stroke-width="30px"> '
         +'<path d="M256 272c0 4.25-1.75 8.25-4.75 11.25l-112 112c-3 3-7 4.75-11.25 4.75s-8.25-1.75-11.25-4.75l-112-112c-3-3-4.75-7-4.75-11.25 0-8.75 7.25-16 16-16h224c8.75 0 16 7.25 16 16zM256 176c0 8.75-7.25 16-16 16h-224c-8.75 0-16-7.25-16-16 0-4.25 1.75-8.25 4.75-11.25l112-112c3-3 7-4.75 11.25-4.75s8.25 1.75 11.25 4.75l112 112c3 3 4.75 7 4.75 11.25z" /></svg> '
         +'</button>'
 
@@ -1305,7 +1310,7 @@ $(document).ready(function()
   $('.ord2').click( function() { clrAdmin(); });
   $('#headbar').click(function() {
     var t= nBar.innerText; nBar.innerText= lastNotif; lastNotif= t;  });
-  $('.mnu, .mtb, .ord, .ord2, .ord3').click(function(e) { e.stopPropagation(); });
+  $('.mnu, .mtb, .ord, .ord2, .ord3, svg').click(function(e) { e.stopPropagation(); });
 
   $("#mnu1").click(function()
   { // star A.
