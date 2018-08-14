@@ -1,12 +1,11 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.24g Aug\'18. \n';
+  var versionCode= 'v0.25k Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
-  $.ajaxSetup({async:true, cache:false, timeout:99999});
+  $.ajaxSetup({async:true, cache:false, timeout:9999});
 
 
-  var dggON= false,
-      dggY1, dggY2, recT;
+  var dggON= false, dggY1, dggY2, recT;
   var dragging= function(x)
   {
     var dm, jq= (curTab !== 2)? $('#t1arnd')[0] : $('#t2arnd')[0];
@@ -17,46 +16,25 @@ $(document).ready(function()
     dggY2= dggY1;
   }
 
-$('#t1arnd, #t2arnd').bind('mousemove', function(e) {
-    if(dggON) {
+  $('#t1arnd, #t2arnd').bind('mousedown', function(e)
+  {
+    dggON= true; dggY1= dggY2= e.pageY;
+  });
+  $('#t1arnd, #t2arnd').bind('mousemove', function(e)
+  {
+    if(dggON)
+    {
+      e.preventDefault();
       dggY1= e.pageY;
       dragging(this);
     }
-    e.preventDefault(); e.stopPropagation();
   });
-
-  $('#t1arnd, #t2arnd').bind('mousedown', function(e) {
-    dggON= true; dggY1= dggY2= e.pageY;
-  //  e.preventDefault(); e.stopPropagation();
-  });
-
-  //#t1arnd
-  $('html').bind('mouseup', function(e) {
+  $('html').bind('mouseup', function(e)
+  {
+    if(dggON) e.preventDefault();
     dggON= false; dggY1= dggY2= e.pageY;
-    //e.preventDefault(); e.stopPropagation();
   });
 
-
-/*
-$('#t1arnd, #t2arnd').bind('touchmove', function(e) {
-  if(dggON) {
-    dggY1= e.originalEvent.touches[0].clientY;
-    dragging(this);
-  }
-  //e.preventDefault();
-  e.stopPropagation();
-});
-
-$('#t1arnd, #t2arnd').bind('touchstart', function(e) {
-  dggON= true; dggY1= dggY2= e.originalEvent.touches[0].clientY;
-//  e.preventDefault(); e.stopPropagation();
-});
-
-$('html').bind('touchend', function(e) {
-  dggON= false; dggY1= dggY2= e.originalEvent.touches[0].clientY;
-  e.preventDefault(); e.stopPropagation();
-});
-*/
 
   var nBar= document.getElementById('notif');
   var adminInfo= document.getElementById('dbFrame');
@@ -199,18 +177,16 @@ $('html').bind('touchend', function(e) {
       $('#ta2sub')[0].disabled= true;
 
       $('#ta2sub').val('Edit Session');
+      $('#t1e0').val( 'Next #No.. '+ nextHD );
       $('#t2e0, #t2e1y, #t2e1m, #t2e1d, #t2e1h, #t2e2, #t2e3').val( '' );
 
-        $('#t2e1y')[0].disabled= true;
-        $('#t2e1m')[0].disabled= true;
-        $('#t2e1d')[0].disabled= true;
-        $('#t2e1h')[0].disabled= true;
-        
-        $('#t2e2')[0].disabled= true;
-        $('#t2e3')[0].disabled= true;
-        
-      $('.clPinf2').css({'border-color':'black', background:'white'});
-      $('#t1e1').val(''); $('#t1e2').val(''); $('#t1e3').val('');
+      $('#t2e1y')[0].disabled= true;
+      $('#t2e1m')[0].disabled= true;
+      $('#t2e1d')[0].disabled= true;
+      $('#t2e1h')[0].disabled= true;
+
+      $('#t2e2')[0].disabled= true;
+      $('#t2e3')[0].disabled= true;
 
       if(jin) return;
       $('#htb>tr.xtrR').remove();
@@ -224,7 +200,7 @@ $('html').bind('touchend', function(e) {
     $('#ta1sub')[0].disabled= false;
 
     $('#ta1sub').val('New Client');
-    $('#t1e0').val( 'next id@ '+ nextID );
+    $('#t1e0').val( 'Next #Id. '+ nextID );
 
     $('.clPinf').css({display:'none'});
     $('#t1e1').val(''); $('#t1e2').val('');
@@ -246,8 +222,8 @@ $('html').bind('touchend', function(e) {
     if(tab !== 1) t= hiTab;
     if(t.length < 2) return;
 
-    var tht= !(hc === 0)
-    if(tab === 2) tht= (hc === 2 || hc === 3);
+    var tht= !(hc === 0);
+    if(tab === 2) tht= (hc === 2);
     if(tht)
     { // alpha
       t.sort(function(a, b)
@@ -263,16 +239,24 @@ $('html').bind('touchend', function(e) {
       {// sort two columns
         t.sort(function(a, b)
         {
-          if(b[0] === a[0])
+          if(a[0] === b[0])
             return b[4] - a[4];
           else
             return b[0] - a[0];
         });
       }
       else
-        t.sort(function(a, b) { return b[hc] - a[hc]; });
+      {
+        var qq= hc;
+        if(tab === 2 && hc > 2) qq= 4;
+        t.sort(function(x, y, a= x[qq], b= y[qq])
+        {
+          return b - a;
+        });
+      }
     }
-    
+
+
     if(rev) t.reverse();
     
     if(tab === 1)
@@ -301,8 +285,12 @@ $('html').bind('touchend', function(e) {
       else
       if(hc === 1) {
         $('#t2F').attr({placeholder:'#cid'}); hdr= '1#cid'; }
-      else {
+      else
+      if(hc === 2) {
         $('#t2F').attr({placeholder:'SESSION'}); hdr= '2SESSION'; }
+      else
+      if(hc === 3) {
+        $('#t2F').attr({placeholder:'#No.'}); hdr= '4#No.'; }
     }
 
     if(fltNum[tab] === 0)
@@ -470,7 +458,6 @@ $('html').bind('touchend', function(e) {
     recNum[1]= rn;
     tbAll[1]= tbAll[0];
 
-//    if(fltNum[1] === 0) recFil[1]= plTab.length;
 //    if(i === plTab.length) $('#t1all')[0].disabled= true;
   //  else $('#t1all')[0].disabled= false;
   }
@@ -520,7 +507,7 @@ $('html').bind('touchend', function(e) {
                          +'<td style="text-align:center">'+ ndt2sdt(x[0])
                          +'</td><td class="admin" style="text-align:right">'+ x[1]
                          +'</td><td >'+ ' TR: '+ x[2] +'\n CR: '+ x[3]
-                         +'</td><td style="display:none">'+ x[4]
+                         +'</td><td class="admin"">'+ x[4]
                          +'</td></tr>');
         rn++;
       }
@@ -530,7 +517,6 @@ $('html').bind('touchend', function(e) {
     recNum[2]= rn;
     tbAll[2]= tbAll[0];
     
-//    if(fltNum[2] === 0) recFil[2]= hiTab.length;
 //    if(i === hiTab.length) $('#t2all')[0].disabled= true;
   //  else $('#t2all')[0].disabled= false;
   }
@@ -587,13 +573,13 @@ $('html').bind('touchend', function(e) {
         j1= $('#t1fil'), j2= $('#t1F');
         a= recNum[i]; b= recFil[i]; c= plTab.length;
         $('#t1end')[0].innerText=
-          ' SHOWING:'+a+'  FILTER:'+b+'  TOTAL:'+c+'  ';
+          ' DISPLAY:'+a+'  FILTER:'+b+'  TOTAL:'+c+'  ';
       break;
       case 2: freshTab2();
         j1= $('#t2fil'), j2= $('#t2F');
         a= recNum[i]; b= recFil[i]; c= hiTab.length;
         $('#t2end')[0].innerText=
-          ' SHOWING:'+a+'  FILTER:'+b+'  TOTAL:'+c+'  ';
+          ' DISPLAY:'+a+'  FILTER:'+b+'  TOTAL:'+c+'  ';
       break;
     }
     
@@ -626,8 +612,6 @@ $('html').bind('touchend', function(e) {
     b= c.getBoundingClientRect();
     a= (window.innerHeight - b.top) -9;
     $(c).css({height:a});
-
-    lastTab= curTab;
   }
   // *** END REFRESH *****************************************
 
@@ -751,10 +735,11 @@ $('html').bind('touchend', function(e) {
         tmp.scrollTop= tmp.scrollHeight;
         $(epp).remove();
 
-// *** S A V E -------------------------------------------------
-        setTimeout(function() { saveDB(true); }, 999);
-        setTimeout(function() { saveDB(); }, 99999);//1.7sec
-// *** S A V E -------------------------------------------------
+        setTimeout(function()
+        {
+// *** S A V E -------------------
+          saveDB();
+        }, 99);
       }
       else
       if(et.value[0] === 'N')
@@ -832,26 +817,23 @@ $('html').bind('touchend', function(e) {
 
         setTimeout(function()
         {
-          $('#mtb1').click();
-          sortem(2, 1);
-        }, 99); //1.7sec
-
-// *** S A V E -------------------------------------------------
-        setTimeout(function() { saveDB(true); }, 999);
-        setTimeout(function() { saveDB(); }, 99999);//1.7sec
-// *** S A V E -------------------------------------------------
+  //        $('#mtb1').click();
+//          sortem(2, 1);
+// *** S A V E -------------------
+          saveDB();
+        }, 99);
       }
-      
+
+// *** endinner xtrT
       tmp= $(e.target).closest('tr')[0];
       setScroll(tmp);
 
       return;
     }
 
-    // *** normal tr stuff...
+
     if( $(et).hasClass('clPinf') ||
       ($(et).is('td') &&$(et.parentNode).hasClass('xtrR')) ) return;
-
 //    e.stopPropagation(); e.preventDefault();
 
 
@@ -901,7 +883,7 @@ $('html').bind('touchend', function(e) {
     var xTxt= id2trs(cid) +'\n**** MEMO:  '
                 + chunkStr(59, id2mmo(+cid)) +'\n\n';
 
-    var cn= 22, plInf= ''+ cid +':'+ id2nme(cid);
+    var cn= 25, plInf= ''+ cid +':'+ id2nme(cid);
 //    plInf= '12345678901234567890123456789012345#';
     if(plInf.length > cn) plInf= plInf.substr(0,cn-2) +'..';
     else plInf= plInf.substr(0,cn);
@@ -920,8 +902,8 @@ $('html').bind('touchend', function(e) {
         +'<path d="M256 272c0 4.25-1.75 8.25-4.75 11.25l-112 112c-3 3-7 4.75-11.25 4.75s-8.25-1.75-11.25-4.75l-112-112c-3-3-4.75-7-4.75-11.25 0-8.75 7.25-16 16-16h224c8.75 0 16 7.25 16 16zM256 176c0 8.75-7.25 16-16 16h-224c-8.75 0-16-7.25-16-16 0-4.25 1.75-8.25 4.75-11.25l112-112c3-3 7-4.75 11.25-4.75s8.25 1.75 11.25 4.75l112 112c3 3 4.75 7 4.75 11.25z" /></svg> '
         +'</button>'
 
-        + '<pre style="font-size:17px; float:left;margin:0; width:240px; '//border-right:1px solid red; '
-        + 'pointer-events:none; text-align:left; padding:9px 5px">'+ plInf +'</pre>'
+        + '<pre style="font-size:15px; float:left;margin:0; width:240px; '//border-right:1px solid red; '
+        + 'pointer-events:none; text-align:left; padding:5px 5px">'+ plInf +'</pre>'
         + '</td></tr>');
     }
       
@@ -960,8 +942,7 @@ $('html').bind('touchend', function(e) {
       reFresh();
       return;
     }
-    
-    
+
     if($(row).hasClass('selR')) {
       resetEdit(2, false); e.stopPropagation(); return; }
 
@@ -1138,7 +1119,6 @@ $('html').bind('touchend', function(e) {
 
         $('#hmPage').css({display:'none'});
         $('#appFrame').css({display:'block'});
-        window.scrollTo(0,0);
       }
     });
   }
@@ -1169,7 +1149,7 @@ $('html').bind('touchend', function(e) {
     
     localStorage.setItem('dataBase', rawdb);
 
-    nBar.innerText+= ' [!]Cache save OK.';
+    nBar.innerText= ' [!]Cache save OK.';
     adminInfo.innerText+= 'PASS:cache save '+ (rawdb.length/1024).toFixed(2) +'KB \n';
     if(cchOnly) return;
     
@@ -1195,7 +1175,7 @@ $('html').bind('touchend', function(e) {
         if(r.substring(0,4) !== 'P@sv') {
           adminInfo.innerText+= 'FAIL@server:'+ r +'\n'; return; }
 
-        nBar.innerText+= ' [!]Server save '+ r.substr(5);
+        nBar.innerText= ' [!]Server save '+ r.substr(5);
         adminInfo.innerText+= x.getAllResponseHeaders() +'\n'
           + 'PASS:server save '+ (rawdb.length/1024).toFixed(2) +'KB \n';
       }
@@ -1252,8 +1232,7 @@ $('html').bind('touchend', function(e) {
           edtRow[1]= 1;
         }
 //        else resetEdit(1);
-*/        
-        nBar.innerText= tblInf[1];
+*/
         break;
 
       case '#tab2':
@@ -1265,12 +1244,10 @@ $('html').bind('touchend', function(e) {
           fltNum[2]= 1; fi1Hdr[2]= fi2Hdr[2]= '1#cid'; fi1Mod[2]= 9;
           fi1Inp[2]= +$('#ptb>tr')[edtRow[1]-1].cells[0].innerText;
 
+          sortem(2, 1);
           resetEdit(2);
           reFresh();
         }
-//        else if(edtRow[2] === -1) fltNum[2]= 0;
-        
-        nBar.innerText= tblInf[2];
         break;
 
       case '#tab3':
@@ -1278,6 +1255,7 @@ $('html').bind('touchend', function(e) {
         break;
     }
 
+    nBar.innerText= tblInf[curTab];
     if(editMode) $("#mnu1").click();
   });
 
@@ -1311,13 +1289,14 @@ $('html').bind('touchend', function(e) {
       $('.filt').css('display', 'block');
     }
 
-    if(er >= 0 && er < tl ) // && eefmod[curTab === 0
+    if(er >= 0 && er < tl )
     {
       var jj= $(js)[er];
       $(jj.firstChild).click();
     }
     nBar.innerText= tblInf[curTab];
   });
+
 /*
   $("#mnu2").click(function()
   { // arrow B.
@@ -1371,21 +1350,22 @@ $('html').bind('touchend', function(e) {
 
     fltNum[tn]= 0;
     resetEdit(tn);
-    reFresh();
 
     if(tn !== 2)
     {
-      $('#mtb1').click();
-
-      $('#t1arnd')[0].scrollTop= 0;
       sortem(1, 2);
+
+      reFresh();
+      $('#mtb1').click();
+      $('#t1arnd')[0].scrollTop= 0;
     }
     else
     {
-      $('#mtb2').click();
-
-      $('#t2arnd')[0].scrollTop= 0;
       sortem(2, 1);
+
+      reFresh();
+      $('#mtb2').click();
+      $('#t2arnd')[0].scrollTop= 0;
     }
 
     $(js).focus();
@@ -1541,7 +1521,7 @@ $('html').bind('touchend', function(e) {
     {
       plTab.splice(fnd, 1);
 
-//      resetEdit(1);
+      resetEdit(1);
       reFresh();
       $('#mtb1').click();
       
@@ -1569,7 +1549,7 @@ $('html').bind('touchend', function(e) {
     {
       hiTab.splice(i, 1);
       
-//      resetEdit(2);
+      resetEdit(2);
       reFresh();
       $('#mtb2').click();
       
@@ -1578,7 +1558,6 @@ $('html').bind('touchend', function(e) {
     else
       nBar.innerText= ' [!]Not found';
   });
-
 
   $("#ta1sub").click(function()
   {
@@ -1614,7 +1593,7 @@ $('html').bind('touchend', function(e) {
       $('#mtb1').click();
       $('#t1fil')[0].disabled= true;
 
-      sortem(1, 2);
+//      sortem(1, 2);
     }
     else
     if(this.value[0] === 'E')
@@ -1651,7 +1630,7 @@ $('html').bind('touchend', function(e) {
       $('#mtb1').click();
       $('#t1fil')[0].disabled= true;
       
-      sortem(1, 2);
+//      sortem(1, 2);
     }
   });
 
@@ -1664,9 +1643,6 @@ $('html').bind('touchend', function(e) {
       $(this).val('Apply Edit');
       $('#ta2rmv')[0].disabled= true;
       $('#ta2sub')[0].disabled= true;
-
-      $('.clPinf2').css({'border-color':'red',
-                         background:'FloralWhite'});
 
       $('#t2e1y')[0].disabled= false;
       $('#t2e1m')[0].disabled= false;
@@ -1697,16 +1673,15 @@ $('html').bind('touchend', function(e) {
             + ('00'+ $('#t2e1d')[0].value).slice(-2) + ('00'+ $('#t2e1h')[0].value).slice(-2);
 
           x[0]= +dtm;
-          $('.clPinf2').css({'border-color':'black', background:'white'});
           break;
         }
       }
 
       reFresh();
       $('#mtb2').click();
-
       $('#t2fil')[0].disabled= true;
-      sortem(2, 1);
+
+//      sortem(2, 1);
     }
   });
 
