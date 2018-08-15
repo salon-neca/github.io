@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- s24a -->
-
+  <!-- .. -->
   <meta charset="utf-8"> 
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,14 +24,11 @@
   <script type="text/javascript" src="client.js"></script>
 </head>
 
-<!-- onselectstart="return false" oncontextmenu="return false"
-      ondragstart="return false" 
-
-      draggable="true" ondragstart="alert('drag');" 
-oncontextmenu="return false"
- min-height: 480px;
+<!-- onselectstart="return false"
+      ondragstart="return false"
 -->
-<body 
+<body oncontextmenu="return false"
+      ondragstart="return false"
       style="background-color:#777777; width:700px; margin:auto">
   
 
@@ -66,27 +62,10 @@ oncontextmenu="return false"
     <input class="mtb dea" id="mtb2" type="button" value="Treatments" >
     <input class="mtb dea" id="mtb3" type="button" value="System" >
 
-    <button class="mnu" id="mnu3"> = </button>
-    <!--button class="mnu" id="mnu2" style="padding:7px 0 0 0">
-      <svg width="40px" height="28px" viewbox="0 0 256 450" fill="white" stroke="grey" stroke-width="30px">
-        <path d="M256 272c0 4.25-1.75 8.25-4.75 11.25l-112 112c-3 3-7 4.75-11.25 4.75s-8.25-1.75-11.25-4.75l-112-112c-3-3-4.75-7-4.75-11.25 0-8.75 7.25-16 16-16h224c8.75 0 16 7.25 16 16zM256 176c0 8.75-7.25 16-16 16h-224c-8.75 0-16-7.25-16-16 0-4.25 1.75-8.25 4.75-11.25l112-112c3-3 7-4.75 11.25-4.75s8.25 1.75 11.25 4.75l112 112c3 3 4.75 7 4.75 11.25z" /></svg>   
-    </button-->
-    <button class="mnu" id="mnu1" > EDIT </button>
+    <button class="mnu" id="mnu1" > FILTER/EDIT </button>
   </div>
 
 <!-- *** tabs stsrt here 
-
-      <svg width="40px" height="35px" viewbox="0 0 24 30" fill="white" stroke="grey" stroke-width="1.5px">
-        <path d="M24 6h-24v-4h24v4zm0 4h-24v4h24v-4zm0 8h-24v4h24v-4z" /></svg>
-
-      <svg width="40px" height="35px" viewbox="0 0 512 652" fill="white" stroke="grey" stroke-width="40px">
-        <path d="M512 198.525l-176.89-25.704-79.11-160.291-79.108 160.291-176.892 25.704 128 124.769-30.216 176.176 158.216-83.179 158.216 83.179-30.217-176.176 128.001-124.769z" /></svg>
-
-
-        <p style="margin-left:-9px; font-size:12px">:HH </p>
-        <p style="margin-left:-9px; font-size:12px">:DD-MM-YYYY </p>
-  border:1px solid red;
-background:OldLace;
 ******************************************************************************************
 -->
   <div id="tab1" class="ptab pac" style="padding:20px 14px 9px">
@@ -167,10 +146,10 @@ background:OldLace;
       <table id="historyTable">
         <thead id="hth"><!--/thead-->
           <tr>
+            <th tabindex="1" style="width:59px">#No.</th>
             <th tabindex="1" style="width:149px">DATE</th>
             <th tabindex="1" class="admin" style="width:70px">#Id.</th>
             <th tabindex="1">SESSION</th>
-            <th tabindex="1" class="admin" style="width:70px">#No.</th>
           </tr></thead>
         <tbody id="htb"></tbody>
       </table>
@@ -202,13 +181,11 @@ background:OldLace;
 
 </div> <!-- appFrame -->
 
-  <!--div style="background:none; user-select:none; height:300px; pointer-events:none"></div>
-  <!--audio id="audQuack" type="audio/wav" src="/aux/quack.wav"></audio-->
-  <script>
-        window.onbeforeunload= function() { return "Reload database?"; }
+<script>
+      window.onbeforeunload= function() { return "Reload database?"; }
 
-        if(navigator.serviceWorker)
-          navigator.serviceWorker.register('sw.js', { scope:'/' });
-  </script>
+      if(navigator.serviceWorker)
+        navigator.serviceWorker.register('sw.js', { scope:'/' });
+</script>
 </body>
 </html>

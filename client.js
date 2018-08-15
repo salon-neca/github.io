@@ -1,9 +1,8 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.27c Aug\'18. \n';
+  var versionCode= 'v0.27i Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
-
 
   var dggON= false, dggY1, dggY2, recT;
   var dragging= function(x)
@@ -73,13 +72,14 @@ $(document).ready(function()
   var fltNum= [0, 0,0];
 
 // *** PLAYER TAB
-  var plTab= []; //[0, 'first', 'last', 'tel', 'mob', '[memo]', 0];
+  var plTab= [];
 // *** HISYORY TAB TABLE
-  var hiTab= []; //[0, 0, '~tr','~cr', 0, 0];
+  var hiTab= [];
 
-  // ***         0   1   2   3   4   5  
-  // *** plTab: cid frs lst pho mob mmo
-  // *** hiTab: dtm cid trt crm hid
+// ***         0   1   2   3   4   5  
+// *** plTab: id. frs lst pho mob mmo
+// ***         0   1   2   3   4
+// *** hiTab: no. dtm cid trt crm
 
 
   var lastNotif= '';
@@ -90,6 +90,17 @@ $(document).ready(function()
       lastNotif= nBar.innerText; nBar.innerText= '..'; }
   }
 
+  function fNum(n)
+  { // *** clear commas: .replace(/,/g, '');
+    if(isNaN(n)) return '~NaaN';
+  
+    var x= (n < 0);
+    n= Math.abs(n).toString()
+             .replace(/\B(?=(\d{3})+(?!\d))/gi, ',');
+    if(x) n= '−'+ n;
+    return n;
+  }
+  
   function setRowCol(ct)
   {
     if(!ct) ct= curTab;
@@ -151,8 +162,8 @@ $(document).ready(function()
     if(curTab === 2) jq= '#htb>tr';
 
     var b, c, r= $(jq)[i];
-    if(curTab !== 2) c= r.firstChild.innerText;
-    else c= r.firstChild.nextSibling.innerText;
+    if(curTab !== 2) c= r.cells[0].innerText;
+    else c= r.cells[2].innerText;
     
     if(curTab === 2) b= tblInf[2]; else b= tblInf[1];
     if(!o)
@@ -224,23 +235,21 @@ $(document).ready(function()
     if(t.length < 2) return;
 
     var tht= !(hc === 0);
-    if(tab === 2) tht= (hc === 2);
+    if(tab === 2) tht= (hc === 3);
     if(tht)
     { // alpha
       var mapped= t.map(function(r, i)
       {
         return { ind:i, val:r[hc] };
-      })
+      });
       mapped.sort(function(a, b)
       {
         return (b.val > a.val)? -1:((b.val < a.val)? 1:0);
       });
-
       var result= mapped.map(function(r)
       {
         return t[r.ind];
       });
-
       result.forEach(function(r, i)
       {
         t[i]= r;
@@ -248,54 +257,22 @@ $(document).ready(function()
     }
     else
     { // numeric
-
+      var re, ma, sc= hc;
+/*
       if(tab === 2 && hc === 0)
       {// sort two columns
-        var mapped= t.map(function(r, i)
-        {
-          return { ind:i, dtm:r[0], hid:r[4] };
-        })
-        mapped.sort(function(a, b)
-        {
-          if(a.dtm === b.dtm)
-            return b.hid - a.hid;
-          else
-            return b.dtm - a.dtm;
-        });
-
-        var result= mapped.map(function(r)
-        {
-          return t[r.ind];
-        });
-
-        result.forEach(function(r, i)
-        {
-          t[i]= r;
-        });
+        ma= t.map(function(r, i) { return [ -r[4], i ] });
+        window.radixSortLSD(ma, function getKey(e) { return e[0]; });
+        re= ma.map(function(r) { return t[r[1]]; });
+        re.forEach(function(r, i) { t[i]= r; });
       }
       else
-      {
-        var qq= hc;
-        if(tab === 2 && hc > 2) qq= 4;
-        var mapped= t.map(function(r, i)
-        {
-          return { ind:i, val:r[qq] };
-        })
-        mapped.sort(function(a, b)
-        {
-          return (b.val - a.val);
-        });
+        if(tab === 2 && hc > 2) sc= 4;*/
 
-        var result= mapped.map(function(r)
-        {
-          return t[r.ind];
-        });
-
-        result.forEach(function(r, i)
-        {
-          t[i]= r;
-        });
-      }
+      ma= t.map(function(r, i) { return [ -r[sc], i ]; });
+      window.radixSortLSD(ma, function getKey(e) { return e[0]; });
+      re= ma.map(function(r) { return t[r[1]]; });
+      re.forEach(function(r, i) { t[i]= r; });
     }
 
 
@@ -308,7 +285,7 @@ $(document).ready(function()
       
       $('#t1F').val('');
       if(hc === 0) {
-        $('#t1F').attr({placeholder:'#id'}); hdr= '0#id'; }
+        $('#t1F').attr({placeholder:'#Id.'}); hdr= '0#Id.'; }
       else
       if(hc < 3) {
         $('#t1F').attr({placeholder:'NAME'}); hdr= '2NAME'; }
@@ -323,16 +300,16 @@ $(document).ready(function()
 
       $('#t2F').val('');
       if(hc === 0) {
-        $('#t2F').attr({placeholder:'DATE'}); hdr= '0DATE'; }
+        $('#t2F').attr({placeholder:'#No.'}); hdr= '0#No.'; }
       else
       if(hc === 1) {
-        $('#t2F').attr({placeholder:'#cid'}); hdr= '1#cid'; }
+        $('#t2F').attr({placeholder:'YYYYMMDDHH'}); hdr= '1DATE'; }
       else
       if(hc === 2) {
-        $('#t2F').attr({placeholder:'SESSION'}); hdr= '2SESSION'; }
+        $('#t2F').attr({placeholder:'#Id.'}); hdr= '2#Id.'; }
       else
-      if(hc === 3) {
-        $('#t2F').attr({placeholder:'#No.'}); hdr= '4#No.'; }
+      if(hc > 2) {
+        $('#t2F').attr({placeholder:'SESSION'}); hdr= '3SESSION'; }
     }
 
     if(fltNum[tab] === 0)
@@ -383,10 +360,10 @@ $(document).ready(function()
     for(i= 0; i < hiTab.length; i++)
     {
       x= hiTab[i];
-      if(x[1] === rx)
+      if(x[2] === rx)
       {
         tn++;
-        trs.push([ x[0], chunkStr(59, x[2]), chunkStr(59, x[3]), x[4] ]);
+        trs.push([ x[1], chunkStr(59, x[3]), chunkStr(59, x[4]), x[0] ]);
       }
     }
 
@@ -406,7 +383,8 @@ $(document).ready(function()
 
   function id2mmo(c)
   {
-    for(var i= 0; i < plTab.length; i++)
+    var i;
+    for(i= 0; i < plTab.length; i++)
     {
       if(plTab[i][0] === c) return plTab[i][5];
     }
@@ -533,6 +511,7 @@ $(document).ready(function()
     var i, x, tth, rn= 0;
     if(tbAll[2] === 0) tbAll[2]= hiTab.length;
     var stop= Math.min(tbAll[2], hiTab.length);
+
     for(i= 0; i < hiTab.length; i++)
     {
       tth= true;
@@ -546,10 +525,10 @@ $(document).ready(function()
       {
         x= hiTab[i];
         $('#htb').append( '<tr tabindex="1">'
-                         +'<td style="text-align:center">'+ ndt2sdt(x[0])
-                         +'</td><td class="admin" style="text-align:right">'+ x[1]
-                         +'</td><td >'+ ' TR: '+ x[2] +'\n CR: '+ x[3]
-                         +'</td><td class="admin"">'+ x[4]
+                         +'</td><td style="font-size:14px; letter-spacing:-2px">'+ x[0]
+                         +'<td style="text-align:center">'+ ndt2sdt(x[1])
+                         +'</td><td class="admin" style="text-align:right">'+ x[2]
+                         +'</td><td >'+ ' TR: '+ x[3] +'\n CR: '+ x[4]
                          +'</td></tr>');
         rn++;
       }
@@ -615,13 +594,13 @@ $(document).ready(function()
         j1= $('#t1fil'), j2= $('#t1F');
         a= recNum[i]; b= recFil[i]; c= plTab.length;
         $('#t1end')[0].innerText=
-          ' DISPLAY:'+a+'  FILTER:'+b+'  TOTAL:'+c+'  ';
+          ' DISPLAY:'+fNum(a)+'  FILTER:'+fNum(b)+'  TOTAL:'+fNum(c);
       break;
       case 2: freshTab2();
         j1= $('#t2fil'), j2= $('#t2F');
         a= recNum[i]; b= recFil[i]; c= hiTab.length;
         $('#t2end')[0].innerText=
-          ' DISPLAY:'+a+'  FILTER:'+b+'  TOTAL:'+c+'  ';
+          ' DISPLAY:'+fNum(a)+'  FILTER:'+fNum(b)+'  TOTAL:'+fNum(c);
       break;
     }
     
@@ -778,11 +757,8 @@ $(document).ready(function()
         tmp.scrollTop= tmp.scrollHeight;
         $(epp).remove();
 
-        setTimeout(function()
-        {
-// *** S A V E -------------------
-          saveDB();
-        }, 99);
+// *** S A V E ------------------------------------
+//        setTimeout(function() { saveDB(); }, 99);
       }
       else
       if(et.value[0] === 'N')
@@ -843,8 +819,8 @@ $(document).ready(function()
         $(epp).remove(); $(tmp).remove();
 
         // *** save hiTab
-        hiTab.push([ dtm, cid,
-                    formatSession(tre), formatSession(cre), nextHD++ ]);
+        hiTab.push([ nextHD++, dtm, cid,
+                    formatSession(tre), formatSession(cre) ]);
 
         tmp= $(et).closest('td')[0].firstChild;
         tmp.innerText= id2trs(cid) +'\n**** MEMO:  '+ chunkStr(59, id2mmo(cid)) +'\n\n';
@@ -858,14 +834,10 @@ $(document).ready(function()
         }
         tmp.scrollTop= tmp.scrollHeight;
 
-        setTimeout(function()
-        {
-  //        $('#mtb1').click();
-//          sortem(2, 1);
-// *** S A V E -------------------
-          saveDB();
-        }, 99);
+// *** S A V E ------------------------------------
+//        setTimeout(function() { saveDB(); }, 99);
       }
+
 
 // *** endinner xtrT
       tmp= $(e.target).closest('tr')[0];
@@ -945,10 +917,7 @@ $(document).ready(function()
         + '<input class="ord3" type="button" style="float:right" value="Edit Memo" >'
 
         +'<input class="ord3 vertSz" type="button" value="v" '
-        +'style="padding:7px 0; font-weight:bold; width:50px; margin:0 9px; float:right">'
-//        +'<svg width="43px" height="25px" viewbox="0 0 256 450" fill="white" stroke="grey" stroke-width="30px"> '
-  //      +'<path d="M256 272c0 4.25-1.75 8.25-4.75 11.25l-112 112c-3 3-7 4.75-11.25 4.75s-8.25-1.75-11.25-4.75l-112-112c-3-3-4.75-7-4.75-11.25 0-8.75 7.25-16 16-16h224c8.75 0 16 7.25 16 16zM256 176c0 8.75-7.25 16-16 16h-224c-8.75 0-16-7.25-16-16 0-4.25 1.75-8.25 4.75-11.25l112-112c3-3 7-4.75 11.25-4.75s8.25 1.75 11.25 4.75l112 112c3 3 4.75 7 4.75 11.25z" /></svg> '
-    //    +'</button>'
+        +'style="padding:7px 0; font-weight:bold; width:50px; margin:0 9px; float:right" >'
 
         + '<pre style="font-size:15px; float:left;margin:0; width:240px; '//border-right:1px solid red; '
         + 'pointer-events:none; text-align:left; padding:5px 5px">'+ plInf +'</pre>'
@@ -997,7 +966,7 @@ $(document).ready(function()
     resetEdit(2, false); 
     edtRow[tn]= tx;
 
-    hid= +$(row)[0].cells[3].innerText;
+    hid= +$(row)[0].cells[0].innerText;
 
 //      if(editMode)
       {
@@ -1008,7 +977,7 @@ $(document).ready(function()
         
         $('#t2e0').val( hid );
 
-        dtm= +sdt2ndt(row.cells[0].innerText);
+        dtm= +sdt2ndt(row.cells[1].innerText);
         a= ''+ dtm;
 
         $('#t2e1y').val( a.substr(0,4) );
@@ -1019,10 +988,10 @@ $(document).ready(function()
         for(i= 0; i < hiTab.length; i++)
         {
           x= hiTab[i];
-          if(x[4] === hid)
+          if(x[0] === hid)
           {
-            $('#t2e2').val( x[2] );
-            $('#t2e3').val( x[3] );
+            $('#t2e2').val( x[3] );
+            $('#t2e3').val( x[4] );
             break;
           }
         }
@@ -1066,16 +1035,15 @@ $(document).ready(function()
         nanCnt++; continue; }
       
       tt[0]= +tt[0]; tt[1]= +tt[1]; 
-      hiTab.push([ tt[0], tt[1], tt[2], tt[3], 0 ]);
+      hiTab.push([ 0, tt[0], tt[1], tt[2], tt[3] ]);
     }
     
-    sortem(curTab= 2, 1);
+    sortem(curTab= 2, -2);
     for(i= 0; i < hiTab.length; i++)
     {
-      r= hiTab[i];
-      r[4]= hiTab.length -i;
+      hiTab[i][0]= i+1;
     }
-    
+    sortem(curTab= 2, 1);
     nextHD= hiTab.length+1;
     reFresh();
     
@@ -1184,13 +1152,17 @@ $(document).ready(function()
     var rawdb, rwp, rwh,
         qq= [], xx= [], yy= [];
     
-    plTab.forEach(function(r) { 
-      xx.push( r.join('^') ); });
+    plTab.forEach(function(r)
+    { 
+      xx.push( r.join('^') );
+    });
     rwp= xx.join('|');
 
-    hiTab.forEach(function(r) { 
-      qq= [ r[0], r[1], r[2], r[3] ];
-      yy.push( qq.join('^') ); });
+    hiTab.forEach(function(r)
+    { 
+      qq= [ r[1], r[2], r[3], r[4] ];
+      yy.push( qq.join('^') );
+    });
     rwh= yy.join('|');
     
     rawdb= rwp +'$'+ rwh;
@@ -1269,29 +1241,31 @@ $(document).ready(function()
     switch(tid)
     {
       case '#tab1': curTab= 1;
-/*
-        if(lastTab === 2 && edtRow[2] >= 0) {
-          fltNum[1]= 1; fi1Hdr[1]= '0#id'; fi1Mod[1]= 9;
-          fi1Inp[1]= +$('#htb>tr')[edtRow[2]-1].cells[1].innerText;
 
+        if(lastTab === 2 && edtRow[2] >= 0) {
+          fltNum[1]= 1; fi1Hdr[1]= '0#Id.'; fi1Mod[1]= 9;
+          fi1Inp[1]= +$('#htb>tr')[edtRow[2]-1].cells[2].innerText;
+
+          resetEdit(1);
           reFresh();
           edtRow[1]= 1;
         }
-//        else resetEdit(1);
-*/
+
+        editMode= true;
         nBar.innerText= tblInf[curTab];
         break;
 
       case '#tab2': curTab= 2;
         if(lastTab === 1 && edtRow[1] >= 0)
         {
-          fltNum[2]= 1; fi1Hdr[2]= fi2Hdr[2]= '1#cid'; fi1Mod[2]= 9;
+          fltNum[2]= 1; fi1Hdr[2]= fi2Hdr[2]= '2#Id.'; fi1Mod[2]= 9;
           fi1Inp[2]= +$('#ptb>tr')[edtRow[1]-1].cells[0].innerText;
 
-          sortem(2, 1);
           resetEdit(2);
           reFresh();
         }
+
+//        sortem(2,1);
         nBar.innerText= tblInf[curTab];
       break;
 
@@ -1312,7 +1286,7 @@ $(document).ready(function()
   $("#mnu1").click(function()
   { // star A.
     if(curTab === 3) {
-      adminInfo.innerText+= ' [?]Haa... \n'; return; }
+      adminInfo.innerText+= ' [?].. [i].. \n'; return; }
 //    sRs= $('#ptb')[0].getElementsByClassName('selR');
 
     var js= '#htb>tr', tl= hiTab.length;
@@ -1339,25 +1313,6 @@ $(document).ready(function()
       $(jj.firstChild).click();
     }
     nBar.innerText= tblInf[curTab];
-  });
-
-/*
-  $("#mnu2").click(function()
-  { // arrow B.
-    if(curTab < 3) tbSpc[curTab]= (tbSpc[curTab] !== '40px')? '40px':'59px';
-    else tbSpc[curTab]= (tbSpc[curTab] !== '300px')? '300px':'auto';
-    setRowSpc();
-  });
-*/   
-
-  $("#mnu3").click(function()
-  { // line C.
-    if(curTab === 3) {
-      adminInfo.innerText=
-        'What?! \n'; return; }
-
-    if(++tbLst[curTab] > 3) tbLst[curTab]= 1;
-    setRowCol();
   });
 
   // *** FILTERING ************************************
@@ -1586,7 +1541,7 @@ $(document).ready(function()
     for(i= 0; i < hiTab.length; i++)
     {
       x= hiTab[i];
-      if(x[4] === hid) { fnd= i; break; }
+      if(x[0] === hid) { fnd= i; break; }
     }
 
     if(fnd >= 0)
@@ -1627,7 +1582,7 @@ $(document).ready(function()
                   '' ]);
 
       fltNum[1]= 1;
-      fi1Hdr[1]= fi2Hdr[1]= '0#id';
+      fi1Hdr[1]= fi2Hdr[1]= '0#Id.';
       fi1Mod[1]= 9; fi1Inp[1]= cid;
 
       reFresh();
@@ -1636,8 +1591,6 @@ $(document).ready(function()
       edtRow[1]= 1;
       $('#mtb1').click();
       $('#t1fil')[0].disabled= true;
-
-//      sortem(1, 2);
     }
     else
     if(this.value[0] === 'E')
@@ -1665,7 +1618,7 @@ $(document).ready(function()
       }
 
       fltNum[1]= 1;
-      fi1Hdr[1]= fi2Hdr[1]= '0#id';
+      fi1Hdr[1]= fi2Hdr[1]= '0#Id.';
       fi1Mod[1]= 9; fi1Inp[1]= cid;
 
       reFresh();
@@ -1673,8 +1626,6 @@ $(document).ready(function()
 
       $('#mtb1').click();
       $('#t1fil')[0].disabled= true;
-      
-//      sortem(1, 2);
     }
   });
 
@@ -1707,16 +1658,16 @@ $(document).ready(function()
       for(i= 0; i < hiTab.length; i++)
       {
         x= hiTab[i];
-        if(x[4] === hid)
+        if(x[0] === hid)
         { //nBar.innerText= 'Apply @'+ x[0] +':'+ x[1] +' '+ x[2];
-          cid= +x[1];
-          x[2]= formatSession($('#t2e2')[0].value);
-          x[3]= formatSession($('#t2e3')[0].value);
+          cid= +x[2];
+          x[3]= formatSession($('#t2e2')[0].value);
+          x[4]= formatSession($('#t2e3')[0].value);
 
           dtm= ('2018'+ $('#t2e1y')[0].value).slice(-4) + ('00'+ $('#t2e1m')[0].value).slice(-2)
             + ('00'+ $('#t2e1d')[0].value).slice(-2) + ('00'+ $('#t2e1h')[0].value).slice(-2);
 
-          x[0]= +dtm;
+          x[1]= +dtm;
           break;
         }
       }
@@ -1724,8 +1675,6 @@ $(document).ready(function()
       reFresh();
       $('#mtb2').click();
       $('#t2fil')[0].disabled= true;
-
-//      sortem(2, 1);
     }
   });
 
@@ -1764,6 +1713,7 @@ $(document).ready(function()
 
   $("#gpc4But").click(function()
   { //>Grant Persistence<
+
     if(!navigator.storage) {
       adminInfo.innerText+= 'No navigator.storage! \n'; return; }
     if(!navigator.storage.persist) {
