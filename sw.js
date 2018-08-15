@@ -1,4 +1,4 @@
-// *** [25z9]-27ab[27c]
+// *** [27c]defgh[27i]
 self.addEventListener('install', e => {
   caches.delete('saloncch').then(cache => {
       caches.open('saloncch').then(cache => {
@@ -13,3 +13,4 @@ self.addEventListener('fetch', event => {event.respondWith(
   caches.match(event.request, {ignoreSearch:true})
     .then( response => {return response || fetch(event.request)} ) );
 });
+ 
