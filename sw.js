@@ -1,4 +1,4 @@
-// *** [27c]defghij[27k]
+// *** [27c]defghijkl[27m]
 self.addEventListener('install', e => {
   caches.delete('saloncch').then(cache => {
       caches.open('saloncch').then(cache => {

@@ -1,8 +1,8 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.27k Aug\'18. \n';
+  var versionCode= 'v0.27m Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
-  $.ajaxSetup({async:true, cache:false, timeout:9999});
+  $.ajaxSetup({async:true, cache:false, timeout:19999});
 
   var dggON= false, dggY1, dggY2, recT;
   var dragging= function(x)
