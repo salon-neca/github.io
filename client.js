@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.27j Aug\'18. \n';
+  var versionCode= 'v0.27k Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:9999});
 
@@ -758,7 +758,7 @@ $(document).ready(function()
         $(epp).remove();
 
 // *** S A V E ------------------------------------
-//        setTimeout(function() { saveDB(); }, 99);
+        setTimeout(function() { saveDB(); }, 99);
       }
       else
       if(et.value[0] === 'N')
@@ -835,7 +835,7 @@ $(document).ready(function()
         tmp.scrollTop= tmp.scrollHeight;
 
 // *** S A V E ------------------------------------
-//        setTimeout(function() { saveDB(); }, 99);
+        setTimeout(function() { saveDB(); }, 99);
       }
 
 
@@ -845,7 +845,6 @@ $(document).ready(function()
 
       return;
     }
-
 
 
     if( $(et).hasClass('clPinf') 
