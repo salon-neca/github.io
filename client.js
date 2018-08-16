@@ -1,8 +1,10 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.27m Aug\'18. \n';
+  var versionCode= 'v0.27o Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:19999});
+  var autoSave= true;
+  if(appPath === 'https://sns.glitch.me') autoSave= false;
 
   var dggON= false, dggY1, dggY2, recT;
   var dragging= function(x)
@@ -693,34 +695,30 @@ $(document).ready(function()
         .previousSibling.firstChild.innerText;
       cid= +cid;
 
-      nBar.innerText= ' @'+ cid +':'+ id2nme(cid);
-
-      var epp;
-      if($(et).hasClass('vertSz'))
-      {
-        
+      var epp, svgBtn= $(et.parentNode).find('.vsiz')[0];
+      if(et.value[0] === '.')
+      { 
         tmp= $(et).closest('td')[0].firstChild;
         
-        if(+tmp.offsetHeight > 175) {
-          $(tmp).css({height:'175px'}); et.value= 'v'; }
-        else {
-          $(tmp).css({height:'auto'}); et.value= '^'; }
+        if(+tmp.offsetHeight > 175)
+          $(tmp).css({height:'175px'});
+        else
+          $(tmp).css({height:'auto'});
         
         tmp.scrollTop= tmp.scrollHeight;
       }
       else
       if(et.value[0] === 'E')
       {
-        var svgBtn= $(et.parentNode).find('.vertSz')[0];
-        svgBtn.disabled= true; $(svgBtn.firstChild).css({fill:'black'});
-
         epp= et.previousSibling;
         $(epp).before(
            '<textarea class="clPinf" placeholder="MEMO" rows="5" onkeyup="mmm()" '
           +'style="width:100%; margin:9px 0; padding:9px; text-align:left; display:block" ></textarea>');
 
+//        svgBtn.disabled= true;
         et.value= 'Apply Edit';
         et.previousSibling.disabled= true;
+
         epp= epp.previousSibling;
         epp.innerText= id2mmo(cid);
 
@@ -746,19 +744,18 @@ $(document).ready(function()
         tmp= $(et).closest('td')[0].firstChild;
         tmp.innerText= id2trs(cid) +'\n**** MEMO:  '+ chunkStr(59, id2mmo(cid)) +'\n\n';
 
+        svgBtn.disabled= false;
         $(tmp).css({height:'auto'});
         if(+tmp.offsetHeight > 175)
-        {
           $(tmp).css({height:'175px'});
-          var svgBtn= $(tmp.parentNode).find('.vertSz')[0];
-          svgBtn.disabled= false; $(svgBtn.firstChild).css({fill:'white'});
-        }
+        else
+          svgBtn.disabled= true;
 
         tmp.scrollTop= tmp.scrollHeight;
         $(epp).remove();
 
 // *** S A V E ------------------------------------
-        setTimeout(function() { saveDB(); }, 99);
+        if(autoSave) setTimeout(function() { saveDB(); }, 99);
       }
       else
       if(et.value[0] === 'N')
@@ -775,10 +772,8 @@ $(document).ready(function()
         $(et).before(
            '<textarea class="clPinf" placeholder="CREAMS" rows="2" '
           +'style="width:100%; margin:9px 0; padding:9px; text-align:left; display:block" ></textarea>');
-      
-        var svgBtn= $(et.parentNode).find('.vertSz')[0];
-        svgBtn.disabled= true; $(svgBtn.firstChild).css({fill:'black'});
 
+//        svgBtn.disabled= true;
         et.value= 'Finish & Save';
         et.nextSibling.disabled= true;
         tmp= et.previousSibling; //creams
@@ -814,7 +809,6 @@ $(document).ready(function()
         tmp= et.previousSibling; //creams
         epp= tmp.previousSibling; //treatment
         
-        
         tre= ''+epp.value, cre= ''+tmp.value;
         $(epp).remove(); $(tmp).remove();
 
@@ -825,21 +819,22 @@ $(document).ready(function()
         tmp= $(et).closest('td')[0].firstChild;
         tmp.innerText= id2trs(cid) +'\n**** MEMO:  '+ chunkStr(59, id2mmo(cid)) +'\n\n';
 
+        svgBtn.disabled= false;
         $(tmp).css({height:'auto'});
         if(+tmp.offsetHeight > 175)
-        {
           $(tmp).css({height:'175px'});
-          var svgBtn= $(tmp.parentNode).find('.vertSz')[0];
-          svgBtn.disabled= false; $(svgBtn.firstChild).css({fill:'white'});
-        }
+        else
+          svgBtn.disabled= true;
+
         tmp.scrollTop= tmp.scrollHeight;
 
 // *** S A V E ------------------------------------
-        setTimeout(function() { saveDB(); }, 99);
+        if(autoSave) setTimeout(function() { saveDB(); }, 99);
       }
 
 
 // *** endinner xtrT
+      nBar.innerText= ' @'+ cid +':'+ id2nme(cid);
       tmp= $(e.target).closest('tr')[0];
       setScroll(tmp);
 
@@ -915,7 +910,7 @@ $(document).ready(function()
         + '<input class="ord3" type="button" style="float:right" value="New Session" >'
         + '<input class="ord3" type="button" style="float:right" value="Edit Memo" >'
 
-        +'<input class="ord3 vertSz" type="button" value="v" '
+        +'<input class="ord3 vsiz" type="button" value=".." '
         +'style="padding:7px 0; font-weight:bold; width:50px; margin:0 9px; float:right" >'
 
         + '<pre style="font-size:15px; float:left;margin:0; width:240px; '//border-right:1px solid red; '
@@ -931,9 +926,11 @@ $(document).ready(function()
       $(tmp).css({height:'175px'});
     else
     {
-      var svgBtn= $(row.nextSibling.firstChild).find('.vertSz')[0];
-      svgBtn.disabled= true; $(svgBtn.firstChild).css({fill:'black'});
+      var svgBtn= $(row.nextSibling.firstChild).find('.vsiz')[0];
+      svgBtn.disabled= true;
     }
+
+    $(row.nextSibling.firstChild).find
     tmp.scrollTop= tmp.scrollHeight;
 
     tmp= $(row.nextSibling)[0];
