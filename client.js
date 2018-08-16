@@ -1,11 +1,12 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.27r Aug\'18. \n';
+  var versionCode= 'v0.27t Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:19999});
+
+
   var autoSave= true;
   if(appPath === 'https://sns.glitch.me') autoSave= false;
-
 
   var dggON= false, dggY1, dggY2, recT;
   var dragging= function(x)
@@ -448,7 +449,7 @@ $(document).ready(function()
                         +'</td><td>'+ x[3]
                         +'</td><td>'+ x[4] 
                          // x[5] is memo
-                        +'</td><td style="display:none">'+ rn
+//                        +'</td><td style="display:none">'+ rn
                         +'</td></tr>' );
         rn++;
       }
@@ -613,7 +614,7 @@ $(document).ready(function()
     window.scrollTo(0,0);
     c= (i !== 2)? $('#t1arnd')[0] : $('#t2arnd')[0];
     b= c.getBoundingClientRect();
-    a= (window.innerHeight - b.top) -9;
+    a= (window.innerHeight - b.top) -29;
     $(c).css({height:a});
 
     j2.focus();
@@ -798,7 +799,7 @@ $(document).ready(function()
 
         // *** save hiTab
         hiTab.push([ nextHD++, dtm, cid,
-                    formatSession(tre), formatSession(cre) ]);
+                     formatSession(tre, '!'), formatSession(cre, '!') ]);
 
         tmp= $(et).closest('td')[0].firstChild;
         tmp.innerText= id2trs(cid) +'\n**** MEMO:  '+ chunkStr(59, id2mmo(cid)) +'\n\n';
@@ -1665,8 +1666,8 @@ $(document).ready(function()
         if(x[0] === hid)
         { //nBar.innerText= 'Apply @'+ x[0] +':'+ x[1] +' '+ x[2];
           cid= +x[2];
-          x[3]= formatSession($('#t2e2')[0].value);
-          x[4]= formatSession($('#t2e3')[0].value);
+          x[3]= formatSession($('#t2e2')[0].value, '!');
+          x[4]= formatSession($('#t2e3')[0].value, '!');
 
           dtm= ('2018'+ $('#t2e1y')[0].value).slice(-4) + ('00'+ $('#t2e1m')[0].value).slice(-2)
             + ('00'+ $('#t2e1d')[0].value).slice(-2) + ('00'+ $('#t2e1h')[0].value).slice(-2);
