@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.29f Aug\'18. \n';
+  var versionCode= 'v0.29g Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, // dataType:'text',
                contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
@@ -1277,7 +1277,6 @@ $(document).ready(function()
           + 'PASS:server save '+ (d.length/1024).toFixed(2) +'KB \n';
       }
     });
-    
   }
 
   function loadDB()
@@ -1318,6 +1317,7 @@ $(document).ready(function()
     lastTab= curTab;
     $("#mnu1")[0].value= 'EDIT MODE';
     $("#help").css({display:'none'});
+    $(adminInfo).css({height:'auto'});
     switch(tid)
     {
       case '#tab1': curTab= 1;
@@ -1369,7 +1369,7 @@ $(document).ready(function()
     if(curTab === 3)
     {
       clrAdmin();
-      
+      $(adminInfo).css({height:'auto'});
       $("#help").css({display:'block'});
       adminInfo.innerText+= ' [i][#][@][?][!].. \n';
       nBar.innerText= ' [i]Design & Coding by Zele - Belgrade, Aug`2018. ze_aks@hotmail.com';
@@ -1846,6 +1846,7 @@ $(document).ready(function()
 
   // *** TAB 3 : ADMIN BUTTONS ***************************************
   $('#showPass').click(function() { //img>Show Password});
+    $('.hom').css({display:'none'});
     $('#hmLog').css({display:'block'});
     window.scrollTo(0, 999);
 
