@@ -1,5 +1,5 @@
 // *** [27y]
-// *** 28abcdefghi-29abcde
+// *** 28abcdefghi-29abcdef
 self.addEventListener('install', e => {
   //caches.delete('saloncch').then(cache => {
       caches.open('saloncch').then(cache => {
