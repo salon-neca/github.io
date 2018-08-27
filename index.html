@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
   <!-- .. -->
-  <meta charset="utf-8">
+  <meta charset="utf-8"> 
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="mobile-web-app-capable" content="yes">
-
+  <meta name="mobile-web-app-capable" content="yes">     
   <link rel="manifest" href="manifest.json">
 
   <!-- Add to home screen for Safari on iOS, and WinMobile -->
@@ -25,25 +24,31 @@
   <script type="text/javascript" src="client.js"></script>
 </head>
 
-<!-- onselectstart="return false"      ondragstart="return false"
+<!-- onselectstart="return false"
+      ondragstart="return false"
 -->
-<body oncontextmenu="return false" ondragstart="return false"
+<body oncontextmenu="return false"
+      ondragstart="return false"
       style="background-color:#777777; width:700px; margin:auto">
+  
 
-<div id="hmPage" style="background:#FFF0C0; margin-bottom:99px;text-align:center; font-size:17px" >
+<div id="hmPage" style="background:orange; margin-bottom:299px;text-align:center; font-size:17px" >
 
-  <img class="hom" src="/aux/a.jpg" width="100%" />
-  <img class="hom" src="/aux/b.png" id="showPass" style="width:30%; margin:19px" />
+  <img src="/aux/c.png" width="100%" style="margin-bottom:-9px" />
+  <img src="/aux/a.jpg" width="100%" />
+  <div style="background:darkorange; width:100%; color:white;
+              margin:auto; padding:9px; text-align:right">
+    <p style="text-align:left"><b>Enquire, or Book/Cancel Appointment Online... </b></p>
+    <textarea class="clPinf" placeholder="MESSAGE TEXT" rows="3"
+              style="font-size:14px; width:100%; text-align:left; display:block" ></textarea>
+      <button class="ord2" id="hmMsg" style="background:purple; border-color:blue; margin:0 5px">Submit</button>
+  </div>
+  <img src="/aux/b.png" id="showPass" style="width:30%; margin:19px" />
 
-    <div id="hmLog" style="padding-bottom:9px; text-align:center; display:none">
-      
-      <img src="/aux/c.png" width="100%" />
-      <pre style="font-size:14px; text-align:right">System-:HELP  </pre>
-
+    <div id="hmLog" style="padding-bottom:99px; text-align:center; display:none">
       <input id="pasIn" class="finf" type="password"
              placeholder="PASSWORD" autocomplete="off" >
-      <input class="ord" id="log4But" type="button"
-             value="LogMe" style="background:purple; color:white; border-color:blue">
+      <input class="ord" id="log4But" type="button" value="Logme" >
     </div>
 </div>
   
@@ -53,11 +58,11 @@
     border:none; white-space:nowrap; overflow:auto; color:lightgrey; background:#505050" >~ntfBar</pre>
 
   <div id="headbar" style="border-bottom:1px solid grey; background:black; padding:15px 5px 0 20px" >
-    <input class="mtb act" id="mtb1" style="margin-left:-20px" type="button" value="Loading.." >
+    <input class="mtb act" id="mtb1" style="margin-left:-20px" type="button" value="Connecting..." >
     <input class="mtb dea" id="mtb2" type="button" value="Treatments" >
     <input class="mtb dea" id="mtb3" type="button" value="System" >
 
-    <input class="mnu" id="mnu1" type="button" value="EDIT/FIND" >
+    <input class="mnu" id="mnu1" type="button" value="EDIT/FILTER" >
   </div>
 
 <!-- *** tabs stsrt here 
@@ -74,16 +79,18 @@
 
     <div class="adminEdit" style="display:none; text-align:right; margin:9px 0 9px; width:100%; border:0">
       <input class="finf" id="t1e0" type="tel" placeholder="ID" autocomplete="off" disabled >
-      <input class="ord" id="ta1mrg" type="button" value="Merge" disabled >
+      <button class="ord" id="ta1mrg" disabled>Merge</button>
       <button class="ord" id="ta1rmv" disabled>Remove</button>
-      <input class="ord" id="ta1sub" type="button" value="New Client" >
+      <input class="ord" id="ta1sub" type="button" value="New Client">
         <input class="clPinf" id="t1e1" type="text" placeholder="~frstName" autocomplete="off" >
         <input class="clPinf" id="t1e2" type="text" placeholder="~lastName" autocomplete="off" style="width:25%">
         <input class="clPinf" id="t1e3" type="text" placeholder="~phone" autocomplete="off" >
         <input class="clPinf" id="t1e4" type="text" placeholder="~mobile" autocomplete="off" >
     </div>
 
-      <table>
+    <div id="t1arnd" style="height:500px; background:#dfdfdf;
+        border-bottom:5px double grey; overflow-y:scroll; overflow-x:hidden" >
+      <table id="playerTable">
         <thead id="pth">
           <tr> <th tabindex="1" class="admin" style="width:59px">#Id.</th>
             <th tabindex="1">FIRST</th>
@@ -91,16 +98,8 @@
             <th tabindex="1">PHONE</th>
             <th tabindex="1">MOBILE</th> </tr>
         </thead>
-      </table>
-    
-    <div id="t1arnd" style="height:500px; background:#dfdfdf; 
-        border-bottom:5px double grey; overflow-y:scroll; overflow-x:hidden" >
-
-      <!--pre style="background:white; height:5px; margin:9px; border:1px solid black"> </pre-->
-      <table>
         <tbody id="ptb"></tbody>
       </table>
-
       <pre id="t1end" style="background:white; margin:99px 9px 19px 9px;
                 padding:5px 9px; border:1px solid black;"> ~endOfList </pre>
     </div>
@@ -141,8 +140,10 @@
                     style="width:320px; float:right; text-align:left" ></textarea>
     </div>
 
+    <div id="t2arnd" style="height:300px; background:#dfdfdf;
+        border-bottom:5px double grey; overflow-y:scroll; overflow-x:hidden" >
 
-      <table>
+      <table id="historyTable">
         <thead id="hth"><!--/thead-->
           <tr>
             <th tabindex="1" style="width:59px">#No.</th>
@@ -150,12 +151,6 @@
             <th tabindex="1" class="admin" style="width:70px">#Id.</th>
             <th tabindex="1">SESSION</th>
           </tr></thead>
-      </table>
-
-    <div id="t2arnd" style="height:300px; background:#dfdfdf;
-        border-bottom:5px double grey; overflow-y:scroll; overflow-x:hidden" >
-
-      <table>
         <tbody id="htb"></tbody>
       </table>
       <pre id="t2end" style="background:white; margin:99px 9px 19px 9px;
@@ -168,16 +163,15 @@
 
   <div id="tab3" class="ptab pde" style="padding:20px 14px 9px">
 
-    <img id="help" src="/aux/c.png" width="100%" style="dispkay:none"/>
     <pre id="dbFrame" style="width:100%; height:400px; padding:5px;
       border:1px solid grey;overflow:auto; margin:0; font-size:15px;
       letter-spacing:-1px; user-select:all; line-height:17px">.aF</pre>
     <div>
-      <button class="ord2" id="med4But">Clear Cache</button>
+      <button class="ord2" id="med4But">Memory Data</button>
       <button class="ord2" id="sld4But">Server Load</button>
       <input class="ord2" id="ssv4But" type="button" value="!Server Save" >
       <br>
-      <button class="ord2" id="cad4But">Cache Info</button>
+      <button class="ord2" id="cad4But">Cache Data</button>
       <button class="ord2" id="imc4But">Import Cache</button>
       <button class="ord2" id="stc4But">Store Cache</button>
       <input class="ord2" style="width:215px" id="gpc4But" type="button" value="Grant Persistance" >
@@ -189,7 +183,9 @@
 
 <script>
       window.onbeforeunload= function() { return "Reload database?"; }
-      if(navigator.serviceWorker) navigator.serviceWorker.register('sw.js');
+
+      if(navigator.serviceWorker)
+        navigator.serviceWorker.register('sw.js', { scope:'/' });
 </script>
 </body>
 </html>
