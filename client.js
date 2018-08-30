@@ -1,11 +1,14 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.27z7 Aug\'18. \n';
+  var versionCode= 'v0.31c Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
-  $.ajaxSetup({async:true, cache:false, timeout:19999});
+  $.ajaxSetup({async:true, // dataType:'text',
+               contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
+
+  ///navigator.appVersion, navigator.userAgent, navigator.platform
 
   var autoSave= true;
-  if(appPath === 'https://sns.glitch.me') autoSave= false;
+//  if(appPath === 'https://sns.glitch.me') autoSave= false;
 
   var dggON= false, dggY1, dggY2, recT;
   var dragging= function(x)
@@ -41,18 +44,21 @@ $(document).ready(function()
   var nBar= document.getElementById('notif');
   var adminInfo= document.getElementById('dbFrame');
 
+  
   var nextID= 0;
   var nextHD= 0;
 
+  var syncID= '*';
   var dbPass= '*';
   var isLogged= false;
-  var ttxt= 'Loading...';
+  var ttxt= 'Importing...';
 
   var curTab= 1;
   var lastTab= 0;
 
   var edtRow= [-1, -1,-1];
   var editMode= false;
+  var mergMode= false;
 
   var tbSpc= [0, '40px','40px','300px'];
   var tbLst= [0, 1,1];
@@ -161,21 +167,36 @@ $(document).ready(function()
   // *** this good now, use as template
   function rowAnim(i, o)
   {
-    var jq= '#ptb>tr'; i--;
+    var jq= '#ptb>tr';
     if(curTab === 2) jq= '#htb>tr';
 
-    var b, c, r= $(jq)[i];
-    if(curTab !== 2) c= r.cells[0].innerText;
-    else c= r.cells[2].innerText;
+    var b, r= $(jq)[i];
     
-    if(curTab === 2) b= tblInf[2]; else b= tblInf[1];
+    if(curTab === 2) b= tblInf[2];
+    else {
+      b= tblInf[1]; if($('#tmpD')) $('#tmpD').remove(); }
+
     if(!o)
     {
       $(r).removeClass(); nBar.innerText= b;
       if(tbLst[curTab] !== 1) $(r).addClass('clnR');
+
       return;
     }
+
+    if(curTab === 1 && mergMode)
+    {
+      var xc= 'DUPLICAT: '+ r.innerText;
+
+      $('#tmpX').after('<p id="tmpD" style="color:white; margin-top:3px; '
+        +'padding:5px 9px; overflow:hidden; text-overflow:ellipsis; '
+        +'white-space:nowrap; font-size:17px; background:grey">'+ xc +'</p>');
+    }
+
     $(r).removeClass('clnR').addClass('selR');
+
+    var c= (curTab !== 2) ?
+        r.cells[0].innerText : r.cells[2].innerText;
     nBar.innerText= b + ' [@]'+ c +':'+ id2nme(+c);
   }
 
@@ -211,7 +232,10 @@ $(document).ready(function()
 
     $('#ta1mrg')[0].disabled= true;
     $('#ta1rmv')[0].disabled= true;
-    $('#ta1sub')[0].disabled= false;
+    if(mergMode)
+      $('#ta1sub')[0].disabled= true;
+    else
+      $('#ta1sub')[0].disabled= false;
 
     $('#ta1sub').val('New Client');
     $('#t1e0').val( 'Next #Id. '+ nextID );
@@ -305,7 +329,7 @@ $(document).ready(function()
                + ("00"+(curDate.getMonth()+1)).slice(-2)
                + ("00"+curDate.getDate()).slice(-2)
                + ("00"+curDate.getHours()).slice(-2);
-    return r; //.substr(2);
+    return r;
   }
 
   function chunkStr(n, s)
@@ -358,7 +382,7 @@ $(document).ready(function()
       cs+= ppp+'\n   CREAMS:  '+ tr[2] +'\n\n';
     });
 
-    return cs; //+'~'+'..creams..'; //.slice(0,-2);
+    return cs;
   }
 
   function id2mmo(c)
@@ -442,7 +466,7 @@ $(document).ready(function()
       {
         x= plTab[i];
         $('#ptb').append( '<tr tabindex="1">'
-                        +'<td class="admin">'+ x[0]
+                        +'<td class="admin" style="width:59px">'+ x[0]
                         +'</td><td>'+ x[1]
                         +'</td><td>'+ x[2]
                         +'</td><td>'+ x[3]
@@ -503,10 +527,10 @@ $(document).ready(function()
       if(rn < stop && tth)
       {
         x= hiTab[i];
-        $('#htb').append( '<tr tabindex="1">'
-                         +'</td><td style="font-size:12px; letter-spacing:-1px">'+ x[0]
-                         +'<td style="text-align:center">'+ ndt2sdt(x[1])
-                         +'</td><td class="admin" style="text-align:right">'+ x[2]
+        $('#htb').append( '<tr tabindex="1"></td>'
+                         +'<td style="font-size:11px; width:59px">'+ x[0]
+                         +'<td style="text-align:center; width:149px">'+ ndt2sdt(x[1])
+                         +'</td><td class="admin" style="text-align:right; width:70px">'+ x[2]
                          +'</td><td >'+ ' TR: '+ x[3] +'\n CR: '+ x[4]
                          +'</td></tr>');
         rn++;
@@ -521,6 +545,7 @@ $(document).ready(function()
   //  else $('#t2all')[0].disabled= false;
   }
 
+            
   function tiFresh(w)
   {
     var s, tn= curTab, jq= $('#t2FinfBar');
@@ -557,6 +582,24 @@ $(document).ready(function()
       s+= '  2.'+ h2 + e2 +'"'+ i2;
     }
     jq.text(s);
+  }
+
+  function resetVsize()
+  {
+    var a, b, c, j, i= curTab;
+    c= (i !== 2)? $('#t1arnd')[0] : $('#t2arnd')[0];
+    j= (i !== 2)? $('#t1F') : $('#t2F');
+    b= c.getBoundingClientRect();
+    a= (window.innerHeight - b.top) -9;
+    $(c).css({height:a});
+
+    if(i === 2)
+    {
+      var q= edtRow[2];
+      if(q >= 0) setScroll($('#htb>tr')[q]);
+    }
+
+    j.focus();
   }
 
   function reFresh()
@@ -606,14 +649,13 @@ $(document).ready(function()
     if(editMode) $(".admin").css("display", "table-cell");
     else $(".admin").css("display", "none");
 
-    
     window.scrollTo(0,0);
-    c= (i !== 2)? $('#t1arnd')[0] : $('#t2arnd')[0];
-    b= c.getBoundingClientRect();
-    a= (window.innerHeight - b.top) -9;
-    $(c).css({height:a});
+    resetVsize();
 
-    j2.focus();
+    if(i !== 2)
+      $('#t1arnd')[0].scrollTop= 0;
+    else
+      $('#t2arnd')[0].scrollTop= 0;
   }
   // *** END REFRESH *****************************************
 
@@ -626,13 +668,23 @@ $(document).ready(function()
     return a;
   }
 
-  // *** subRow-content - REMOVE
-  function subrowDelete(etpn)
+  function setScroll(x)
   {
-    rowAnim(etpn.previousSibling.rowIndex, false);
-    $(etpn).remove();
-    resetEdit(curTab);
+    var y= (curTab !== 2) ?
+        $('#t1arnd')[0] : $('#t2arnd')[0];
+
+    var ri= x.getBoundingClientRect();
+    var ro= y.getBoundingClientRect();
+
+    if(ri.top < ro.top)
+      y.scrollTop-= ro.top- ri.top+60; //2top
+
+    ri= x.getBoundingClientRect();
+    ro= y.getBoundingClientRect();
+    if(ri.bottom > ro.bottom)
+      y.scrollTop-= ro.bottom- ri.bottom-30; //2btt
   }
+
 
   $('#ptb').on('keyup', function(e)
   {
@@ -652,23 +704,8 @@ $(document).ready(function()
     }
   });
 
-  function setScroll(x)
-  {
-    var y= $('#t1arnd')[0];
-    var ri= x.getBoundingClientRect();
-    var ro= y.getBoundingClientRect();
-
-    if(ri.top < ro.top)
-      y.scrollTop-= ro.top- ri.top+60; //2top
-
-    ri= x.getBoundingClientRect();
-    ro= y.getBoundingClientRect();
-    if(ri.bottom > ro.bottom)
-      y.scrollTop-= ro.bottom- ri.bottom-30; //2btt
-  }
-  
   var noRst= false;
-  $('#playerTable').click(function(e)
+  $('#ptb').click(function(e)
   {
     var i, tmp, cid, et= e.target;
     if($(et).hasClass('ord3'))
@@ -682,7 +719,6 @@ $(document).ready(function()
       { 
         tmp= $(et).closest('td')[0].firstChild;
         
-//        nBar.innerText= 'oh='+ tmp.offsetHeight;
         if(+tmp.offsetHeight > 177)
           $(tmp).css({height:'175px'});
         else
@@ -829,32 +865,26 @@ $(document).ready(function()
     }
 //    e.stopPropagation(); e.preventDefault();
 
-
     var row, tx;
     if(!$(et).is('tr')) row= $(et).closest('tr')[0];
     tx= row.rowIndex; if($(row).hasClass('xtrR')) tx--;
 
-    if(tx > 0)
+//    nBar.innerText='tx='+tx; return;
+    row= $('#ptb>tr')[tx];
+    cid= +row.cells[0].innerText;
+
+    // *** subRow-content - REMOVE
+    if($(row).hasClass('selR'))
     {
-      row= $('#ptb>tr')[tx-1];
-      cid= +row.cells[0].innerText;
-    }
-    else tx= 0;
-
-    if(tx === 0)
-    { // *** table headers, do sort
-      var os= tbSrt[1], s= e.target.cellIndex;
-      s= (0 < os && Math.abs(os) -1 === s)? -(s+1) : s+1;
-      sortem(1, s);
-
-      reFresh();
+      //subrowDelete(row.nextSibling);
+      rowAnim(tx, false);
+      $(row.nextSibling).remove();
+      resetEdit(curTab, true);
       return;
     }
-//    else      alert('Ooops! This was not supposed to happen: #playerTable.click()');
-    
-    if($(row).hasClass('selR')) { subrowDelete(row.nextSibling); return; }
 
-    resetEdit(1, false);
+    if(!mergMode)
+      resetEdit(1, false);
     
     edtRow[1]= tx= row.rowIndex;
 
@@ -868,9 +898,17 @@ $(document).ready(function()
       $('#t1e3').val( row.cells[3].innerText );
       $('#t1e4').val( row.cells[4].innerText );
 
-      $('#ta1mrg')[0].disabled= true;
-      $('#ta1rmv')[0].disabled= false;
-      $('#ta1sub')[0].disabled= false;
+      $('#ta1mrg')[0].disabled= false;
+      if(mergMode)
+      {
+        $('#ta1rmv')[0].disabled= true;
+        $('#ta1sub')[0].disabled= true;
+      }
+      else
+      {
+        $('#ta1rmv')[0].disabled= false;
+        $('#ta1sub')[0].disabled= false;
+      }
     }
     
     var xTxt= id2trs(cid) +'\n**** MEMO:  '
@@ -880,7 +918,9 @@ $(document).ready(function()
 //    plInf= '12345678901234567890123456789012345#';
     if(plInf.length > cn) plInf= plInf.substr(0,cn-2) +'..';
     else plInf= plInf.substr(0,cn);
-     
+
+    rowAnim(tx, true);
+
     {
       $(row).after(
           '<tr class="xtrR" style="width:95%"><td align="center" colspan='+ (editMode? 5:4) +'>'
@@ -897,8 +937,7 @@ $(document).ready(function()
         + 'pointer-events:none; text-align:left; padding:5px 5px">'+ plInf +'</pre>'
         + '</td></tr>');
     }
-      
-    rowAnim(tx, true);
+
     setRowCol();
 
     tmp= row.nextSibling.firstChild.firstChild;
@@ -916,94 +955,88 @@ $(document).ready(function()
     tmp= $(row.nextSibling)[0];
     setScroll(tmp);
   });
+  //header
+  $('#pth').click(function(e)
+  {// *** table headers, do sort
+    var os= tbSrt[1], s= e.target.cellIndex;
+    s= (0 < os && Math.abs(os) -1 === s)? -(s+1) : s+1;
+    sortem(1, s);
+
+    reFresh();
+  });
 
 
-  $('#historyTable').on('click', function (e)
+  $('#htb').click(function (e)
   { 
-    var a, tmp, row, hid, tx, tn= 2; //, et= e.target;
-    
+    var a, tmp, row, hid, tx;
     row= e.target.parentNode;
     if(row.rowIndex === undefined) row= e.target;
     var tx= row.rowIndex;
-
-    if(tx === 0)
-    {
-      var os= tbSrt[tn], s= e.target.cellIndex;
-      s= (0 < os && Math.abs(os) -1 === s)? -(s+1) : s+1;
-      sortem(tn, s);
-      
-      reFresh();
-      return;
-    }
 
     if($(row).hasClass('selR')) {
       resetEdit(2, false); e.stopPropagation(); return; }
 
     resetEdit(2, false); 
-    edtRow[tn]= tx;
+    edtRow[2]= tx;
 
     hid= +$(row)[0].cells[0].innerText;
 
 //      if(editMode)
+    {
+      var i, x, dtm,
+          trt= 'trtInit', crmr= 'crmInit';
+
+      $('#ta2sub').val('Edit Session');
+
+      $('#t2e0').val( hid );
+
+      dtm= +sdt2ndt(row.cells[1].innerText);
+      a= ''+ dtm;
+
+      $('#t2e1y').val( a.substr(0,4) );
+      $('#t2e1m').val( a.substr(4,2) );
+      $('#t2e1d').val( a.substr(6,2) );
+      $('#t2e1h').val( a.substr(8,2) );
+
+      for(i= 0; i < hiTab.length; i++)
       {
-        var i, x, dtm,
-            trt= 'trtInit', crmr= 'crmInit';
-
-        $('#ta2sub').val('Edit Session');
-        
-        $('#t2e0').val( hid );
-
-        dtm= +sdt2ndt(row.cells[1].innerText);
-        a= ''+ dtm;
-
-        $('#t2e1y').val( a.substr(0,4) );
-        $('#t2e1m').val( a.substr(4,2) );
-        $('#t2e1d').val( a.substr(6,2) );
-        $('#t2e1h').val( a.substr(8,2) );
-
-        for(i= 0; i < hiTab.length; i++)
+        x= hiTab[i];
+        if(x[0] === hid)
         {
-          x= hiTab[i];
-          if(x[0] === hid)
-          {
-            $('#t2e2').val( x[3] );
-            $('#t2e3').val( x[4] );
-            break;
-          }
+          $('#t2e2').val( x[3] );
+          $('#t2e3').val( x[4] );
+          break;
         }
-
-        $('#ta2rmv')[0].disabled= false;
-        $('#ta2sub')[0].disabled= false;
       }
-    
-      rowAnim(tx, true);
+
+      $('#ta2rmv')[0].disabled= false;
+      $('#ta2sub')[0].disabled= false;
+    }
+    rowAnim(tx, true);
+  });
+  //header
+  $('#hth').click(function(e)
+  {// *** table headers, do sort
+    var os= tbSrt[2], s= e.target.cellIndex;
+    s= (0 < os && Math.abs(os) -1 === s)? -(s+1) : s+1;
+    sortem(2, s);
+
+    reFresh();
   });
 
 
-
-  function checkEmpty()
-  {
-    adminInfo.innerText= 'Orphan treatments: \n';
-
-    var i, j, x, y, fnd;
-    for(i= 0; i < hiTab.length; i++)
-    {
-      x= hiTab[i][2]; fnd= -1;
-      for(j= 0; j < plTab.length; j++)
-      {
-        y= plTab[j][0];
-        if(y === x) { fnd= j; break; }
-      }
-
-      if(fnd < 0) adminInfo.innerText+= '#Id='+y+'  #No='+x+'\n';
-    }
-  }
-  
   // *** import... *********************************************
   function importDB(d)
   {
     nextID= 0;
     nextHD= 0;
+
+/*    adminInfo.innerText+= 'zip.len= '+ (d.length/1024).toFixed(2) +'KB \n';
+    d= window.LZString.decompressFromEncodedURIComponent(d);
+    adminInfo.innerText+= 'uzp.len= '+ (d.length/1024).toFixed(2) +'KB \n';
+*/
+
+    var nanCnt= 0;
     var a, i, r, tt,
         loP, loH, x= d.split('$');
     
@@ -1013,13 +1046,16 @@ $(document).ready(function()
     {
       r= loP[i];
       tt= r.split('^');
+      
+      if(!tt[0] || isNaN(tt[0])
+         || +tt[0] < 1) { nanCnt++; continue; }
+
       tt[0]= +tt[0]; 
       if(tt[0] >= nextID) nextID= tt[0]+1;
 
       plTab.push([ tt[0], tt[1], tt[2], tt[3], tt[4], tt[5] ]);
     }
 
-    var nanCnt= 0;
     hiTab.length= 0;
     loH= x[1].split('|');
     for(i= 0; i < loH.length; i++)
@@ -1027,11 +1063,10 @@ $(document).ready(function()
       r= loH[i];
       tt= r.split('^');
 
-      if(isNaN(tt[1])) {
+      if(isNaN(tt[0]) || isNaN(tt[1])) {
         nanCnt++; continue; }
-      
-      tt[0]= +tt[0]; tt[1]= +tt[1]; 
-      hiTab.push([ 0, tt[0], tt[1], tt[2], tt[3] ]);
+
+      hiTab.push([ 0, +tt[0], +tt[1], tt[2], tt[3] ]);
     }
     
     sortem(curTab= 2, -2);
@@ -1039,37 +1074,71 @@ $(document).ready(function()
     {
       hiTab[i][0]= i+1;
     }
+
     sortem(curTab= 2, 1);
     nextHD= hiTab.length+1;
     reFresh();
     
     sortem(curTab= 1, 2);
-    reFresh();
-
-//    checkEmpty();
-  //  adminInfo.innerText+= 'NaNs count:'+ nanCnt+'\n';
 
     $('#mtb1').click();
+    reFresh();
+    adminInfo.innerText+= 'NaNs count:'+ nanCnt+'\n';
+  }
+
+
+  function spaceLeft()
+  {
+    var j, i= 0, sz= 1024*10; //precission KBx10
+    var data= ''+ new Array(sz).join('9');
+    while(i <= 9*sz)
+    {
+      try { localStorage.setItem('tK'+ i++, data); }
+      catch(e) { break; }
+    }
+
+    for(j= 0; j < i; j++)
+      localStorage.removeItem('tK'+ j);
+
+    return i*sz;
+  }
+
+  function locStorageInfo()
+  {
+    var r, u= JSON.stringify(localStorage).length;
+    // ~~ double bitwise = Math.flor()
+    u= (u /1024).toFixed(2);
+    r= (spaceLeft() /1024).toFixed(2);
+    adminInfo.innerText+= 'LOCAL STORAGE:usage info \n'
+      +'Used: '+(u)+'KB \n'+ 'Left: '+(r)+'KB \n';
+
+    cchInfo();
   }
 
   function loadCache(isImport)
-  {
-    adminInfo.innerText+= 'CACHE:info & import \n';
-    
-   // cchInfo();
+  { 
     if(!window.localStorage) {
       adminInfo.innerText+= 'FAIL:window.localStorage \n'; return; }
     else
-      adminInfo.innerText+= 'USING:window.localStorage \n';
+      adminInfo.innerText+= 'PASS:window.localStorage \n';
    
-    var t, d= localStorage.getItem('dataBase');
-    if(!d) { nBar.innerText= ' #no cache data '; return; }
 
-    if(isImport) {
+    adminInfo.innerText+= 'CACHE:info & import \n';
+    locStorageInfo();
+
+    var t, d= localStorage.getItem('dataBase');
+    if(!d) { nBar.innerText= ' [!]No cache data'; return; }
+
+    if(isImport)
+    {
+      //adminInfo.innerText+= 'zip.len= '+ (d.length/1024).toFixed(2) +'KB \n';
+      //d= window.LZString.decompress(d);
+      adminInfo.innerText+= 'uzp.len= '+ (d.length/1024).toFixed(2) +'KB \n';
+
       importDB(d); 
-      adminInfo.innerText+=  'import@loadCache-RAW: Pass!\n'; }
-    else
-      adminInfo.innerText+=  'info@loadCache-RAW: in progresd.. \n';
+//      adminInfo.innerText+= 'import@loadCache-RAW:Pass!\n';
+    }
+//    else adminInfo.innerText+=  'info@loadCache-RAW:in progress.. \n';
   }
 
   function loadServer()
@@ -1077,7 +1146,7 @@ $(document).ready(function()
     adminInfo.innerText+= '\nSERVER:load & import\n';
     $.ajax(
     {
-      url:appPath +'/ld:'+dbPass, type:'GET',
+      url:appPath +'/lod:'+dbPass, type:'GET',
       error:function(e, f)
       {
         adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
@@ -1090,11 +1159,12 @@ $(document).ready(function()
           + 'PASS:server load '+ (d.length/1024).toFixed(2) +'KB \n';
 
         ttxt= ' Clients ';
+      
         importDB(d);
       }
     });
   }
-
+  
   function logMe()
   {
     adminInfo.innerText+= 'SERVER:logme \n';
@@ -1147,7 +1217,7 @@ $(document).ready(function()
     else
       adminInfo.innerText+= 'USING:window.localStorage \n';
  
-    var rawdb, rwp, rwh,
+    var d, rawdb, rwp, rwh,
         qq= [], xx= [], yy= [];
     
     plTab.forEach(function(r)
@@ -1157,20 +1227,29 @@ $(document).ready(function()
     rwp= xx.join('|');
 
     hiTab.forEach(function(r)
-    { 
+    {
       qq= [ r[1], r[2], r[3], r[4] ];
       yy.push( qq.join('^') );
     });
     rwh= yy.join('|');
     
     rawdb= rwp +'$'+ rwh;
-    
-    localStorage.setItem('dataBase', rawdb);
 
-    nBar.innerText= ' [!]Cache save OK.';
-    adminInfo.innerText+= 'PASS:cache save '+ (rawdb.length/1024).toFixed(2) +'KB \n';
-    if(cchOnly) return;
+    d= rawdb.replace(/[^A-Z0-9.\-,\+ $#\|\^~]/gi, '');
     
+//    adminInfo.innerText+= 'zip.len= '+ (d.length/1024).toFixed(2) +'KB \n';
+  //    d= window.LZString.compress(d);
+//    d= window.LZString.compressToEncodedURIComponent(d);
+    adminInfo.innerText+= 'uzp.len= '+ (d.length/1024).toFixed(2) +'KB \n';
+
+    localStorage.clear();
+    localStorage.setItem('dataBase', d);
+
+    nBar.innerText= ' [i]Cache save OK';
+    adminInfo.innerText+= 'PASS:cache save '+ (d.length/1024).toFixed(2) +'KB \n';
+    if(cchOnly) return;
+
+
     // *** SERVER SAVE
     adminInfo.innerText+= 'SERVER:export & save \n';
 
@@ -1179,11 +1258,11 @@ $(document).ready(function()
     else
     if(!isLogged) {
       adminInfo.innerText+= 'FAIL:no password\n';
-      nBar.innerText= ' [!]Must be logged to update server database.'; return; }
+      nBar.innerText= ' [!]Must be logged to update server database'; return; }
 
     $.ajax(
     {
-      url:appPath +'/sav:'+dbPass, data:rawdb, type:'POST',
+      url:appPath +'/sav:'+dbPass, data:d, type:'POST',
       error:function(e, f)
       {
         adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
@@ -1193,12 +1272,11 @@ $(document).ready(function()
         if(r.substring(0,4) !== 'P@sv') {
           adminInfo.innerText+= 'FAIL@server:'+ r +'\n'; return; }
 
-        nBar.innerText= ' [!]Server save '+ r.substr(5);
+        nBar.innerText= ' [i]Server save '+ r.substr(5);
         adminInfo.innerText+= x.getAllResponseHeaders() +'\n'
-          + 'PASS:server save '+ (rawdb.length/1024).toFixed(2) +'KB \n';
+          + 'PASS:server save '+ (d.length/1024).toFixed(2) +'KB \n';
       }
     });
-    
   }
 
   function loadDB()
@@ -1246,11 +1324,11 @@ $(document).ready(function()
 
         if(lastTab === 2 && edtRow[2] >= 0) {
           fltNum[1]= 1; fi1Hdr[1]= '0#Id.'; fi1Mod[1]= 9;
-          fi1Inp[1]= +$('#htb>tr')[edtRow[2]-1].cells[2].innerText;
+          fi1Inp[1]= +$('#htb>tr')[edtRow[2]].cells[2].innerText;
 
-          resetEdit(1);
+//          resetEdit(1);
           reFresh();
-          edtRow[1]= 1;
+          edtRow[1]= 0;
         }
 
         editMode= true;
@@ -1261,7 +1339,7 @@ $(document).ready(function()
         if(lastTab === 1 && edtRow[1] >= 0)
         {
           fltNum[2]= 1; fi1Hdr[2]= fi2Hdr[2]= '2#Id.'; fi1Mod[2]= 9;
-          fi1Inp[2]= +$('#ptb>tr')[edtRow[1]-1].cells[0].innerText;
+          fi1Inp[2]= +$('#ptb>tr')[edtRow[1]].cells[0].innerText;
 
           resetEdit(2);
           reFresh();
@@ -1272,10 +1350,11 @@ $(document).ready(function()
 
       case '#tab3': curTab= 3;
         $("#mnu1")[0].value= 'HELP';
-        nBar.innerText=' [~]System';
+        nBar.innerText=' [i]System';
       break;
     }
 
+//    if(curTab === 2) { editMode= false; $("#mnu1").click(); }    else
     if(editMode) $("#mnu1").click();
   });
 
@@ -1298,24 +1377,26 @@ $(document).ready(function()
     }
 //    sRs= $('#ptb')[0].getElementsByClassName('selR');
 
+    resetMerge();
+
     var js= '#htb>tr', tl= hiTab.length;
     if(curTab !== 2) { js= '#ptb>tr'; tl= plTab.length; }
     
-    var er= edtRow[curTab] -1; //editRow-1;
+    var er= edtRow[curTab];
     resetEdit(curTab);
     if(editMode= !editMode)
     {
       this.value= 'FIND MODE';
-      $(".admin").css("display", "table-cell");
-      $('.adminEdit').css('display', 'inline-block');
-      $('.filt').css('display', 'none');
+      $(".admin").css({display:'table-cell'});
+      $('.adminEdit').css({display:'inline-block'});
+      $('.filt').css({display:'none'});
     }
     else
     {
       this.value= 'EDIT MODE';
-      $(".admin").css("display", "none");
-      $('.adminEdit').css('display', 'none');
-      $('.filt').css('display', 'block');
+      $(".admin").css({display:'none'});
+      $('.adminEdit').css({display:'none'});
+      $('.filt').css({display:'block'});
     }
 
     if(er >= 0 && er < tl )
@@ -1323,12 +1404,14 @@ $(document).ready(function()
       var jj= $(js)[er];
       $(jj.firstChild).click();
     }
+
+    resetVsize();
     nBar.innerText= tblInf[curTab];
   });
 
   // *** FILTERING ************************************
   function hntShow() {
-    nBar.innerText= tblInf[curTab] +' [?]Press BACK to toggle filter modes.'; }
+    nBar.innerText= tblInf[curTab] +' [i]Press ESC to toggle filter modes'; }
 
 
   $('#t1fil, #t2fil').click(function(e)
@@ -1365,22 +1448,21 @@ $(document).ready(function()
     {
       sortem(1, 2);
 
-      reFresh();
       $('#mtb1').click();
-      $('#t1arnd')[0].scrollTop= 0;
+      reFresh();
     }
     else
     {
       sortem(2, 1);
 
-      reFresh();
       $('#mtb2').click();
-      $('#t2arnd')[0].scrollTop= 0;
+      reFresh();
     }
 
 //    $(js).focus();
   });
 
+  $('#t1F, #t2F').on('blur', function(e) { tiFresh(); });
 
   $('#t1F, #t2F').on('focus', function(e)
   {
@@ -1396,37 +1478,29 @@ $(document).ready(function()
     hntShow();
   });
 
-  $('#t1F, #t2F').on('blur', function(e)
-  { //e.stopImmediatePropagation(); e.preventDefault();
-
-    tiFresh();
-  });
-
-
   // *** INPUT TEXT FIELD ...............................
   $('#t1F, #t2F').on('keyup', function(e)
   {
-    var a,
-        t= this.value,
-        tn= +this.id[1];
-
+    var a, t= this.value, tn= +this.id[1];
     if(tn !== 2) tn= 1;
-    if(e.which === 8 )
+
+    if(t.length === 0) hntShow();
+    if(e.which === 27) //t.length === 0 && 
     {
+      e.stopImmediatePropagation(); e.preventDefault();
+
       if(fltNum[tn] === 0)
         fi1Mod[tn]= (fi1Mod[tn] !== 1)? 1:2;
       else
         fi2Mod[tn]= (fi2Mod[tn] !== 1)? 1:2;
 
       tiFresh(1);
-      hntShow();
-      this.value= '';
+//      hntShow();
+  //    this.value= '';
       nBar.innerrTexy= 'fi1Mod='+fi1Mod[tn];
       return;
-    }
-    else
-    if(t.length === 1)
-      nBar.innerText= tblInf[tn];
+    }  
+//    else    if(t.length === 1)      nBar.innerText= tblInf[tn];
 
     a= Math.abs(tbSrt[tn]) -1;
     if(tn !== 2)
@@ -1443,11 +1517,11 @@ $(document).ready(function()
     }
 
     // *** tab2
-    t= t.toUpperCase();
+    t= t.toLowerCase();
     if(a > 2)
       this.value= t.replace(/[^A-Z 0-9\+,\-.]/gi, '');
     else
-      this.value= t.replace(/[^0-9 a]/g, '');
+      this.value= t.replace(/[^0-9 a]/gi, '');
   });
 
   $('.finf').on('keydown', function(e)
@@ -1475,7 +1549,7 @@ $(document).ready(function()
     if(ii > 2)
       this.value= tv.replace(/[^0-9]/g, '');
 
-    //    $('#ta1mrg')[0].disabled= true;
+    $('#ta1mrg')[0].disabled= true;
     $('#ta1rmv')[0].disabled= true;
     $('#ta1sub')[0].disabled= false;
     return;
@@ -1503,7 +1577,8 @@ $(document).ready(function()
   $('#ta1rmv').click( //>Remove<
   function()
   {
-    if(!confirm('Are you sure?')) return;
+    if(!confirm('Selected client will be '
+      +'completely removed from the files.\n\nAre you sure?')) return;
 
     var i, x, fnd= -1,
         cid= $('#t1e0')[0].value;
@@ -1521,7 +1596,7 @@ $(document).ready(function()
       reFresh();
       $('#mtb1').click();
       
-      nBar.innerText= ' [!]Deleted';
+      nBar.innerText= ' [i]Deleted';
     }
     else
       nBar.innerText= ' [!]Not found';
@@ -1530,7 +1605,8 @@ $(document).ready(function()
   $('#ta2rmv').click( //>Remove<
   function()
   {
-    if(!confirm('Are you sure?')) return;
+    if(!confirm('Selected session will be '
+      +'completely removed from the files.\n\nAre you sure?')) return;
 
     var i, x, fnd= 0,
         hid= +$('#t2e0')[0].value;
@@ -1549,7 +1625,7 @@ $(document).ready(function()
       reFresh();
       $('#mtb2').click();
       
-      nBar.innerText= ' [!]Deleted';
+      nBar.innerText= ' [i]Deleted';
     }
     else
       nBar.innerText= ' [!]Not found';
@@ -1585,7 +1661,7 @@ $(document).ready(function()
       reFresh();
       fltNum[1]= 0;
       
-      edtRow[1]= 1;
+      edtRow[1]= 0;
       $('#mtb1').click();
       $('#t1fil')[0].disabled= true;
     }
@@ -1593,6 +1669,7 @@ $(document).ready(function()
     if(this.value[0] === 'E')
     { // *** EDIT CLIENT
       $('#ta1sub').val('Apply Edit');
+      $('#ta1mrg')[0].disabled= true;
       $('#ta1rmv')[0].disabled= true;
       $('#ta1sub')[0].disabled= true;
 
@@ -1619,7 +1696,7 @@ $(document).ready(function()
       fi1Mod[1]= 9; fi1Inp[1]= cid;
 
       reFresh();
-      edtRow[1]= 1;
+      edtRow[1]= 0;
 
       $('#mtb1').click();
       $('#t1fil')[0].disabled= true;
@@ -1675,6 +1752,92 @@ $(document).ready(function()
     }
   });
 
+  var mergMaster= 0;
+  function resetMerge()
+  {
+    mergMaster= 0;
+    mergMode= false;
+
+    $('#tmpX, #tmpD').remove();
+    $('#ta1mrg').val('Merge');
+    $("#mnu1").val('FIND MODE');
+  }
+
+  $("#ta1mrg").click(function() { //>Merge<
+
+    if(mergMode= !mergMode)
+    {
+      var jq= $('#ptb>tr.selR')[0];
+      var xc= 'ORIGINAL: '+ jq.innerText;
+
+      mergMaster= +jq.cells[0].innerText;
+      $(this.parentNode)
+        .before('<p id="tmpX" style="background:black; color:white; '
+        +'padding:5px 9px; overflow:hidden; text-overflow:ellipsis; '
+        +'white-space:nowrap; font-size:17px">'+ xc +'</p>');
+
+//      resetEdit(1);
+      $(this).val('Apply Merge');
+      $("#mnu1").val('CANCEL MERGE');
+      $('#ta1mrg')[0].disabled= true;
+      $('#ta1rmv')[0].disabled= true;
+      $('#ta1sub')[0].disabled= true;
+      
+      setScroll($('#ptb>tr.xtrR')[0]);
+    }
+    else
+    {
+      if(!confirm('Last selected client "duplicate" will be removed '
+        +'from the files and their session history merged with the first '
+        +'selected "original" client`s records.\n\nAre you sure?'))
+      {
+        resetEdit(1);
+        resetMerge();
+        return;
+      }
+
+      var i, x, cid, fnd= -1;
+      cid= +$('#t1e0')[0].value;
+      // merge with master
+      for(i= 0; i < hiTab.length; i++)
+      {
+        x= hiTab[i];
+        if(x[2] === cid) x[2]= mergMaster;
+      }
+
+      // remove duplicat
+      for(i= 0; i < plTab.length; i++)
+      {
+        x= plTab[i];
+        if(x[0] === cid) { fnd= i; break; }
+      }
+
+      if(fnd >= 0)
+      {
+        plTab.splice(fnd, 1);
+
+//        resetEdit(1);
+
+        nBar.innerText= ' [i]Deleted';
+      }
+      else
+        nBar.innerText= ' [!]Not found';
+
+
+      fltNum[1]= 1;
+      fi1Hdr[1]= fi2Hdr[1]= '0#Id.';
+      fi1Mod[1]= 9; fi1Inp[1]= mergMaster;
+
+      reFresh();
+      edtRow[1]= 0;
+
+      resetMerge();
+
+      $('#mtb1').click();
+      $('#t1fil')[0].disabled= true;
+    }
+  });
+
   $('#t1all, #t2all').click(function(e)
   {//    nBar.innerText= ' [!]Please wait...'; nBar.focus();
     alert('This may take more than a few seconds!');
@@ -1683,9 +1846,8 @@ $(document).ready(function()
 
   // *** TAB 3 : ADMIN BUTTONS ***************************************
   $('#showPass').click(function() { //img>Show Password});
-    $('#hmLog').css({display:'block'});
     $('.hom').css({display:'none'});
-    
+    $('#hmLog').css({display:'block'});
     window.scrollTo(0, 999);
 
     $('#pasIn').focus();
@@ -1745,7 +1907,102 @@ $(document).ready(function()
     });
   });
 
+  function cchInfo()
+  { //    adminInfo.innerText+= "Cache info.v9 -- \n";
+    var t= ':window.caches \n';
+    if(window.caches)
+    {
+      adminInfo.innerText+= 'PASS' +t;
+      caches.keys().then(function(cacheNames)
+      {
+        cacheNames.forEach(function(cacheName)
+        {
+          caches.open(cacheName).then(function(cache)
+          {
+            return cache.keys(); 
+          }).then(function(reqs)
+          {
+              var strOut= 'Cache data files: \n';
+              reqs.forEach(function(rs, i)
+              {
+                strOut+= '            '+ ('   '+ (i+1)).slice(-3) +':: '
+                  + (rs.url).substr(0+ (rs.url).lastIndexOf('/')) +'\n';
+              });
+              adminInfo.innerText+= 'Cache name: '+ cacheName +' \n'+ strOut +'\n';
+              strOut= '';
+          });
+        });
+      });
+    }
+    else adminInfo.innerText+= 'FAIL' +t;
+    
+    t= ':navigator.storage \n';
+    if(navigator.storage)
+    {
+      adminInfo.innerText+= 'PASS' +t;
+      t= ':navigator.storage.estimate \n';
+      if(navigator.storage.estimate)
+      {
+        adminInfo.innerText+= 'PASS' +t;
+        navigator.storage.estimate().then(function(est)
+        {
+          adminInfo.innerText+= 'WINDOW CACHES:usage info \n'
+            +'Used: '+ (est.usage/1048576).toFixed(2) +'MB \n'
+            +'Left: '+ (est.quota/1048576).toFixed(2) +"MB \n";
+        });
+      }
+      else adminInfo.innerText+= 'FAIL' +t;
+
+      t= ':navigator.storage.persist \n';
+      if(navigator.storage.persist)
+      {
+        adminInfo.innerText+= 'PASS' +t;
+        navigator.storage.persisted().then(function(getP) {
+          adminInfo.innerText+= "Persistence: "+ getP +'\n'; });
+      }
+      else adminInfo.innerText+= 'FAIL' +t;
+    }
+    else adminInfo.innerText+= 'FAIL' +t;
+
+    t= ':navigator.serviceWorker \n';
+    if(navigator.serviceWorker) adminInfo.innerText+= 'PASS' +t;
+    else adminInfo.innerText+= 'FAIL' +t;
+
+    adminInfo.innerText+= '\n';
+  }
+
+  $("#med4But").click( function()
+  {
+    localStorage.clear();
+    adminInfo.innerText= 'Local storage cleared. \n';
+  });
+
   $("#sld4But").click( function() { loadDB(); }); //>Server Load<
   $("#ssv4But").click( function() { saveDB(); }); //>Server Save<
+
+/*
+  function compress(s)
+  {
+    var i, out= '';
+    if(s.length%2 !== 0) s+= ' ';
+    for(i= 0; i < s.length; i+= 2) {
+      out+= String.fromCharCode(
+        (s.charCodeAt(i)*256) + s.charCodeAt(i+1) );
+    }
+    return out;
+  }
+
+  function decompress(s)
+  {
+    var i, n, m, out = '';
+    for(i= 1; i < s.length; i++)
+    { 
+      // ~~ double bitwise = Math.flor()
+      n= s.charCodeAt(i); m= ~~(n/256);
+      out+= String.fromCharCode(m, n%256);
+    }
+    return out;
+  }
+*/
 
 }); // THE END

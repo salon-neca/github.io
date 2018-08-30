@@ -1,5 +1,5 @@
-/*** [27z]-zEXTRA:
-123457
+/*** [27z]-31
+abc
 */
 self.addEventListener('install', function(event)
 {
