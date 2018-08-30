@@ -1,9 +1,8 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.27z Aug\'18. \n';
+  var versionCode= 'v0.27z3 Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:19999});
-
 
   var autoSave= true;
   if(appPath === 'https://sns.glitch.me') autoSave= false;
@@ -1238,6 +1237,9 @@ $(document).ready(function()
     $(tid).removeClass("pde").addClass("pac");
 
     lastTab= curTab;
+    $("#mnu1")[0].value= 'EDIT MODE';
+    $("#help").css({display:'none'});
+    $(adminInfo).css({height:'auto'});
     switch(tid)
     {
       case '#tab1': curTab= 1;
@@ -1269,6 +1271,7 @@ $(document).ready(function()
       break;
 
       case '#tab3': curTab= 3;
+        $("#mnu1")[0].value= 'HELP';
         nBar.innerText=' [~]System';
       break;
     }
@@ -1284,8 +1287,15 @@ $(document).ready(function()
 
   $("#mnu1").click(function()
   { // star A.
-    if(curTab === 3) {
-      adminInfo.innerText+= ' [?].. [i].. [#].. [@].. [!].. \n'; return; }
+    if(curTab === 3)
+    {
+      clrAdmin();
+      $(adminInfo).css({height:'auto'});
+      $("#help").css({display:'block'});
+      adminInfo.innerText+= ' [i][#][@][?][!].. \n';
+      nBar.innerText= ' [i]Design & Coding by Zele - Belgrade, Aug`2018. ze_aks@hotmail.com';
+      return;
+    }
 //    sRs= $('#ptb')[0].getElementsByClassName('selR');
 
     var js= '#htb>tr', tl= hiTab.length;
@@ -1295,14 +1305,14 @@ $(document).ready(function()
     resetEdit(curTab);
     if(editMode= !editMode)
     {
-      this.value= 'FILTER/EDIT';
+      this.value= 'FIND MODE';
       $(".admin").css("display", "table-cell");
       $('.adminEdit').css('display', 'inline-block');
       $('.filt').css('display', 'none');
     }
     else
     {
-      this.value= 'EDIT/FILTER';
+      this.value= 'EDIT MODE';
       $(".admin").css("display", "none");
       $('.adminEdit').css('display', 'none');
       $('.filt').css('display', 'block');
@@ -1674,6 +1684,8 @@ $(document).ready(function()
   // *** TAB 3 : ADMIN BUTTONS ***************************************
   $('#showPass').click(function() { //img>Show Password});
     $('#hmLog').css({display:'block'});
+    $('.hom').css({display:'none'});
+    
     window.scrollTo(0, 999);
 
     $('#pasIn').focus();

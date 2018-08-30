@@ -1,10 +1,10 @@
-// *** [27c]defghijklmnopq[r]s[t]uvwx[yz]
+// *** [27z]23
 self.addEventListener('install', e => {
   caches.delete('saloncch').then(cache => {
       caches.open('saloncch').then(cache => {
         return cache.addAll([ '/', '/index.html', '/client.js', '/style.css',
                  '/manifest.json', '/aux/aux.js', '/aux/ibm.ttf', '/aux/quack.wav',
-                  '/aux/a.jpg', '/aux/b.png', '/aux/c.png'])
+                 '/aux/icon-144.png', '/aux/a.jpg', '/aux/b.png', '/aux/c.png'])
           .then(() => self.skipWaiting());
       }); });
 });
