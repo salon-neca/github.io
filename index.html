@@ -180,9 +180,7 @@
 
 <script>
       window.onbeforeunload= function() { return "Reload database?"; }
-
-      if(navigator.serviceWorker)
-        navigator.serviceWorker.register('sw.js', { scope:'/' });
+      if(navigator.serviceWorker) navigator.serviceWorker.register('sw.js');
 </script>
 </body>
 </html>
