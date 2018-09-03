@@ -1,11 +1,40 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.31i Aug\'18. \n';
+  var versionCode= 'v0.31r Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, // dataType:'text',
                contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
 
-  ///navigator.appVersion, navigator.userAgent, navigator.platform
+
+  var nBar= document.getElementById('notif');
+  var adminInfo= document.getElementById('dbFrame');
+  
+  function installUpdate() {
+    window.location.reload(true);
+    alert('Software update installed!');
+    adminInfo.innerText+= 'Software update installed! \n';
+  }
+
+  navigator.serviceWorker.register('sw.js')
+  .then(function(reg) {
+      reg.addEventListener('updatefound', function() {
+        var iw= this.installing;
+  //      alert('iw.state='+ iw.state);
+  //      updateReady= true;
+        alert('Revision pending, ready to install.');
+        adminInfo.innerText+= 'updateReady= true \n';
+
+        iw.addEventListener('statechange', function() {
+  //        alert('this.state='+this.state);
+          if(this.state === 'activated') installUpdate();
+        });
+      });
+  }).catch(function(err) {
+    adminInfo.innerText+= 'SW fail:'+ err +'\n';
+  });
+  
+  //window.onbeforeunload= function() { return "Reload database?"; }
+
 
   var autoSave= true;
   if(appPath === 'https://sns.glitch.me') autoSave= false;
@@ -42,8 +71,6 @@ $(document).ready(function()
   });
 
 
-  var nBar= document.getElementById('notif');
-  var adminInfo= document.getElementById('dbFrame');
 
   
   var nextID= 0;
@@ -1165,9 +1192,23 @@ $(document).ready(function()
       }
     });
   }
-  
-  function logMe()
+
+
+  function knockKnock()
   {
+    adminInfo.innerText+= 'SERVER:knockKnock \n';
+    $.ajax(
+    {
+      url:appPath +'/lgn:'+dbPass, type:'GET',
+      error:function(e, f)
+      {
+        adminInfo.innerText+= 'Knocking... \n';
+      }
+    });
+  }
+
+// *** FORMER logMe()
+/*
     adminInfo.innerText+= 'SERVER:logme \n';
     $.ajax(
     {
@@ -1181,7 +1222,7 @@ $(document).ready(function()
       },
       success:function(r, s, x)
       {
-        if(r !== 'P@lg')
+        if(r !== 'OK')
         {
           if(dbPass === 'knock')
             adminInfo.innerText+= 'PASS@server:waking up \n';
@@ -1196,18 +1237,54 @@ $(document).ready(function()
         }
   
         adminInfo.innerText+= 
-          x.getAllResponseHeaders() +'\n'+ 'PASS:logme logged \n';
+          x.getAllResponseHeaders() +'\n'+ 'PASS:accepted \n';
 
         loadDB();
-        isLogged= true;
-        $('#log4But').css({background:'none', 'box-shadow':'none'});
-        $('#log4But').val("Logged"); $('#pasIn').css({display:'none'});
-
-        $('#hmPage').css({display:'none'});
-        $('#appFrame').css({display:'block'});
       }
     });
+*/
+
+
+// *** NEW INTERCEP TO ATTEMPT ERROR FIX
+  function logMe()
+  {
+    
+    if(dbPass == 'knock') {
+      knockKnock();
+      return;
+    }
+
+    if(dbPass !== 'sal0n')
+    {
+      $("#log4But").val('Wrong password, try again!');
+      return;
+    }
+
+    isLogged= true;
+    ttxt= ' [Clients] ';
+
+    $('#hmPage').css({display:'none'});
+    $('#appFrame').css({display:'block'});
+    
+    var t, d= localStorage.getItem('dataBase');
+    if(!d) {
+      adminInfo.innerText+= ' [!]No cache data! \n'
+      loadDB();
+      return; 
+    }
+
+    adminInfo.innerText+= 'uzp.len= '+ (d.length/1024).toFixed(2) +'KB \n';
+
+    importDB(d);
+
+    $('#log4But').css({background:'none', 'box-shadow':'none'});
+    $('#log4But').val("Logged"); $('#pasIn').css({display:'none'});
+
+    adminInfo.innerText+= 'import@loadCache:PASS \n';    
   }
+// *** NEW INTERCEP TO ATTEMPT ERROR FIX
+
+  
 
   function saveDB(cchOnly)
   {
@@ -1286,7 +1363,8 @@ $(document).ready(function()
     if(!navigator.onLine)
     {
       adminInfo.innerText+= 'FAIL@navigator.offline \n';
-      ttxt= 'OFFLINE'; loadCache(true);
+      ttxt= 'OFFLINE';
+      loadCache(true);
       $("#mtb3").click();
       return;
     }
@@ -1860,9 +1938,9 @@ $(document).ready(function()
   $("#log4But").click(function() { //>Log In<
 //    if(isLogged) return;
     dbPass= $('#pasIn').val();
-    
     $("#log4But").val('Please wait...');
-    logMe();
+
+    setTimeout(function() { logMe(); }, 99);
   });
   
   // *** class="ord2" : DARK BOTTOM BUTTON
@@ -1978,35 +2056,10 @@ $(document).ready(function()
   $("#med4But").click( function()
   {
     localStorage.clear();
-    adminInfo.innerText= 'Local storage cleared. \n';
+    adminInfo.innerText+= 'Local storage cleared. \n';
   });
 
   $("#sld4But").click( function() { loadDB(); }); //>Server Load<
   $("#ssv4But").click( function() { saveDB(); }); //>Server Save<
 
-/*
-  function compress(s)
-  {
-    var i, out= '';
-    if(s.length%2 !== 0) s+= ' ';
-    for(i= 0; i < s.length; i+= 2) {
-      out+= String.fromCharCode(
-        (s.charCodeAt(i)*256) + s.charCodeAt(i+1) );
-    }
-    return out;
-  }
-
-  function decompress(s)
-  {
-    var i, n, m, out = '';
-    for(i= 1; i < s.length; i++)
-    { 
-      // ~~ double bitwise = Math.flor()
-      n= s.charCodeAt(i); m= ~~(n/256);
-      out+= String.fromCharCode(m, n%256);
-    }
-    return out;
-  }
-*/
-
-}); // THE END
+}); // THE ENDs
