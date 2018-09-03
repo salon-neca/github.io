@@ -1,44 +1,14 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.31s Aug\'18. \n';
+  var versionCode= 'v0.31c Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, // dataType:'text',
                contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
 
-
-  var nBar= document.getElementById('notif');
-  var adminInfo= document.getElementById('dbFrame');
-  
-  function installUpdate() {
-    window.location.reload(true);
-    alert('Software update installed!');
-    adminInfo.innerText+= 'Software update installed! \n';
-  }
-
-  navigator.serviceWorker.register('sw.js')
-  .then(function(reg) {
-      reg.addEventListener('updatefound', function() {
-        var iw= this.installing;
-  //      alert('iw.state='+ iw.state);
-  //      updateReady= true;
-        alert('Revision pending, ready to install.');
-        adminInfo.innerText+= 'updateReady= true \n';
-
-        iw.addEventListener('statechange', function() {
-  //        alert('this.state='+this.state);
-          if(this.state === 'activated') installUpdate();
-        });
-      });
-  }).catch(function(err) {
-    adminInfo.innerText+= 'SW fail:'+ err +'\n';
-  });
-  
-  //window.onbeforeunload= function() { return "Reload database?"; }
-
+  ///navigator.appVersion, navigator.userAgent, navigator.platform
 
   var autoSave= true;
-  if(appPath === 'https://sns.glitch.me') autoSave= false;
-  
+//  if(appPath === 'https://sns.glitch.me') autoSave= false;
 
   var dggON= false, dggY1, dggY2, recT;
   var dragging= function(x)
@@ -71,6 +41,8 @@ $(document).ready(function()
   });
 
 
+  var nBar= document.getElementById('notif');
+  var adminInfo= document.getElementById('dbFrame');
 
   
   var nextID= 0;
@@ -1174,7 +1146,7 @@ $(document).ready(function()
     adminInfo.innerText+= '\nSERVER:load & import\n';
     $.ajax(
     {
-      url:appPath +'/dbb:'+dbPass, type:'GET',
+      url:appPath +'/lod:'+dbPass, type:'GET',
       error:function(e, f)
       {
         adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
@@ -1192,23 +1164,9 @@ $(document).ready(function()
       }
     });
   }
-
-
-  function knockKnock()
+  
+  function logMe()
   {
-    adminInfo.innerText+= 'SERVER:knockKnock \n';
-    $.ajax(
-    {
-      url:appPath +'/lgn:'+dbPass, type:'GET',
-      error:function(e, f)
-      {
-        adminInfo.innerText+= 'Knocking... \n';
-      }
-    });
-  }
-
-// *** FORMER logMe()
-/*
     adminInfo.innerText+= 'SERVER:logme \n';
     $.ajax(
     {
@@ -1217,14 +1175,13 @@ $(document).ready(function()
       {
         adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
         
-        if(dbPass !== 'knock')
-          $("#log4But").val('Server Awakening:'+ f +', try again!');
+            $("#log4But").val('Server Awakening:'+ f +', try again!');
       },
       success:function(r, s, x)
       {
-        if(r !== 'OK')
+        if(r !== 'P@lg')
         {
-          if(dbPass === 'knock')
+          if(dbPass === 'justWakingUpServer')
             adminInfo.innerText+= 'PASS@server:waking up \n';
           else {
             adminInfo.innerText+= 'FAIL@server:'+ r +'\n';
@@ -1237,54 +1194,18 @@ $(document).ready(function()
         }
   
         adminInfo.innerText+= 
-          x.getAllResponseHeaders() +'\n'+ 'PASS:accepted \n';
+          x.getAllResponseHeaders() +'\n'+ 'PASS:logme logged \n';
 
         loadDB();
+        isLogged= true;
+        $('#log4But').css({background:'none', 'box-shadow':'none'});
+        $('#log4But').val("Logged"); $('#pasIn').css({display:'none'});
+
+        $('#hmPage').css({display:'none'});
+        $('#appFrame').css({display:'block'});
       }
     });
-*/
-
-
-// *** NEW INTERCEP TO ATTEMPT ERROR FIX
-  function logMe()
-  {
-    
-    if(dbPass == 'knock') {
-      knockKnock();
-      return;
-    }
-
-    if(dbPass !== 'sal0n')
-    {
-      $("#log4But").val('Wrong password, try again!');
-      return;
-    }
-
-    isLogged= true;
-    ttxt= ' [Clients] ';
-
-    $('#hmPage').css({display:'none'});
-    $('#appFrame').css({display:'block'});
-    
-    var t, d= localStorage.getItem('dataBase');
-    if(!d) {
-      adminInfo.innerText+= ' [!]No cache data! \n'
-      loadDB();
-      return; 
-    }
-
-    adminInfo.innerText+= 'uzp.len= '+ (d.length/1024).toFixed(2) +'KB \n';
-
-    importDB(d);
-
-    $('#log4But').css({background:'none', 'box-shadow':'none'});
-    $('#log4But').val("Logged"); $('#pasIn').css({display:'none'});
-
-    adminInfo.innerText+= 'import@loadCache:PASS \n';    
   }
-// *** NEW INTERCEP TO ATTEMPT ERROR FIX
-
-  
 
   function saveDB(cchOnly)
   {
@@ -1363,8 +1284,7 @@ $(document).ready(function()
     if(!navigator.onLine)
     {
       adminInfo.innerText+= 'FAIL@navigator.offline \n';
-      ttxt= 'OFFLINE';
-      loadCache(true);
+      ttxt= 'OFFLINE'; loadCache(true);
       $("#mtb3").click();
       return;
     }
@@ -1381,10 +1301,8 @@ $(document).ready(function()
         $('#gpc4But').css({background:'none', color:'black', 'box-shadow':'none'}); }
     });
   }
-
   clrAdmin();
-  //*** WAKE UP SERVER
-  dbPass= 'knock'; logMe();
+
 
   // *** tab buttons listener ********************************
   $(".mtb").click(function(e)
@@ -1938,9 +1856,9 @@ $(document).ready(function()
   $("#log4But").click(function() { //>Log In<
 //    if(isLogged) return;
     dbPass= $('#pasIn').val();
+    
     $("#log4But").val('Please wait...');
-
-    setTimeout(function() { logMe(); }, 99);
+    logMe();
   });
   
   // *** class="ord2" : DARK BOTTOM BUTTON
@@ -2056,10 +1974,35 @@ $(document).ready(function()
   $("#med4But").click( function()
   {
     localStorage.clear();
-    adminInfo.innerText+= 'Local storage cleared. \n';
+    adminInfo.innerText= 'Local storage cleared. \n';
   });
 
   $("#sld4But").click( function() { loadDB(); }); //>Server Load<
   $("#ssv4But").click( function() { saveDB(); }); //>Server Save<
 
-}); // THE ENDs
+/*
+  function compress(s)
+  {
+    var i, out= '';
+    if(s.length%2 !== 0) s+= ' ';
+    for(i= 0; i < s.length; i+= 2) {
+      out+= String.fromCharCode(
+        (s.charCodeAt(i)*256) + s.charCodeAt(i+1) );
+    }
+    return out;
+  }
+
+  function decompress(s)
+  {
+    var i, n, m, out = '';
+    for(i= 1; i < s.length; i++)
+    { 
+      // ~~ double bitwise = Math.flor()
+      n= s.charCodeAt(i); m= ~~(n/256);
+      out+= String.fromCharCode(m, n%256);
+    }
+    return out;
+  }
+*/
+
+}); // THE END
