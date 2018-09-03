@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- .. -->
+  <!-- 31st -->
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,6 +30,7 @@
 <body oncontextmenu="return false" ondragstart="return false"
       style="background-color:#777777; width:700px; margin:auto">
 
+  
 <div id="hmPage" style="background:#FFF0C0; margin-bottom:99px;text-align:center; font-size:17px" >
 
   <img class="hom" src="/aux/a.jpg" width="100%" />
@@ -41,7 +42,7 @@
       <pre style="font-size:14px; text-align:right">System-:HELP  </pre>
 
       <input id="pasIn" class="finf" type="password"
-             placeholder="PASSWORD" autocomplete="off" >
+             placeholder="PASSWORD" autocomplete="off">
       <input class="ord" id="log4But" type="button"
              value="LogMe" style="background:purple; color:white; border-color:blue">
     </div>
@@ -186,11 +187,5 @@
   </div>
 
 </div> <!-- appFrame -->
-
-<script>
-      window.onbeforeunload= function() { return "Reload database?"; }
-      if(navigator.serviceWorker) //navigator.serviceWorker.register('sw.js');
-  navigator.serviceWorker.register('/sw.js').then(reg => { reg.update(); });
-</script>
 </body>
 </html>
