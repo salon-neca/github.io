@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.31c Aug\'18. \n';
+  var versionCode= 'v0.31i Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, // dataType:'text',
                contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
@@ -8,7 +8,8 @@ $(document).ready(function()
   ///navigator.appVersion, navigator.userAgent, navigator.platform
 
   var autoSave= true;
-//  if(appPath === 'https://sns.glitch.me') autoSave= false;
+  if(appPath === 'https://sns.glitch.me') autoSave= false;
+  
 
   var dggON= false, dggY1, dggY2, recT;
   var dragging= function(x)
@@ -1175,13 +1176,14 @@ $(document).ready(function()
       {
         adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
         
-            $("#log4But").val('Server Awakening:'+ f +', try again!');
+        if(dbPass !== 'knock')
+          $("#log4But").val('Server Awakening:'+ f +', try again!');
       },
       success:function(r, s, x)
       {
         if(r !== 'P@lg')
         {
-          if(dbPass === 'justWakingUpServer')
+          if(dbPass === 'knock')
             adminInfo.innerText+= 'PASS@server:waking up \n';
           else {
             adminInfo.innerText+= 'FAIL@server:'+ r +'\n';
@@ -1301,8 +1303,10 @@ $(document).ready(function()
         $('#gpc4But').css({background:'none', color:'black', 'box-shadow':'none'}); }
     });
   }
-  clrAdmin();
 
+  clrAdmin();
+  //*** WAKE UP SERVER
+  dbPass= 'knock'; logMe();
 
   // *** tab buttons listener ********************************
   $(".mtb").click(function(e)
