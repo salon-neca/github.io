@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v0.31r Aug\'18. \n';
+  var versionCode= 'v0.31s Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, // dataType:'text',
                contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
@@ -1174,7 +1174,7 @@ $(document).ready(function()
     adminInfo.innerText+= '\nSERVER:load & import\n';
     $.ajax(
     {
-      url:appPath +'/lod:'+dbPass, type:'GET',
+      url:appPath +'/dbb:'+dbPass, type:'GET',
       error:function(e, f)
       {
         adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
