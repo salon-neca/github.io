@@ -1,5 +1,5 @@
 // *** [31c..i]
-// *** defghijklmnopqrst
+// *** defghijklmnopqrstu
 // ******************************************************************************
 self.addEventListener('install', function(e)
 {
