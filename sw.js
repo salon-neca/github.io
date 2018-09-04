@@ -1,6 +1,6 @@
 // *** [31u]
-// *** abcdefgh
-// ******************************************************************************
+// *** abcdefghi
+// *********************************************************************
 self.addEventListener('install', function(event)
 {  event.waitUntil(
     caches.open('saloncch').then(function(cache) {
