@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v32h Aug\'18. \n';
+  var versionCode= 'v32i Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, // dataType:'text',
                contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
@@ -22,7 +22,8 @@ $(document).ready(function()
     
     $('#log4But').val('LogMe');
     $('#pasIn').focus();
-
+    
+    localStorage.removeItem('ju');
   }, jju);
   
 
@@ -1076,7 +1077,6 @@ $(document).ready(function()
   // *** import... *********************************************
   function importDB(d)
   {
-    localStorage.removeItem('ju');
 
     nextID= 0;
     nextHD= 0;
