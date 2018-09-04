@@ -1,7 +1,6 @@
 $(document).ready(function()
 {
-  
-  var versionCode= 'v0.31u Aug\'18. \n';
+  var versionCode= 'v32g Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, // dataType:'text',
                contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
@@ -10,24 +9,43 @@ $(document).ready(function()
   var nBar= document.getElementById('notif');
   var adminInfo= document.getElementById('dbFrame');
   
-  function installUpdate() {
-    window.location.reload(true);
-    alert('Software update installed!');
-    adminInfo.innerText+= 'Software update installed! \n';
-  }
+
+  var jju= (localStorage.getItem('ju')) ? 999 : 7999;
+  
+   
+  var updateReady= 0;
+  var udCheck= setTimeout(function()
+  {
+    $('#pasIn').css({display:'inline'});
+    $('#pasIn')[0].disabled= false;
+    $('#log4But')[0].disabled= false;
+    
+    $('#log4But').val('LogMe');
+    $('#pasIn').focus();
+
+  }, jju);
+  
 
   navigator.serviceWorker.register('sw.js')
   .then(function(reg) {
       reg.addEventListener('updatefound', function() {
         var iw= this.installing;
   //      alert('iw.state='+ iw.state);
-  //      updateReady= true;
-        alert('Revision pending, ready to install.');
-        adminInfo.innerText+= 'updateReady= true \n';
+        
+        clearTimeout(udCheck);
+        
+        $('#log4But').val('Update found, installing...');
+
+        updateReady= 1;
+        adminInfo.innerText+= 'UPDATE:pending \n';
 
         iw.addEventListener('statechange', function() {
   //        alert('this.state='+this.state);
-          if(this.state === 'activated') installUpdate();
+          if(this.state === 'activated') {
+            localStorage.setItem('ju', '!');
+            window.location.reload(true);
+          }
+          
         });
       });
   }).catch(function(err) {
@@ -54,6 +72,7 @@ $(document).ready(function()
 
   $('#t1arnd, #t2arnd').bind('mousedown', function(e)
   {
+
     dggON= true; dggY1= dggY2= e.pageY;
   });
   $('#t1arnd, #t2arnd').bind('mousemove', function(e)
@@ -1057,6 +1076,8 @@ $(document).ready(function()
   // *** import... *********************************************
   function importDB(d)
   {
+    localStorage.removeItem('ju');
+
     nextID= 0;
     nextHD= 0;
 
@@ -1175,7 +1196,7 @@ $(document).ready(function()
     adminInfo.innerText+= '\nSERVER:load & import\n';
     $.ajax(
     {
-      url:appPath +'/dbb:'+dbPass, type:'GET',
+      url:appPath +'/lod:'+dbPass, type:'GET',
       error:function(e, f)
       {
         adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
@@ -1200,7 +1221,7 @@ $(document).ready(function()
     adminInfo.innerText+= 'SERVER:knockKnock \n';
     $.ajax(
     {
-      url:appPath +'/lgn:'+dbPass, type:'GET',
+      url:appPath +'/lgn:knock'+versionCode.substr(0,4), type:'GET',
       error:function(e, f)
       {
         adminInfo.innerText+= 'Knocking... \n';
@@ -1249,7 +1270,6 @@ $(document).ready(function()
 // *** NEW INTERCEP TO ATTEMPT ERROR FIX
   function logMe()
   {
-    
     if(dbPass == 'knock') {
       knockKnock();
       return;
@@ -1262,7 +1282,7 @@ $(document).ready(function()
     }
 
     isLogged= true;
-    ttxt= ' [Clients] ';
+    ttxt= ' Clients ';
 
     $('#hmPage').css({display:'none'});
     $('#appFrame').css({display:'block'});
@@ -1932,8 +1952,8 @@ $(document).ready(function()
     $('.hom').css({display:'none'});
     $('#hmLog').css({display:'block'});
     window.scrollTo(0, 999);
-
-    $('#pasIn').focus();
+    
+//    $('#pasIn').css({display:'none'});
   });
 
   $("#log4But").click(function() { //>Log In<
