@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v33e Aug\'18. \n';
+  var versionCode= 'v33f Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, // dataType:'text',
                contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
@@ -1173,7 +1173,7 @@ $(document).ready(function()
 
   function knockKnock()
   {
-    adminInfo.innerText+= 'SERVER:knockKnock \n';
+    adminInfo.innerText+= 'SERVER:knock \n';
     $.ajax(
     {
       url:appPath +'/lgn:knock'+versionCode.substr(0,4), type:'GET',
@@ -1194,9 +1194,7 @@ $(document).ready(function()
       error:function(e, f)
       {
         adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
-        
-        if(dbPass !== 'knock')
-          $("#log4But").val('Server Awakening:'+ f +', try again!');
+        $("#log4But").val('Server Awakening:'+ f +', try again!');
       },
       success:function(r, s, x)
       {
