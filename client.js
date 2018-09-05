@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v33c Aug\'18. \n';
+  var versionCode= 'v33d Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, // dataType:'text',
                contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
@@ -1217,6 +1217,8 @@ $(document).ready(function()
 
         loadDB();
         
+        localStorage.clear();
+        
         isLogged= true;
         ttxt= ' Clients [srv] ';
         localStorage.setItem('password', dbPass);
@@ -1307,7 +1309,6 @@ $(document).ready(function()
 //    d= window.LZString.compressToEncodedURIComponent(d);
     adminInfo.innerText+= 'uzp.len= '+ (d.length/1024).toFixed(2) +'KB \n';
 
-    localStorage.clear();
     localStorage.setItem('dataBase', d);
 
     nBar.innerText= ' [i]Cache save OK';
@@ -1415,7 +1416,7 @@ $(document).ready(function()
   clrAdmin();
   //*** WAKE UP SERVER
   knockKnock();
-  regSW();
+  if(navigator.serviceWorker) regSW();
   
   //window.onbeforeunload= function() { return "Reload database?"; }
 
@@ -2098,6 +2099,8 @@ $(document).ready(function()
   });
 
   $("#sld4But").click( function() { loadDB(); }); //>Server Load<
-  $("#ssv4But").click( function() { saveDB(); }); //>Server Save<
+  $("#ssv4But").click( function() {
+    if(confirm('Are you sure?')) saveDB();  
+  }); //>Server Save<
 
 }); // THE ENDs
