@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v32x Aug\'18. \n';
+  var versionCode= 'v33c Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, // dataType:'text',
                contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
@@ -1038,6 +1038,11 @@ $(document).ready(function()
     adminInfo.innerText+= 'uzp.len= '+ (d.length/1024).toFixed(2) +'KB \n';
 */
 
+    $('#hmPage').css({display:'none'});
+    $('#appFrame').css({display:'block'});
+    
+    adminInfo.innerText+= 'uzp.len= '+ (d.length/1024).toFixed(2) +'KB \n';
+    
     var nanCnt= 0;
     var a, i, r, tt,
         loP, loH, x= d.split('$');
@@ -1135,10 +1140,10 @@ $(document).ready(function()
     {
       //adminInfo.innerText+= 'zip.len= '+ (d.length/1024).toFixed(2) +'KB \n';
       //d= window.LZString.decompress(d);
-      adminInfo.innerText+= 'uzp.len= '+ (d.length/1024).toFixed(2) +'KB \n';
+      //adminInfo.innerText+= 'uzp.len= '+ (d.length/1024).toFixed(2) +'KB \n';
 
       importDB(d); 
-//      adminInfo.innerText+= 'import@loadCache-RAW:Pass!\n';
+      adminInfo.innerText+= 'import@loadCache:PASS \n';
     }
 //    else adminInfo.innerText+=  'info@loadCache-RAW:in progress.. \n';
   }
@@ -1152,15 +1157,13 @@ $(document).ready(function()
       error:function(e, f)
       {
         adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
-        ttxt= 'CACHE'; loadCache(true);
+        ttxt= ' Clients [cch] '; loadCache(true);
         $("#mtb3").click();
       },
       success:function(d, s, x)
       {
         adminInfo.innerText+= x.getAllResponseHeaders()
           + 'PASS:server load '+ (d.length/1024).toFixed(2) +'KB \n';
-
-        ttxt= ' Clients ';
       
         importDB(d);
       }
@@ -1181,8 +1184,9 @@ $(document).ready(function()
     });
   }
 
-// *** FORMER logMe()
-/*
+
+  function logServer()
+  {
     adminInfo.innerText+= 'SERVER:logme \n';
     $.ajax(
     {
@@ -1196,14 +1200,11 @@ $(document).ready(function()
       },
       success:function(r, s, x)
       {
-        if(r !== 'OK')
+        if(r !== 'P@lg')
         {
-          if(dbPass === 'knock')
-            adminInfo.innerText+= 'PASS@server:waking up \n';
-          else {
-            adminInfo.innerText+= 'FAIL@server:'+ r +'\n';
-            $("#log4But").val('Wrong password, try again!'); }
-
+          adminInfo.innerText+= 'FAIL@server:'+ r +'\n';
+          $("#log4But").val('Wrong password, try again!');
+          
           dbPass= '*';
           $('#pasIn').val('').focus();
 
@@ -1211,51 +1212,61 @@ $(document).ready(function()
         }
   
         adminInfo.innerText+= 
-          x.getAllResponseHeaders() +'\n'+ 'PASS:accepted \n';
+          x.getAllResponseHeaders() +'\n'+ 'PASSWORD:accepted \n';
+        
 
         loadDB();
+        
+        isLogged= true;
+        ttxt= ' Clients [srv] ';
+        localStorage.setItem('password', dbPass);
       }
     });
-*/
-
+  }
 
 // *** NEW INTERCEP TO ATTEMPT ERROR FIX
   function logMe()
   {
-    if(dbPass == 'knock') {
-      knockKnock();
-      return;
-    }
+    adminInfo.innerText+= 'LOCAL:logme \n';
 
-    if(dbPass !== 'sal0n')
-    {
-      $("#log4But").val('Wrong password, try again!');
-      return;
-    }
+    var p= localStorage.getItem('password');
+    if(!p) {
+      adminInfo.innerText+= ' [!]No password stored \n'
 
-    localStorage.setItem('password', dbPass);
-    
-    isLogged= true;
-    ttxt= ' Clients ';
-
-    $('#hmPage').css({display:'none'});
-    $('#appFrame').css({display:'block'});
-    
-    var t, d= localStorage.getItem('dataBase');
-    if(!d) {
-      adminInfo.innerText+= ' [!]No cache data! \n'
-      loadDB();
+      logServer();
       return; 
     }
 
-    adminInfo.innerText+= 'uzp.len= '+ (d.length/1024).toFixed(2) +'KB \n';
+    if(dbPass !== p)
+    {
+      $("#log4But").val('Wrong password, try again!');
+      
+      dbPass= '*';
+      $('#pasIn').val('').focus();
+      
+      return;
+    }
+
+    adminInfo.innerText+= 'PASSWORD:accepted \n';
+    
+    var t, d= localStorage.getItem('dataBase');
+    if(!d) {
+      adminInfo.innerText+= ' [!]No cache data \n'
+
+      logServer();
+      return; 
+    }
+
+    
+    isLogged= true;
+    ttxt= ' Clients [lcl] ';
 
     importDB(d);
 
-    $('#log4But').css({background:'none', 'box-shadow':'none'});
-    $('#log4But').val("Logged"); $('#pasIn').css({display:'none'});
+//    $('#log4But').css({background:'none', 'box-shadow':'none'});
+  //  $('#log4But').val("Logged"); $('#pasIn').css({display:'none'});
 
-    adminInfo.innerText+= 'import@loadCache:PASS \n';    
+    adminInfo.innerText+= 'import@loadLocal:PASS \n';    
   }
 // *** NEW INTERCEP TO ATTEMPT ERROR FIX
 
@@ -1338,12 +1349,56 @@ $(document).ready(function()
     if(!navigator.onLine)
     {
       adminInfo.innerText+= 'FAIL@navigator.offline \n';
-      ttxt= 'OFFLINE';
+      ttxt= ' Clients [ofl] ';
       loadCache(true);
       $("#mtb3").click();
       return;
     }
     loadServer();
+  }
+
+
+  function regSW()
+  {
+    var jju= (localStorage.getItem('ju')) ? 99 : 4999;
+    var updateReady= 0;
+    var udCheck= setTimeout(function()
+    {
+      $('#pasIn').css({display:'inline'});
+      $('#pasIn')[0].disabled= false;
+      $('#log4But')[0].disabled= false;
+
+      $('#log4But').val('LogMe');
+      $('#pasIn').focus();
+
+      localStorage.removeItem('ju');
+    }, jju);
+
+    navigator.serviceWorker.register('sw.js')
+    .then(function(reg) {
+        reg.addEventListener('updatefound', function() {
+          var iw= this.installing;
+    //      alert('iw.state='+ iw.state);
+
+          clearTimeout(udCheck);
+
+          $('#log4But').val('Update found, installing...');
+
+          updateReady= 1;
+          adminInfo.innerText+= 'UPDATE:pending \n';
+
+          iw.addEventListener('statechange', function() {
+    //        alert('this.state='+this.state);
+            if(this.state === 'activated') {
+              localStorage.setItem('ju', '!');
+              window.location.reload(true);
+            }
+
+          });
+        });
+    }).catch(function(err) {
+      adminInfo.innerText+= 'SW.fail:'+ err +'\n';
+    });
   }
 
 
@@ -1359,48 +1414,8 @@ $(document).ready(function()
 
   clrAdmin();
   //*** WAKE UP SERVER
-  dbPass= 'knock'; logMe();
-  
-  var jju= (localStorage.getItem('ju')) ? 99 : 4999;
-  var updateReady= 0;
-  var udCheck= setTimeout(function()
-  {
-    $('#pasIn').css({display:'inline'});
-    $('#pasIn')[0].disabled= false;
-    $('#log4But')[0].disabled= false;
-    
-    $('#log4But').val('LogMe');
-    $('#pasIn').focus();
-    
-    localStorage.removeItem('ju');
-  }, jju);
-  
-
-  navigator.serviceWorker.register('sw.js')
-  .then(function(reg) {
-      reg.addEventListener('updatefound', function() {
-        var iw= this.installing;
-  //      alert('iw.state='+ iw.state);
-        
-        clearTimeout(udCheck);
-        
-        $('#log4But').val('Update found, installing...');
-
-        updateReady= 1;
-        adminInfo.innerText+= 'UPDATE:pending \n';
-
-        iw.addEventListener('statechange', function() {
-  //        alert('this.state='+this.state);
-          if(this.state === 'activated') {
-            localStorage.setItem('ju', '!');
-            window.location.reload(true);
-          }
-          
-        });
-      });
-  }).catch(function(err) {
-    adminInfo.innerText+= 'SW fail:'+ err +'\n';
-  });
+  knockKnock();
+  regSW();
   
   //window.onbeforeunload= function() { return "Reload database?"; }
 
@@ -1971,7 +1986,7 @@ $(document).ready(function()
     loadCache(false);
   });
   $("#imc4But").click( function() { // >Import Cache<
-    ttxt= 'IMPORT'; loadCache(true);
+    ttxt= ' Clients [imp]'; loadCache(true);
   });
   $("#stc4But").click( function() { // >Store Cache<
    saveDB(true);
