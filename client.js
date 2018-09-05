@@ -1,64 +1,16 @@
 $(document).ready(function()
 {
-  var versionCode= 'v32i Aug\'18. \n';
+  var versionCode= 'v32x Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, // dataType:'text',
                contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
 
+  var autoSave= true;
+  //if(appPath === 'https://sns.glitch.me') autoSave= false;
 
   var nBar= document.getElementById('notif');
   var adminInfo= document.getElementById('dbFrame');
-  
 
-  var jju= (localStorage.getItem('ju')) ? 999 : 7999;
-  
-   
-  var updateReady= 0;
-  var udCheck= setTimeout(function()
-  {
-    $('#pasIn').css({display:'inline'});
-    $('#pasIn')[0].disabled= false;
-    $('#log4But')[0].disabled= false;
-    
-    $('#log4But').val('LogMe');
-    $('#pasIn').focus();
-    
-    localStorage.removeItem('ju');
-  }, jju);
-  
-
-  navigator.serviceWorker.register('sw.js')
-  .then(function(reg) {
-      reg.addEventListener('updatefound', function() {
-        var iw= this.installing;
-  //      alert('iw.state='+ iw.state);
-        
-        clearTimeout(udCheck);
-        
-        $('#log4But').val('Update found, installing...');
-
-        updateReady= 1;
-        adminInfo.innerText+= 'UPDATE:pending \n';
-
-        iw.addEventListener('statechange', function() {
-  //        alert('this.state='+this.state);
-          if(this.state === 'activated') {
-            localStorage.setItem('ju', '!');
-            window.location.reload(true);
-          }
-          
-        });
-      });
-  }).catch(function(err) {
-    adminInfo.innerText+= 'SW fail:'+ err +'\n';
-  });
-  
-  //window.onbeforeunload= function() { return "Reload database?"; }
-
-
-  var autoSave= true;
-  if(appPath === 'https://sns.glitch.me') autoSave= false;
-  
 
   var dggON= false, dggY1, dggY2, recT;
   var dragging= function(x)
@@ -1281,6 +1233,8 @@ $(document).ready(function()
       return;
     }
 
+    localStorage.setItem('password', dbPass);
+    
     isLogged= true;
     ttxt= ' Clients ';
 
@@ -1394,7 +1348,7 @@ $(document).ready(function()
 
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // *** action starts here **********************************                    
+  // *** action starts here **********************************
   if(navigator.storage) {
     navigator.storage.persisted().then(function(getP) {
       if(getP) {
@@ -1406,6 +1360,54 @@ $(document).ready(function()
   clrAdmin();
   //*** WAKE UP SERVER
   dbPass= 'knock'; logMe();
+  
+  var jju= (localStorage.getItem('ju')) ? 99 : 4999;
+  var updateReady= 0;
+  var udCheck= setTimeout(function()
+  {
+    $('#pasIn').css({display:'inline'});
+    $('#pasIn')[0].disabled= false;
+    $('#log4But')[0].disabled= false;
+    
+    $('#log4But').val('LogMe');
+    $('#pasIn').focus();
+    
+    localStorage.removeItem('ju');
+  }, jju);
+  
+
+  navigator.serviceWorker.register('sw.js')
+  .then(function(reg) {
+      reg.addEventListener('updatefound', function() {
+        var iw= this.installing;
+  //      alert('iw.state='+ iw.state);
+        
+        clearTimeout(udCheck);
+        
+        $('#log4But').val('Update found, installing...');
+
+        updateReady= 1;
+        adminInfo.innerText+= 'UPDATE:pending \n';
+
+        iw.addEventListener('statechange', function() {
+  //        alert('this.state='+this.state);
+          if(this.state === 'activated') {
+            localStorage.setItem('ju', '!');
+            window.location.reload(true);
+          }
+          
+        });
+      });
+  }).catch(function(err) {
+    adminInfo.innerText+= 'SW fail:'+ err +'\n';
+  });
+  
+  //window.onbeforeunload= function() { return "Reload database?"; }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // *** action starts here **********************************
+
+
 
   // *** tab buttons listener ********************************
   $(".mtb").click(function(e)
@@ -1514,7 +1516,7 @@ $(document).ready(function()
 
   // *** FILTERING ************************************
   function hntShow() {
-    nBar.innerText= tblInf[curTab] +' [i]Press ESC to toggle filter modes'; }
+    nBar.innerText= tblInf[curTab] +' [i]Press ESC to change matching pattern'; }
 
 
   $('#t1fil, #t2fil').click(function(e)
