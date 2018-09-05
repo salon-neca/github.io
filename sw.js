@@ -1,8 +1,9 @@
 // *** [31u]
-// *** abcdefghi
+// *** 32 abcdefghijklmnopqrstuvx
 // *********************************************************************
 self.addEventListener('install', function(event)
-{  event.waitUntil(
+{
+  event.waitUntil(
     caches.open('saloncch').then(function(cache) {
       return cache.addAll([ '/', '/index.html', '/client.js', '/style.css',
                            '/manifest.json', '/aux/aux.js', '/aux/ibm.ttf',
@@ -15,7 +16,6 @@ self.addEventListener('install', function(event)
 });
 
 self.addEventListener('activate', function(event) {
-
   event.waitUntil(
        self.clients.claim()
   );
