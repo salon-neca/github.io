@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v33d Aug\'18. \n';
+  var versionCode= 'v33e Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, // dataType:'text',
                contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
@@ -1230,6 +1230,9 @@ $(document).ready(function()
   function logMe()
   {
     adminInfo.innerText+= 'LOCAL:logme \n';
+    
+    localStorage.clear();
+    
 
     var p= localStorage.getItem('password');
     if(!p) {
