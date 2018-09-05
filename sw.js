@@ -1,5 +1,5 @@
-// *** [31u]
-// *** 32 abcdefghijklmnopqrstuvx
+// *** [31u] [32x]
+// *** 33 ab[c]
 // *********************************************************************
 self.addEventListener('install', function(event)
 {
