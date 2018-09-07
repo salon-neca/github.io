@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v33k Aug\'18. \n';
+  var versionCode= 'v33m Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, // dataType:'text',
                contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
