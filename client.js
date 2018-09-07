@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v33i Aug\'18. \n';
+  var versionCode= 'v33k Aug\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, // dataType:'text',
                contentType:'text/plain; charset=utf-8', cache:false, timeout:19999});
@@ -1157,7 +1157,8 @@ $(document).ready(function()
       error:function(e, f)
       {
         adminInfo.innerText+= 'FAIL@client:'+ f +'\n';
-        ttxt= ' Clients [cch] '; loadCache(true);
+        ttxt= ' Clients [cch] ';
+        loadCache(true);
         $("#mtb3").click();
       },
       success:function(d, s, x)
@@ -1165,6 +1166,13 @@ $(document).ready(function()
         adminInfo.innerText+= x.getAllResponseHeaders()
           + 'PASS:server load '+ (d.length/1024).toFixed(2) +'KB \n';
       
+        
+        localStorage.clear();
+        
+        isLogged= true;
+        ttxt= ' Clients [srv] ';
+        localStorage.setItem('password', dbPass);
+        
         importDB(d);
       }
     });
@@ -1212,14 +1220,7 @@ $(document).ready(function()
         adminInfo.innerText+= 
           x.getAllResponseHeaders() +'\n'+ 'PASSWORD:accepted \n';
         
-
         loadDB();
-        
-        localStorage.clear();
-        
-        isLogged= true;
-        ttxt= ' Clients [srv] ';
-        localStorage.setItem('password', dbPass);
       }
     });
   }
@@ -1228,9 +1229,6 @@ $(document).ready(function()
   function logMe()
   {
     adminInfo.innerText+= 'LOCAL:logme \n';
-    
-//    localStorage.clear();
-    
 
     var p= localStorage.getItem('password');
     if(!p) {
