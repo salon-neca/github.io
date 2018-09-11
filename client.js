@@ -1,9 +1,10 @@
 $(document).ready(function()
 {
-  var versionCode= 'v33p Sep\'18. \n';
+  var versionCode= 'v33u Sep\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:19999,
-               dataType:'text', contentType:'text/plain; charset=utf-8'});
+//               dataType:'text',
+               contentType:'text/plain; charset=utf-8'});
 
   var autoSave= true;
   //if(appPath === 'https://sns.glitch.me') autoSave= false;
