@@ -1,5 +1,5 @@
 // *** 33m
-// *** 33 nop
+// *** 33 nopstuv
 // *********************************************************************
 self.addEventListener('install', function(event)
 {
