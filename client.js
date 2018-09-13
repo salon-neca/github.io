@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v33v Sep\'18. \n';
+  var versionCode= 'v33x Sep\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:19999,
 //               dataType:'text',
@@ -105,7 +105,7 @@ $(document).ready(function()
   {
     if(t[0] !== '#') t= ' '+t;
     adminInfo.innerText+= t+'\n';
-    adminInfo.scrollTop= adminInfo.scrollHeight+99;
+    adminInfo.scrollTop= adminInfo.scrollHeight-99;
   }
 
   function fNum(n)
@@ -1195,11 +1195,12 @@ $(document).ready(function()
   function signIn()
   {
     $('#mtb1').val('Loading...');
+
     $('#appFrame').css({display:'block'});
     $('#hmPage').css({display:'none'});
 
     $("#mtb3").click();
-    
+
     isLogged= true;
     lgg( 'PASSWORD:accepted' );
   }
@@ -1365,52 +1366,6 @@ $(document).ready(function()
     loadServer();
   }
 
-
-  function regSW()
-  {
-    var jju= (localStorage.getItem('ju')) ? 99 : 4999;
-    var updateReady= 0;
-    var udCheck= setTimeout(function()
-    {
-      $('#pasIn').css({display:'inline'});
-      $('#pasIn')[0].disabled= false;
-      $('#log4But')[0].disabled= false;
-
-      $('#log4But').val('Sign In');
-      $('#pasIn').focus();
-
-      localStorage.removeItem('ju');
-    }, jju);
-
-    navigator.serviceWorker.register('sw.js')
-    .then(function(reg) {
-        reg.addEventListener('updatefound', function() {
-          var iw= this.installing;
-    //      alert('iw.state='+ iw.state);
-
-          clearTimeout(udCheck);
-
-          $('#log4But').val('Update found, installing...');
-
-          updateReady= 1;
-          lgg( 'UPDATE:found pending, activating...' );
-
-          iw.addEventListener('statechange', function() {
-    //        alert('this.state='+this.state);
-            if(this.state === 'activated') {
-              localStorage.setItem('ju', '!');
-              lgg( 'UPDATE:activation success, reloading...' );
-              
-              window.location.reload(true);
-            }
-
-          });
-        });
-    }).catch(function(err) {
-      lgg( 'SW.fail:'+ err );
-    });
-  }
-
   function wakeupServer()
   {
     lgg( '#knock2SERVER' );
@@ -1443,6 +1398,30 @@ $(document).ready(function()
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
+  // *** action starts here *********************************
+  function updates()
+  {
+      navigator.serviceWorker.register('sw.js')
+      .then(function(reg) {
+          reg.addEventListener('updatefound', function() {
+
+            var cf, iw= this.installing;
+            iw.addEventListener('statechange', function() {
+              if(this.state === 'activated') {
+
+                cf= confirm('Software update pending, restart now?');
+                if(cf) window.location.reload(true);
+              }
+            });
+
+          });
+      }).catch(function(err) {
+        lgg( 'SW fail:'+ err );
+      });
+    
+//    window.onbeforeunload= function() { return "Reload database?"; }
+  }
+ 
 
 // *** action starts here **********************************
 // *** _____________________________________________________
@@ -1451,9 +1430,9 @@ $(document).ready(function()
 
   //*** WAKE UP SERVER
   wakeupServer();
-  if(navigator.serviceWorker) regSW();
+  if(navigator.serviceWorker) updates();
   
-  //window.onbeforeunload= function() { return "Reload database?"; }
+  
 // *** _____________________________________________________
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -2011,7 +1990,7 @@ $(document).ready(function()
     $('#hmLog').css({display:'block'});
     window.scrollTo(0, 999);
     
-//    $('#pasIn').css({display:'none'});
+    $('#pasIn').focus();
   });
 
   $("#log4But").click(function() { //>Log In<
