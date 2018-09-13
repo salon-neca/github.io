@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v33x Sep\'18. \n';
+  var versionCode= 'v33y Sep\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:19999,
 //               dataType:'text',
@@ -103,7 +103,7 @@ $(document).ready(function()
 
   function lgg(t)
   {
-    if(t[0] !== '#') t= ' '+t;
+    if(t[0] !== '$') t= ' '+t;
     adminInfo.innerText+= t+'\n';
     adminInfo.scrollTop= adminInfo.scrollHeight-99;
   }
@@ -1119,7 +1119,7 @@ $(document).ready(function()
     // ~~ double bitwise = Math.flor()
     u= (u /1024).toFixed(2);
     r= (spaceLeft() /1024).toFixed(2);
-    lgg( '#usage@localStorage \n'
+    lgg( '$usage@localStorage \n'
       +' Used:'+(u)+'KB \n'+ ' Left:'+(r)+'KB' );
 
     cchInfo();
@@ -1128,7 +1128,7 @@ $(document).ready(function()
   function loadCache(isImport)
   {
     if(!isImport) locStorageInfo();
-    else lgg( '#cache2MEM' );
+    else lgg( '$cache2MEM' );
 
     var t, d= localStorage.getItem('dataBase');
     if(!d) {
@@ -1151,7 +1151,7 @@ $(document).ready(function()
 
   function loadServer()
   {
-    lgg( '#'+ (new Date().toISOString()).substr(11,8)+' server2MEM' );
+    lgg( '$server2MEM' );
     $.ajax(
     {
       url:appPath +'/lod:'+dbPass, type:'GET',
@@ -1207,7 +1207,7 @@ $(document).ready(function()
 
   function logServer()
   {
-    lgg( '#sign2SERVER' );
+    lgg( '$sign2SERVER' );
     $.ajax(
     {
       url:appPath +'/lgn:'+dbPass, type:'GET',
@@ -1238,7 +1238,7 @@ $(document).ready(function()
 // *** NEW INTERCEP TO ATTEMPT ERROR FIX
   function logMe()
   { 
-    lgg( '#sign2LOCAL' );
+    lgg( '$sign2LOCAL' );
 
     var p= localStorage.getItem('password');
     if(!p) {
@@ -1267,7 +1267,9 @@ $(document).ready(function()
 
   function clgSave()
   {
-    lgg( '#sysLogs2ERVER' );
+//    alert(0);
+    
+    lgg( '$sysLogs2SERVER' );
     var d= adminInfo.innerText;
     
     $.ajax(
@@ -1283,7 +1285,7 @@ $(document).ready(function()
           lgg( 'FAIL@server:'+ r ); return; }
 
         nBar.innerText+= ' [i]System logs recorded '+ r.substr(5);
-        lgg( 'OK.SAV#D:'+ (d.length/1024).toFixed(2) +'KB' );
+        lgg( 'OK.SAVED:'+ (d.length/1024).toFixed(2) +'KB' );
       }
     });
   }
@@ -1291,7 +1293,7 @@ $(document).ready(function()
   function saveDB(cchOnly)
   {
 // *** PART 1 - CACHE SAVE
-    lgg( '#'+ (new Date().toISOString()).substr(11,8)+' db2CACHE' );
+    lgg( '$db2CACHE' );
 
     var d, rawdb, rwp, rwh,
         qq= [], xx= [], yy= [];
@@ -1326,7 +1328,7 @@ $(document).ready(function()
 
 
 // *** PART 2 - SERVER SAVE
-    lgg( '#'+ (new Date().toISOString()).substr(11,8)+' db2SERVER' );
+    lgg( '$'+ (new Date().toISOString()).substr(11,8)+' db2SERVER' );
 
     if(!navigator.onLine) {
       lgg( 'FAIL:navigator.online' ); return; }
@@ -1349,9 +1351,11 @@ $(document).ready(function()
         nBar.innerText= ' [i]Database saved '+ r.substr(5);
         lgg( 'OK.SAVED:'+ (d.length/1024).toFixed(2) +'KB' );
 
-        clgSave();
+//        clgSave();
       }
     });
+
+    clgSave();
   }
 
   function loadDB()
@@ -1368,7 +1372,7 @@ $(document).ready(function()
 
   function wakeupServer()
   {
-    lgg( '#knock2SERVER' );
+    lgg( '$knock2SERVER' );
     $.ajax(
     {
       url:appPath +'/lgn:knock'+versionCode.substr(0,4), type:'GET',
@@ -2014,7 +2018,7 @@ $(document).ready(function()
   $("#gpc4But").click(function()
   { //>Grant Persistence<
 
-    lgg( '#persistence@CACHE' );
+    lgg( '$persistence@CACHE' );
     
     if(!navigator.storage) {
       lgg( 'No navigator.storage!' ); return; }
@@ -2050,7 +2054,7 @@ $(document).ready(function()
 
   function cchInfo()
   {
-    lgg( '#info@CACHE.v3 --' );
+    lgg( '$info@CACHE.v3 --' );
     var t= ':window.caches';
     if(window.caches)
     {
@@ -2108,15 +2112,13 @@ $(document).ready(function()
     t= ':navigator.serviceWorker';
     if(navigator.serviceWorker) lgg( 'PASS' +t );
     else lgg( 'FAIL' +t );
-
-//    lgg( ' --- ' );
   }
 
   $('#med4But').click( function()
   {
     if(confirm('Are you sure?')) {
       localStorage.clear();
-      lgg( '#CLEAR:localStorage' );
+      lgg( '$CLEAR:localStorage' );
     }
   });
 
@@ -2175,7 +2177,7 @@ $(document).ready(function()
 
   $("#orf4But").click( function()
   {
-    lgg( '#ORPHANS-CHECK:This may take some time...' );
+    lgg( '$ORPHANS-CHECK:This may take some time...' );
     setTimeout(function() { orphanCli(); }, 99);
   }); //>Check Orphans<
 
