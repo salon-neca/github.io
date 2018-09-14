@@ -1,8 +1,8 @@
 $(document).ready(function()
 {
-  var versionCode= 'v33y Sep\'18. \n';
+  var versionCode= 'v33z Sep\'18. \n';
   var appPath= 'https://snn.glitch.me';
-  $.ajaxSetup({async:true, cache:false, timeout:19999,
+  $.ajaxSetup({async:true, cache:false, timeout:29999,
 //               dataType:'text',
                contentType:'text/plain; charset=utf-8'});
 
@@ -43,7 +43,6 @@ $(document).ready(function()
 //    if(dggON) e.preventDefault();
     dggON= false; dggY1= dggY2= e.pageY;
   });
-
 
   
   var nextID= 0;
@@ -1268,13 +1267,13 @@ $(document).ready(function()
   function clgSave()
   {
 //    alert(0);
-    
     lgg( '$sysLogs2SERVER' );
     var d= adminInfo.innerText;
     
     $.ajax(
     {
-      url:appPath +'/clg', data:d, type:'POST',
+      url:appPath +'/clg',
+      data:d, type:'POST',
       error:function(e, f)
       {
         lgg( 'FAIL@client:'+ f );
@@ -1328,7 +1327,7 @@ $(document).ready(function()
 
 
 // *** PART 2 - SERVER SAVE
-    lgg( '$'+ (new Date().toISOString()).substr(11,8)+' db2SERVER' );
+    lgg( '$db2SERVER --- @'+ (new Date().toISOString()).substr(11,8) );
 
     if(!navigator.onLine) {
       lgg( 'FAIL:navigator.online' ); return; }
@@ -1338,7 +1337,8 @@ $(document).ready(function()
 
     $.ajax(
     {
-      url:appPath +'/sav:'+dbPass, data:d, type:'POST',
+      url:appPath +'/sav:'+dbPass,
+      data:d, type:'POST',
       error:function(e, f)
       {
         lgg( 'FAIL@client:'+ f );
@@ -2114,19 +2114,10 @@ $(document).ready(function()
     else lgg( 'FAIL' +t );
   }
 
-  $('#med4But').click( function()
-  {
-    if(confirm('Are you sure?')) {
-      localStorage.clear();
-      lgg( '$CLEAR:localStorage' );
-    }
-  });
-
   $('#sld4But').click( function() { loadDB(); }); //>Server Load<
   $('#ssv4But').click( function() { //>Server Save<
     if(confirm('Are you sure?')) saveDB();
   });
-
 
   function orphanSes()
   {
@@ -2180,5 +2171,21 @@ $(document).ready(function()
     lgg( '$ORPHANS-CHECK:This may take some time...' );
     setTimeout(function() { orphanCli(); }, 99);
   }); //>Check Orphans<
+
+/*
+  $('#cls4Butt').click( function()
+  {
+    if(confirm('Are you sure?')) {
+      localStorage.clear();
+      lgg( '$CLEAR:localStorage' );
+    }
+  });
+*/
+
+  $('#bkp4But').click( function()
+  {
+    
+    lgg( '$CLEAR:localStorage' );
+  });
 
 }); // THE ENDs

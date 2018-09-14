@@ -1,7 +1,7 @@
 /* 31 opqrs*/
 @font-face {
   font-family: 'IBM Plex Mono';
-  src: url('/aux/ibm.ttf') format('truetype');
+  src: url('aux/ibm.ttf') format('truetype');
 }
 
 * {
