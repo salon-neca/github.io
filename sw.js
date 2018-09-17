@@ -1,10 +1,11 @@
-// *** 33vxz
-// *** 34 abc
+// *** 33vxz 34c
+// *** 34 abcd
+var vrz= 'cch34d';
 // ***************************************************************************
 self.addEventListener('install', function(event)
 {
   event.waitUntil(
-    caches.open('s34c').then(function(cache) {
+    caches.open(vrz).then(function(cache) {
       return cache.addAll(['/', 'index.html', 'client.js', 'style.css',
                            'manifest.json', 'aux/aux.js', 'aux/ibm.ttf',
                            'aux/icon-144.png',
@@ -15,9 +16,15 @@ self.addEventListener('install', function(event)
   );
 });
 
-self.addEventListener('activate', function(event) {
+self.addEventListener('activate', function(event)
+{
   event.waitUntil(
-    caches.delete('saloncch').then(function() {
+    caches.keys().then(function(ns) {
+      return Promise.all(ns.map(function(nm) {
+        if(nm !== vrz) {
+          return caches.delete(nm); }
+      }) );
+    }).then(function() {
       return self.clients.claim();
     })
   );

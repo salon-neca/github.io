@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v34c Sep\'18. \n';
+  var versionCode= 'v34d Sep\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:29999,
 //               dataType:'text',
@@ -1418,7 +1418,7 @@ $(document).ready(function()
             iw.addEventListener('statechange', function() {
               if(this.state === 'activated') {
 
-                cf= confirm('Software update pending, activate now?');
+                cf= confirm('Software update pending, refresh now?');
                 if(cf) window.location.reload(true);
               }
             });
@@ -2151,6 +2151,7 @@ $(document).ready(function()
       }
     }
     lgg( 'orphanSessions:'+s );
+    lgg( 'END.check@memory' );
   }
 
   function orphanCli()
@@ -2178,13 +2179,38 @@ $(document).ready(function()
 
   $("#orf4But").click( function()
   {
-    lgg( '$ORPHANS-CHECK:This may take some time...' );
+    lgg( '$ORPHANS-CHECK:working...' );
     setTimeout(function() { orphanCli(); }, 99);
   }); //>Check Orphans<
 
   $('#bkp4But').click( function()
   {
-    lgg( 'BACK&P:*** work in progress..' );
+    lgg( '$BACKUP:loc2fil' );
+    
+
+    var rawdb= localStorage.getItem('dataBase');
+    if(!rawdb) {
+      lgg( 'FAIL@localStorage:no data' );
+      return;
+    }
+
+    lgg( 'COMPRESS:working...' );
+
+    setTimeout(function() {
+    
+      lgg( 'uzp.len:'+ (rawdb.length/1024).toFixed(2) +'KB' );
+      var d= rawdb.replace(/[^A-Z0-9.\-,\+ $#\|\^~]/gi, '');
+      d= window.LZString.compressToEncodedURIComponent(d);
+      lgg( 'zip.len:'+ (d.length/1024).toFixed(2) +'KB' );
+
+      var dl= document.createElement('a');
+      dl.setAttribute('href',
+          'data:text/csv;charset=utf-8,' +d);
+      dl.setAttribute('download', 'dbb.txt');
+      dl.click();
+      $(dl).remove();
+      lgg( 'OK.export@backup' );
+    }, 99);
   });
 
 }); // THE ENDs
