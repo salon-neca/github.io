@@ -1,13 +1,13 @@
-// *** 33vx
-// *** 33 nopqrstuvxyz
-// *********************************************************************
+// *** 33vxz
+// *** 34 abc
+// ***************************************************************************
 self.addEventListener('install', function(event)
 {
   event.waitUntil(
-    caches.open('saloncch').then(function(cache) {
+    caches.open('s34c').then(function(cache) {
       return cache.addAll(['/', 'index.html', 'client.js', 'style.css',
                            'manifest.json', 'aux/aux.js', 'aux/ibm.ttf',
-                           'aux/quack.wav', 'aux/icon-144.png',
+                           'aux/icon-144.png',
                            'aux/a.jpg', 'aux/b.png', 'aux/c.png']);
     }).then(function() {
       return self.skipWaiting();
@@ -17,7 +17,9 @@ self.addEventListener('install', function(event)
 
 self.addEventListener('activate', function(event) {
   event.waitUntil(
-       self.clients.claim()
+    caches.delete('saloncch').then(function() {
+      return self.clients.claim();
+    })
   );
 });
 
