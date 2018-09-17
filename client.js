@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var versionCode= 'v33z Sep\'18. \n';
+  var versionCode= 'v34c Sep\'18. \n';
   var appPath= 'https://snn.glitch.me';
   $.ajaxSetup({async:true, cache:false, timeout:29999,
 //               dataType:'text',
@@ -104,7 +104,7 @@ $(document).ready(function()
   {
     if(t[0] !== '$') t= ' '+t;
     adminInfo.innerText+= t+'\n';
-    adminInfo.scrollTop= adminInfo.scrollHeight-99;
+    adminInfo.scrollTop= adminInfo.scrollHeight;
   }
 
   function fNum(n)
@@ -616,7 +616,7 @@ $(document).ready(function()
         j1, j2, a, b, c;
 
     $('#mtb1').val(' Clients ');
-    $('#mtb3').val('System '+ttxt);
+//    $('#mtb3').val('System '+ttxt);
     
     switch(curTab)
     {
@@ -1092,7 +1092,7 @@ $(document).ready(function()
     $('#mtb1').click();
     reFresh();
 
-    lgg( 'NaNs count:'+ nanCnt );
+    lgg( ttxt +' NaNs:'+ nanCnt );
   }
 
 
@@ -1134,8 +1134,10 @@ $(document).ready(function()
       nBar.innerText= ' [!]No cache data';
 
       lgg( 'FAIL@localStorage:no data' );
-      ttxt= '!';
-      loadServer();
+      
+      if(isImport) {
+        ttxt= '!'; loadServer(); }
+
       return;
     }
 
@@ -1260,6 +1262,8 @@ $(document).ready(function()
 
     signIn();
     ttxt= '[lcl]';
+    if(!navigator.onLine) ttxt= '[ofl]';
+
     setTimeout(function() {
       loadCache(true); }, 99);
   }
@@ -1367,6 +1371,7 @@ $(document).ready(function()
       loadCache(true);
       return;
     }
+
     loadServer();
   }
 
@@ -1413,7 +1418,7 @@ $(document).ready(function()
             iw.addEventListener('statechange', function() {
               if(this.state === 'activated') {
 
-                cf= confirm('Software update pending, restart now?');
+                cf= confirm('Software update pending, activate now?');
                 if(cf) window.location.reload(true);
               }
             });
@@ -2050,6 +2055,11 @@ $(document).ready(function()
         });
       }
     });
+
+    if(confirm('Delete localStorage?')) {
+      localStorage.clear();
+      lgg( '$CLEAR:localStorage' );
+    }
   });
 
   function cchInfo()
@@ -2172,20 +2182,9 @@ $(document).ready(function()
     setTimeout(function() { orphanCli(); }, 99);
   }); //>Check Orphans<
 
-/*
-  $('#cls4Butt').click( function()
-  {
-    if(confirm('Are you sure?')) {
-      localStorage.clear();
-      lgg( '$CLEAR:localStorage' );
-    }
-  });
-*/
-
   $('#bkp4But').click( function()
   {
-    
-    lgg( '$CLEAR:localStorage' );
+    lgg( 'BACK&P:*** work in progress..' );
   });
 
 }); // THE ENDs
