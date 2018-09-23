@@ -1,6 +1,6 @@
-// *** 33vxz 34c
-// *** 34 abcd
-var vrz= 'cch34d';
+// *** 33z 34d
+var vrz= 'cch34e';
+// *** 34 abcde
 // ***************************************************************************
 self.addEventListener('install', function(event)
 {
@@ -8,8 +8,8 @@ self.addEventListener('install', function(event)
     caches.open(vrz).then(function(cache) {
       return cache.addAll(['/', 'index.html', 'client.js', 'style.css',
                            'manifest.json', 'aux/aux.js', 'aux/ibm.ttf',
-                           'aux/icon-144.png',
-                           'aux/a.jpg', 'aux/b.png', 'aux/c.png']);
+                           'aux/icon-144.png', 'aux/a.jpg',
+                           'aux/b.png', 'aux/c.png']);
     }).then(function() {
       return self.skipWaiting();
     })
@@ -32,7 +32,7 @@ self.addEventListener('activate', function(event)
 
 self.addEventListener('fetch', function(event) {
   event.respondWith(
-    caches.match(event.request)
+    caches.match(event.request, {ignoreVary:true, ignoreSearch:true})
     .then(function(response) {
       return response || fetch(event.request)
     })

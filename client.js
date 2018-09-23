@@ -1,10 +1,9 @@
 $(document).ready(function()
 {
-  var versionCode= 'v34d Sep\'18. \n';
+  var versionCode= 'v34e Sep\'18. \n';
   var appPath= 'https://snn.glitch.me';
-  $.ajaxSetup({async:true, cache:false, timeout:29999,
-//               dataType:'text',
-               contentType:'text/plain; charset=utf-8'});
+  $.ajaxSetup({async:true, timeout:59999,  // cache:false, contentType:false, 
+    dataType:"text", contentType:'text/plain', processData:false});
 
   var autoSave= true;
   //if(appPath === 'https://sns.glitch.me') autoSave= false;
@@ -60,7 +59,7 @@ $(document).ready(function()
   var editMode= false;
   var mergMode= false;
 
-  var tbSpc= [0, '40px','40px','300px'];
+  var tbSpc= [0, '40px','40px','299px'];
   var tbLst= [0, 1,1];
   var tbSrt= [0, 2,1];
   var tbAll= [99, 99,99];
@@ -102,7 +101,7 @@ $(document).ready(function()
 
   function lgg(t)
   {
-    if(t[0] !== '$') t= ' '+t;
+    if(t[0] !== '>') t= ' '+t;
     adminInfo.innerText+= t+'\n';
     adminInfo.scrollTop= adminInfo.scrollHeight;
   }
@@ -1035,12 +1034,7 @@ $(document).ready(function()
 
   // *** import... *********************************************
   function importDB(d)
-  { 
-/*    lgg( 'zip.len'+ (d.length/1024).toFixed(2) +'KB' );
-    d= window.LZString.decompressFromEncodedURIComponent(d);
-    lgg( 'uzp.len:'+ (d.length/1024).toFixed(2) +'KB' );
-*/
-
+  {
     nextID= 0;
     nextHD= 0;
 
@@ -1118,7 +1112,7 @@ $(document).ready(function()
     // ~~ double bitwise = Math.flor()
     u= (u /1024).toFixed(2);
     r= (spaceLeft() /1024).toFixed(2);
-    lgg( '$usage@localStorage \n'
+    lgg( '>usage@localStorage \n'
       +' Used:'+(u)+'KB \n'+ ' Left:'+(r)+'KB' );
 
     cchInfo();
@@ -1127,7 +1121,7 @@ $(document).ready(function()
   function loadCache(isImport)
   {
     if(!isImport) locStorageInfo();
-    else lgg( '$cache2MEM' );
+    else lgg( '>db.loc2mem' );
 
     var t, d= localStorage.getItem('dataBase');
     if(!d) {
@@ -1143,16 +1137,16 @@ $(document).ready(function()
 
     if(isImport)
     {
-      lgg( 'OK.LOADED:'+ (d.length/1024).toFixed(2) +'KB' );
+      lgg( 'OK.db2mem:'+ (d.length/1024).toFixed(2) +'KB' );
 
       importDB(d); 
-      lgg( 'OK.import@loadCache' );
+      lgg( 'OK.import@loc2mem' );
     }
   }
 
   function loadServer()
   {
-    lgg( '$server2MEM' );
+    lgg( '>db.srv2mem' );
     $.ajax(
     {
       url:appPath +'/lod:'+dbPass, type:'GET',
@@ -1162,8 +1156,8 @@ $(document).ready(function()
 
         if(ttxt === '!')
         {
-          lgg( 'ERROR:communication x2' );
-          var cf= confirm('Communication error, restart?');
+          lgg( 'ERROR:comm. x2' );
+          var cf= confirm('General comm. error, reload now?');
           if(cf) window.location.reload(true);
           else loadServer();
 //          return;
@@ -1173,9 +1167,9 @@ $(document).ready(function()
         loadCache(true);
       },
       success:function(d, s, x)
-      {
-        lgg( '' //x.getAllResponseHeaders()
-          + 'OK.LOADED:'+ (d.length/1024).toFixed(2) +'KB' );
+      {//        lgg( 'heads='+ x.getAllResponseHeaders());
+
+        lgg( 'OK.db2mem:'+ (d.length/1024).toFixed(2) +'KB' );
         
         localStorage.clear();
         lgg( 'CLEAR:localStorage' );
@@ -1186,7 +1180,7 @@ $(document).ready(function()
         ttxt= '[srv]';
 
         importDB(d);
-        lgg( 'OK.import@loadServer' );
+        lgg( 'OK.import@srv2mem' );
 
         saveDB(true)
       }
@@ -1203,26 +1197,26 @@ $(document).ready(function()
     $("#mtb3").click();
 
     isLogged= true;
-    lgg( 'PASSWORD:accepted' );
+    lgg( 'PASSWORD:accepted \n --- SIGNED IN ---' );
   }
 
-  function logServer()
+  function signServer()
   {
-    lgg( '$sign2SERVER' );
+    lgg( '>sgn2srv' );
     $.ajax(
     {
       url:appPath +'/lgn:'+dbPass, type:'GET',
       error:function(e, f)
       {
         lgg( 'FAIL@client:'+ f );
-        $("#log4But").val('Server Awakening:'+ f +', try again!');
+        $("#sgn4But").val('Server Awakening:'+ f +', try again!');
       },
       success:function(r, s, x)
       {
         if(r !== 'P@lg')
         {
           lgg( 'FAIL@server:'+ r );
-          $("#log4But").val('Wrong password, try again!');
+          $("#sgn4But").val('Wrong password, try again!');
           
           dbPass= '*';
           $('#pasIn').val('').focus();
@@ -1237,21 +1231,21 @@ $(document).ready(function()
   }
 
 // *** NEW INTERCEP TO ATTEMPT ERROR FIX
-  function logMe()
+  function signLocal()
   { 
-    lgg( '$sign2LOCAL' );
+    lgg( '>sgn2loc' );
 
     var p= localStorage.getItem('password');
     if(!p) {
-      lgg( 'FAIL:no local password' );
+      lgg( 'SKIP@loc...' );
 
-      logServer();
+      signServer();
       return; 
     }
 
     if(dbPass !== p)
     {
-      $('#log4But').val('Wrong password, try again!');
+      $('#sgn4But').val('Wrong password, try again!');
       lgg( 'FAIL:wrong password' );
 
       dbPass= '*';
@@ -1270,25 +1264,27 @@ $(document).ready(function()
 
   function clgSave()
   {
-//    alert(0);
-    lgg( '$sysLogs2SERVER' );
+//    lgg( '>log.sys2srv' );
     var d= adminInfo.innerText;
     
     $.ajax(
     {
-      url:appPath +'/clg',
+      url:appPath +'/clg:'+dbPass,
       data:d, type:'POST',
       error:function(e, f)
       {
         lgg( 'FAIL@client:'+ f );
       },
-      success:function(r, s, x)
+      success:function(r)
       {
         if(r.substring(0,4) !== 'P@cl') {
           lgg( 'FAIL@server:'+ r ); return; }
 
-        nBar.innerText+= ' [i]System logs recorded '+ r.substr(5);
-        lgg( 'OK.SAVED:'+ (d.length/1024).toFixed(2) +'KB' );
+        nBar.innerText+= ' [i]Logs save OK '+ r.substr(5);
+        lgg( 'OK.log2srv:'+ (d.length/1024).toFixed(2) +'KB' );
+      },
+      complete:function() {
+        lgg( '--- '+ (new Date().toISOString()).substr(11,8) +' ---' );
       }
     });
   }
@@ -1296,10 +1292,13 @@ $(document).ready(function()
   function saveDB(cchOnly)
   {
 // *** PART 1 - CACHE SAVE
-    lgg( '$db2CACHE' );
+    lgg( '>db.mem2loc' );
 
-    var d, rawdb, rwp, rwh,
+    var d, rwp, rwh,
         qq= [], xx= [], yy= [];
+
+    sortem(1, 2);
+    sortem(2, 1);
     
     plTab.forEach(function(r)
     { 
@@ -1314,30 +1313,25 @@ $(document).ready(function()
     });
     rwh= yy.join('|');
     
-    rawdb= rwp +'$'+ rwh;
-
-    d= rawdb;
-/*    lgg( 'uzp.len:'+ (rawdb.length/1024).toFixed(2) +'KB' );
-    d= rawdb.replace(/[^A-Z0-9.\-,\+ $#\|\^~]/gi, '');
-//    d= window.LZString.compressToEncodedURIComponent(d);
-    lgg( 'zip.len:'+ (d.length/1024).toFixed(2) +'KB' );
-*/
-
+    d= rwp +'$'+ rwh;
+    
     localStorage.setItem('dataBase', d);
-    nBar.innerText= ' [i]Cache stored OK';
+    nBar.innerText= ' [i]Local store OK';
 
-    lgg( 'OK.SAVED:'+ (d.length/1024).toFixed(2) +'KB' );
+    lgg( 'OK.db2loc:'+ (d.length/1024).toFixed(2) +'KB' );
     if(cchOnly) return;
 
 
 // *** PART 2 - SERVER SAVE
-    lgg( '$db2SERVER --- @'+ (new Date().toISOString()).substr(11,8) );
-
     if(!navigator.onLine) {
-      lgg( 'FAIL:navigator.online' ); return; }
+      lgg( 'FAIL:offline' ); return; }
     else
     if(!isLogged) {
       lgg( 'FAIL:no password' ); return; }
+
+    lgg( '>db&log2srv' );
+    lgg( '--- '+ (new Date().toISOString()).substr(11,8) +' ---' );
+
 
     $.ajax(
     {
@@ -1348,25 +1342,25 @@ $(document).ready(function()
         lgg( 'FAIL@client:'+ f );
       },
       success:function(r, s, x)
-      {
+      {//        lgg( 'heads='+ x.getAllResponseHeaders());
+
         if(r.substring(0,4) !== 'P@sv') {
           lgg( 'FAIL@server:'+ r ); return; }
 
-        nBar.innerText= ' [i]Database saved '+ r.substr(5);
-        lgg( 'OK.SAVED:'+ (d.length/1024).toFixed(2) +'KB' );
-
-//        clgSave();
+        nBar.innerText= ' [i]Server save OK '+ r.substr(5);
+        lgg( 'OK.db2srv:'+ (d.length/1024).toFixed(2) +'KB' );
+      },
+      complete:function() {
+        clgSave();
       }
     });
-
-    clgSave();
   }
 
   function loadDB()
   {
     if(!navigator.onLine)
     {
-      lgg( 'FAIL@navigator.offline' );
+      lgg( 'FAIL@offline' );
       ttxt= '[ofl]';
       loadCache(true);
       return;
@@ -1377,7 +1371,7 @@ $(document).ready(function()
 
   function wakeupServer()
   {
-    lgg( '$knock2SERVER' );
+    lgg( '>knock2srv' );
     $.ajax(
     {
       url:appPath +'/lgn:knock'+versionCode.substr(0,4), type:'GET',
@@ -1387,8 +1381,8 @@ $(document).ready(function()
       },
       success:function(r, s, x)
       {
-        if(r.substr(0,5) !== 'awake')
-          lgg( 'CAUTION@server:'+ r );
+        if(r.substr(0,6) !== 'awoken')
+          lgg( 'UNEXPECTED@server:'+ r );
         else
           lgg( 'OK.AWOKEN' );
       }
@@ -1496,6 +1490,7 @@ $(document).ready(function()
         editMode= false;
         $("#mnu1")[0].value= 'HELP';
         nBar.innerText=' [i]System';
+        adminInfo.scrollTop= adminInfo.scrollHeight;
       break;
     }
 
@@ -2002,11 +1997,11 @@ $(document).ready(function()
     $('#pasIn').focus();
   });
 
-  $("#log4But").click(function() { //>Log In<
+  $("#sgn4But").click(function() { //>Log In<
     dbPass= $('#pasIn').val();
-    $("#log4But").val('Please wait...');
+    $("#sgn4But").val('Please wait...');
 
-    setTimeout(function() { logMe(); }, 99);
+    setTimeout(function() { signLocal(); }, 99);
   });
   
   // *** class="ord2" : DARK BOTTOM BUTTON
@@ -2023,7 +2018,7 @@ $(document).ready(function()
   $("#gpc4But").click(function()
   { //>Grant Persistence<
 
-    lgg( '$persistence@CACHE' );
+    lgg( '>persistence@CACHE' );
     
     if(!navigator.storage) {
       lgg( 'No navigator.storage!' ); return; }
@@ -2058,13 +2053,13 @@ $(document).ready(function()
 
     if(confirm('Delete localStorage?')) {
       localStorage.clear();
-      lgg( '$CLEAR:localStorage' );
+      lgg( '>CLEAR:localStorage' );
     }
   });
 
   function cchInfo()
   {
-    lgg( '$info@CACHE.v3 --' );
+    lgg( '>info@CACHE.v3 --' );
     var t= ':window.caches';
     if(window.caches)
     {
@@ -2151,7 +2146,7 @@ $(document).ready(function()
       }
     }
     lgg( 'orphanSessions:'+s );
-    lgg( 'END.check@memory' );
+    lgg( 'END.check' );
   }
 
   function orphanCli()
@@ -2179,13 +2174,13 @@ $(document).ready(function()
 
   $("#orf4But").click( function()
   {
-    lgg( '$ORPHANS-CHECK:working...' );
+    lgg( '>ORPHANS-CHECK:working...' );
     setTimeout(function() { orphanCli(); }, 99);
   }); //>Check Orphans<
 
   $('#bkp4But').click( function()
   {
-    lgg( '$BACKUP:loc2fil' );
+    lgg( '>db(zip).loc2bkp' );
     
 
     var rawdb= localStorage.getItem('dataBase');
@@ -2209,7 +2204,7 @@ $(document).ready(function()
       dl.setAttribute('download', 'dbb.txt');
       dl.click();
       $(dl).remove();
-      lgg( 'OK.export@backup' );
+      lgg( 'OK.export@loc2bkp' );
     }, 99);
   });
 
