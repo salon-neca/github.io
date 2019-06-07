@@ -1,6 +1,5 @@
-// *** 33z 34d
-var vrz= 'cch34e';
-// *** 34 abcde
+// *** 34e
+var vrz= 'cch34f';
 // ***************************************************************************
 self.addEventListener('install', function(event)
 {
