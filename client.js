@@ -1,8 +1,8 @@
 $(document).ready(function()
 {
-  var versionCode= 'v34e Sep\'18. \n';
+  var versionCode= 'v34f Sep\'18.';
   var appPath= 'https://snn.glitch.me';
-  $.ajaxSetup({async:true, timeout:59999,  // cache:false, contentType:false, 
+  $.ajaxSetup({async:true, timeout:90000,  // cache:false, contentType:false, 
     dataType:"text", contentType:'text/plain', processData:false});
 
   var autoSave= true;
@@ -102,7 +102,7 @@ $(document).ready(function()
   function lgg(t)
   {
     if(t[0] !== '>') t= ' '+t;
-    adminInfo.innerText+= t+'\n';
+    adminInfo.textContent+= '\n'+t;
     adminInfo.scrollTop= adminInfo.scrollHeight;
   }
 
@@ -1264,6 +1264,9 @@ $(document).ready(function()
 
   function clgSave()
   {
+    
+    return;
+  
 //    lgg( '>log.sys2srv' );
     var d= adminInfo.innerText;
     
@@ -1391,7 +1394,7 @@ $(document).ready(function()
     if(navigator.storage) {
       navigator.storage.persisted().then(function(getP) {
         if(getP) {
-          $('#gpc4But').val("Persistance Granted");
+          $('#gpc4But').val("Persist.OK");
           $('#gpc4But').css({background:'none', color:'black', 'box-shadow':'none'}); }
       });
     }
@@ -2006,6 +2009,7 @@ $(document).ready(function()
   
   // *** class="ord2" : DARK BOTTOM BUTTON
   $("#cad4But").click( function() { // >Cache Data<
+    adminInfo.textContent= versionCode;
     loadCache(false);
   });
   $("#imc4But").click( function() { // >Import Cache<
@@ -2201,11 +2205,40 @@ $(document).ready(function()
       var dl= document.createElement('a');
       dl.setAttribute('href',
           'data:text/csv;charset=utf-8,' +d);
-      dl.setAttribute('download', 'dbb.txt');
+      dl.setAttribute('download', curDTM().slice(0,6)+'.bkp');
       dl.click();
       $(dl).remove();
       lgg( 'OK.export@loc2bkp' );
     }, 99);
+  });
+  
+  $('#lfb4But').click( function()
+  {
+    lgg( '>db(zip).bkp2loc' );
+    
+    var readFile = function(e)
+    {
+      var file= e.target.files[0];
+
+      var reader= new FileReader();
+      reader.onload= function(e)
+      {
+        lgg( 'DECOMPRESS:working...' );
+        
+        var content= e.target.result;
+        var d= window.LZString.decompressFromEncodedURIComponent(content);
+        importDB(d);
+        
+        $(dl).remove();
+        lgg( 'OK.imort@bkp2loc' );
+      }
+      reader.readAsText(file);
+    }
+
+    var dl= document.createElement('input');
+    dl.type= 'file';
+    dl.onchange= readFile;
+    dl.click();
   });
 
 }); // THE ENDs
